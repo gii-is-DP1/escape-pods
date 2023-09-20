@@ -10,7 +10,7 @@
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>3.1.1</version>
 	</parent>
-	<name>Proyecto DP1 lab 1</name>
+	<name>Escape Pods L7-1</name>
 
 	<properties>
 
