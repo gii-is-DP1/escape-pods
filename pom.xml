@@ -36,9 +36,13 @@
 
 	<developers>
 		<developer>
-			<name>JAParejo</name>
-			<email>japarejo@gmail.com</email>
-			<url>http://www.isa.us.es</url>
+			<name>Gonzalo</name>
+			<email>gonnavrem@alum.us.es</email>
+			<properties>
+				<picUrl>
+					https://pbs.twimg.com/media/F6MdEtnXQAAkLQq?format=jpg&name=medium
+				</picUrl>
+			</properties>
 		</developer>
 	</developers>
 
