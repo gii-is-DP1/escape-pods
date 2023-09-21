@@ -43,6 +43,10 @@
 			<name>daniel benito hidalgo</name>
 			<email>danbenhid@alum.us.es</email>
 		</developer>
+		<developer>
+			<name>Pablo Jesus Castellanos Compaña</name>
+			<email>pabcascom@alum.us.es</email>
+		</developer>
 	</developers>
 
 	<dependencies>		
