@@ -27,6 +27,7 @@ INSERT INTO appusers(id,username,password,authority) VALUES (11,'owner8','$2a$10
 INSERT INTO appusers(id,username,password,authority) VALUES (12,'owner9','$2a$10$DaS6KIEfF5CRTFrxIoGc7emY3BpZZ0.fVjwA3NiJ.BjpGNmocaS3e',3);
 INSERT INTO appusers(id,username,password,authority) VALUES (13,'owner10','$2a$10$DaS6KIEfF5CRTFrxIoGc7emY3BpZZ0.fVjwA3NiJ.BjpGNmocaS3e',3);
 INSERT INTO appusers(id,username,password,authority) VALUES (20,'ferdehur','$2a$10$DaS6KIEfF5CRTFrxIoGc7emY3BpZZ0.fVjwA3NiJ.BjpGNmocaS3e',3);
+INSERT INTO appusers(id,username,password,authority) VALUES (22,'pabcascom','$2a$10$DaS6KIEfF5CRTFrxIoGc7emY3BpZZ0.fVjwA3NiJ.BjpGNmocaS3e',3);
 -- One vet user, named vet1 with passwor v3t
 /*INSERT INTO users(username,password,enabled) VALUES ('vet1','v3t',TRUE);
 INSERT INTO authorities(id,username,authority) VALUES (12,'vet1','veterinarian');*/
@@ -61,7 +62,7 @@ INSERT INTO types(id,name)  VALUES (3, 'lizard');
 INSERT INTO types(id,name)  VALUES (4, 'snake');
 INSERT INTO types(id,name)  VALUES (5, 'bird');
 INSERT INTO types(id,name)  VALUES (6, 'hamster');
-INSERT INTO types(id,name)  VALUES (7, 'turtle');
+INSERT INTO types(id,name)  VALUES (7, 'worm');
 
 INSERT INTO	owners(id, first_name, last_name, address, city, telephone, user_id, clinic) VALUES (1, 'George', 'Franklin', '110 W. Liberty St.', 'Sevilla', '608555103', 4, 1);
 INSERT INTO owners(id, first_name, last_name, address, city, telephone, user_id, clinic) VALUES (2, 'Betty', 'Davis', '638 Cardinal Ave.', 'Sevilla', '608555174', 5, 1);
@@ -74,6 +75,7 @@ INSERT INTO owners(id, first_name, last_name, address, city, telephone, user_id,
 INSERT INTO owners(id, first_name, last_name, address, city, telephone, user_id, clinic) VALUES (9, 'David', 'Schroeder', '2749 Blackhawk Trail','Cádiz', '685559435', 12, 3);
 INSERT INTO owners(id, first_name, last_name, address, city, telephone, user_id, clinic) VALUES (10, 'Carlos', 'Estaban', '2335 Independence La.', 'Cádiz', '685555487', 13, 1);
 INSERT INTO owners(id, first_name, last_name, address, city, telephone, user_id, clinic) VALUES (11, 'Fernando Jose', 'De Celis Hurtado', 'C/ Julio Romero de Torres Nº19', 'Sevilla', '644980609', 20, 1);
+INSERT INTO owners(id, first_name, last_name, address, city, telephone, user_id, clinic) VALUES (13, 'Pablo Jesus', 'Castellanos Compaña', 'C/ Brookdale', 'Bemidji', '608315519', 22, 1);
 
 INSERT INTO pets(id,name,birth_date,type_id,owner_id) VALUES (1, 'Leo', '2010-09-07', 1, 1);
 INSERT INTO pets(id,name,birth_date,type_id,owner_id) VALUES (2, 'Basil', '2012-08-06', 6, 2);
@@ -89,6 +91,7 @@ INSERT INTO pets(id,name,birth_date,type_id,owner_id) VALUES (11, 'Freddy', '201
 INSERT INTO pets(id,name,birth_date,type_id,owner_id) VALUES (12, 'Lucky', '2010-06-24', 2, 10);
 INSERT INTO pets(id,name,birth_date,type_id,owner_id) VALUES (13, 'Sly', '2012-06-08', 1, 10);
 INSERT INTO pets(id,name,birth_date,type_id,owner_id) VALUES (14, 'Kira', '2012-06-08', 2, 11);
+INSERT INTO pets(id,name,birth_date,type_id,owner_id) VALUES (16, 'Antonio', '2003-06-09', 7, 13);
 
 INSERT INTO visits(id,pet_id,visit_date_time,description,vet_id) VALUES (1, 7, '2013-01-01 13:00', 'rabies shot', 4);
 INSERT INTO visits(id,pet_id,visit_date_time,description,vet_id) VALUES (2, 8, '2013-01-02 15:30', 'rabies shot', 5);
