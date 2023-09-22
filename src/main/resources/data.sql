@@ -62,8 +62,7 @@ INSERT INTO types(id,name)  VALUES (3, 'lizard');
 INSERT INTO types(id,name)  VALUES (4, 'snake');
 INSERT INTO types(id,name)  VALUES (5, 'bird');
 INSERT INTO types(id,name)  VALUES (6, 'hamster');
-INSERT INTO types(id,name)  VALUES (7, 'turtle');
-INSERT INTO types(id,name)  VALUES (8, 'worm');
+INSERT INTO types(id,name)  VALUES (7, 'worm');
 
 INSERT INTO	owners(id, first_name, last_name, address, city, telephone, user_id, clinic) VALUES (1, 'George', 'Franklin', '110 W. Liberty St.', 'Sevilla', '608555103', 4, 1);
 INSERT INTO owners(id, first_name, last_name, address, city, telephone, user_id, clinic) VALUES (2, 'Betty', 'Davis', '638 Cardinal Ave.', 'Sevilla', '608555174', 5, 1);
@@ -92,7 +91,7 @@ INSERT INTO pets(id,name,birth_date,type_id,owner_id) VALUES (11, 'Freddy', '201
 INSERT INTO pets(id,name,birth_date,type_id,owner_id) VALUES (12, 'Lucky', '2010-06-24', 2, 10);
 INSERT INTO pets(id,name,birth_date,type_id,owner_id) VALUES (13, 'Sly', '2012-06-08', 1, 10);
 INSERT INTO pets(id,name,birth_date,type_id,owner_id) VALUES (14, 'Kira', '2012-06-08', 2, 11);
-INSERT INTO pets(id,name,birth_date,type_id,owner_id) VALUES (16, 'Antonio', '2003-06-09', 8, 13);
+INSERT INTO pets(id,name,birth_date,type_id,owner_id) VALUES (16, 'Antonio', '2003-06-09', 7, 13);
 
 INSERT INTO visits(id,pet_id,visit_date_time,description,vet_id) VALUES (1, 7, '2013-01-01 13:00', 'rabies shot', 4);
 INSERT INTO visits(id,pet_id,visit_date_time,description,vet_id) VALUES (2, 8, '2013-01-02 15:30', 'rabies shot', 5);
