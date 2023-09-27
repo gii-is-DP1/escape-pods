@@ -47,6 +47,10 @@
 			<name>Pablo Jesus Castellanos Compaña</name>
 			<email>pabcascom@alum.us.es</email>
 		</developer>
+		<developer>
+			<name>David Godoy Fernández</name>
+			<email>davgodfer@alum.us.es</email>
+		</developer>
 	</developers>
 
 	<dependencies>		
