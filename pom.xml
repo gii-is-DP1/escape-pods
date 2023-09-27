@@ -2,7 +2,7 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.springframework.samples</groupId>
-	<artifactId>spring-petclinic</artifactId>
+	<artifactId>L7-1</artifactId>
 	<version>2.2.0.BUILD-SNAPSHOT</version>
 
 	<parent>
@@ -10,7 +10,7 @@
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>3.1.1</version>
 	</parent>
-	<name>PetClinic React</name>
+	<name>Escape Pods L7-1</name>
 
 	<properties>
 
@@ -35,6 +35,18 @@
 	</properties>
 
 	<developers>
+		<developer>
+			<name>Fernando Jose De Celis Hurtado</name>
+			<email>ferdehur@alum.us.es</email>
+		</developer>
+		<developer>
+			<name>daniel benito hidalgo</name>
+			<email>danbenhid@alum.us.es</email>
+		</developer>
+		<developer>
+			<name>Pablo Jesus Castellanos Compaña</name>
+			<email>pabcascom@alum.us.es</email>
+		</developer>
 		<developer>
 			<name>davgodfer</name>
 			<email>davgodfer@alum.us.es</email>
