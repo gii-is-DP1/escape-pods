@@ -51,6 +51,15 @@
 			<name>David Godoy Fernández</name>
 			<email>davgodfer@alum.us.es</email>
 		</developer>
+		<developer>
+			<name>Gonzalo Navas Remmers</name>
+			<email>gonnavrem@alum.us.es</email>
+			<properties>
+				<picUrl>
+					https://pbs.twimg.com/media/F6MdEtnXQAAkLQq?format=jpg&name=medium
+				</picUrl>
+			</properties>
+		</developer>
 	</developers>
 
 	<dependencies>		
