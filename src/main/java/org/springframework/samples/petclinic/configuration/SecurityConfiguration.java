@@ -1,5 +1,5 @@
 package org.springframework.samples.petclinic.configuration;
-
+// TODO Cambiar uris y movidas relacionadas a las anteriores versiones
 import static org.springframework.security.config.Customizer.withDefaults;
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -50,7 +50,8 @@ public class SecurityConfiguration {
 		http
 			.cors(withDefaults())		
 			.csrf(AbstractHttpConfigurer::disable)		
-			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))			
+			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+			//esto nos permite mantener info de la sesion y eso, con una cabecera de necesita json			
 			.headers((headers) -> headers.frameOptions((frameOptions) -> frameOptions.sameOrigin()))
 			.exceptionHandling((exepciontHandling) -> exepciontHandling.authenticationEntryPoint(unauthorizedHandler))			
 			
