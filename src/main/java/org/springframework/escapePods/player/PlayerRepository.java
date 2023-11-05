@@ -1,4 +1,4 @@
-package org.springframework.scapePods.player;
+package org.springframework.escapePods.player;
 
 import java.util.List;
 

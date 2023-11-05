@@ -1,4 +1,4 @@
-package org.springframework.scapePods.specialActionCard;
+package org.springframework.escapePods.specialActionCard;
 
 import java.util.Optional;
 
@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-//TODO preguntar porque no podriamos hacer uso directamente del repositorio y debemos recurrir a service
+// TODO preguntar porque no podriamos hacer uso directamente del repositorio y debemos recurrir a service
 
 @Service
 public class SpecialActionCardService {

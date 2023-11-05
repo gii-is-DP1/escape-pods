@@ -1,4 +1,4 @@
-package org.springframework.scapePods.enums;
+package org.springframework.escapePods.enums;
 
 public enum Role {
     CAPTAIN, ENGINEER, SCIENTIST
