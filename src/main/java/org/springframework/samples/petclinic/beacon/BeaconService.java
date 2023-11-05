@@ -29,8 +29,8 @@ public class BeaconService {
     }
     
     @Transactional(readOnly=true)
-    public List<Beacon> getBeaconByColors(String color1, String color2){
-        return br.findByColors(color1, color2);
+    public List<Beacon> getBeaconByColor(String color1){
+        return br.findByColor1(color1);
     }
 
     @Transactional

@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.samples.petclinic.player.Player;
-import org.springframework.samples.petclinic.player.PlayerRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,22 +48,22 @@ public class PlayerService {
     }
     @Transactional(readOnly=true)
     public List<Player> getPinkPlayer() {
-        return pr.findByPink();
+        return pr.findByColor("pink");
     }
     @Transactional(readOnly=true)
     public List<Player> getBlackPlayer() {
-        return pr.findByBlack();
+        return pr.findByColor("black");
     }
     @Transactional(readOnly=true)
     public List<Player> getWhitePlayer() {
-        return pr.findByWhite();
+        return pr.findByColor("white");
     }
     @Transactional(readOnly=true)
     public List<Player> getBluePlayer() {
-        return pr.findByBlue();
+        return pr.findByColor("blue");
     }
     @Transactional(readOnly=true)
     public List<Player> getYellowPlayer() {
-        return pr.findByYellow();
+        return pr.findByColor("yellow");
     }
 }

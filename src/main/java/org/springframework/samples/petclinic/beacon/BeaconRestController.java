@@ -35,15 +35,9 @@ public class BeaconRestController {
         this.bs=bs;
     }
     @GetMapping
-    public List<Beacon> getAllBeacons(@ParameterObject() @RequestParam(value="color1",required = false) String color1, 
-    @ParameterObject @RequestParam(value="color2",required = false) String color2){
-        if(color1!=null && color2==null)
-            return bs.getBeaconByColors(color1, null);
-        else if(color2!=null && color1==null){
-            return bs.getBeaconByColors(null, color2);
-        }else if(color1!=null && color2!=null){
-            return bs.getBeaconByColors(color1, color2);
-        }
+    public List<Beacon> getAllBeacons(@ParameterObject() @RequestParam(value="color",required = false) String color1){
+        if(color1!=null)
+            return bs.getBeaconByColor(color1);
         else
             return bs.getAllBeacons();
     }
