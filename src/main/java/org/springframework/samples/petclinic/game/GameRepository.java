@@ -1,4 +1,4 @@
-package org.springframework.scapePods.game;
+package org.springframework.samples.petclinic.game;
 
 import java.time.LocalDateTime;
 import java.util.List;

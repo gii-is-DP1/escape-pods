@@ -1,4 +1,4 @@
-package org.springframework.scapePods.beacon;
+package org.springframework.samples.petclinic.beacon;
 
 import java.util.List;
 import java.util.Optional;

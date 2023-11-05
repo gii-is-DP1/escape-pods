@@ -1,4 +1,4 @@
-package org.springframework.scapePods.player;
+package org.springframework.samples.petclinic.player;
 
 import java.net.URI;
 import java.util.List;
@@ -9,7 +9,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
-import org.springframework.scapePods.enums.Color;
+import org.springframework.samples.petclinic.game.Game;
+import org.springframework.samples.petclinic.game.GameStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
