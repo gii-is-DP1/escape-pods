@@ -9,8 +9,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
-import org.springframework.samples.petclinic.game.Game;
-import org.springframework.samples.petclinic.game.GameStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -45,6 +43,7 @@ public class PlayerRestController {
             switch(color){
                 case PINK:
                     return ps.getPinkPlayer();
+                    
                 case BLACK:
                     return ps.getBlackPlayer();
                 case WHITE:

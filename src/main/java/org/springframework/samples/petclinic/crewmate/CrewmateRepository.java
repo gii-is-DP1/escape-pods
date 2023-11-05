@@ -9,6 +9,6 @@ import org.springframework.stereotype.Repository;
 public interface CrewmateRepository extends CrudRepository<Crewmate,Integer>{
     // AQUI NO SE REALMENTE QUE HAY QUE PONER
 
-    List<Crewmate> findCrewmate();
+    List<Crewmate> findAll();
 
 }
