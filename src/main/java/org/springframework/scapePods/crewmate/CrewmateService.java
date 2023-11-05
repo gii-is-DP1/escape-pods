@@ -1,4 +1,4 @@
-package org.springframework.samples.petclinic.crewmate;
+package org.springframework.scapePods.crewmate;
 
 import java.util.Optional;
 
