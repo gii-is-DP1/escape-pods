@@ -1,9 +1,7 @@
-package org.springframework.scapePods.player;
+package org.springframework.samples.petclinic.player;
 
 
 import org.springframework.samples.petclinic.model.BaseEntity;
-import org.springframework.scapePods.enums.Color;
-
 import jakarta.persistence.Entity;
 
 import lombok.EqualsAndHashCode;

@@ -1,4 +1,4 @@
-package org.springframework.scapePods.player;
+package org.springframework.samples.petclinic.player;
 
 import java.util.List;
 
