@@ -1,10 +1,10 @@
-package org.springframework.scapePods.game;
+package org.springframework.escapePods.game;
 
 
 import java.time.LocalDateTime;
 
 import org.springframework.samples.petclinic.model.NamedEntity;
-import org.springframework.scapePods.enums.GameStatus;
+import org.springframework.escapePods.enums.GameStatus;
 
 import jakarta.persistence.Entity;
 import jakarta.validation.constraints.Digits;

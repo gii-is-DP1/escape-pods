@@ -1,4 +1,4 @@
-package org.springframework.scapePods.specialActionCard;
+package org.springframework.escapePods.specialActionCard;
 
 import org.springframework.samples.petclinic.model.NamedEntity;
 
