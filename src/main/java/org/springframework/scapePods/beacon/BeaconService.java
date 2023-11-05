@@ -1,4 +1,4 @@
-package org.springframework.escapePods.beacon;
+package org.springframework.scapePods.beacon;
 
 import java.util.List;
 import java.util.Optional;

@@ -1,4 +1,4 @@
-package org.springframework.escapePods.game;
+package org.springframework.scapePods.game;
 
 import java.time.LocalDateTime;
 import java.util.List;

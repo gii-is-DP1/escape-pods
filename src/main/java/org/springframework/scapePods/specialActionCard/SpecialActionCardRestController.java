@@ -1,4 +1,4 @@
-package org.springframework.escapePods.specialActionCard;
+package org.springframework.scapePods.specialActionCard;
 
 import java.net.URI;
 import java.util.Optional;

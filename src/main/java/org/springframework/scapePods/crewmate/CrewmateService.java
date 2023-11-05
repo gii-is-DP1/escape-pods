@@ -1,4 +1,4 @@
-package org.springframework.escapePods.crewmate;
+package org.springframework.scapePods.crewmate;
 
 import java.util.Optional;
 
