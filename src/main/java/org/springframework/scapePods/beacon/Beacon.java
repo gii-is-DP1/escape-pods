@@ -1,7 +1,6 @@
-package org.springframework.samples.petclinic.crewmate;
-
+package org.springframework.scapePods.beacon;
 import org.springframework.samples.petclinic.model.BaseEntity;
-import  org.springframework.samples.petclinic.player.Color;
+import org.springframework.scapePods.enums.Color;
 
 import jakarta.persistence.Entity;
 import lombok.EqualsAndHashCode;
@@ -12,8 +11,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @EqualsAndHashCode(of="id")
-public class Crewmate extends BaseEntity{
-    Color color;
-    Role role;
-    
+public class Beacon extends BaseEntity {
+    Color color1;
+    Color color2;
 }
