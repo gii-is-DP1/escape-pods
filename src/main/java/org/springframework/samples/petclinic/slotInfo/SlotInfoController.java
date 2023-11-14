@@ -1,4 +1,4 @@
-package org.springframework.samples.petclinic.beacon;
+package org.springframework.samples.petclinic.slotInfo;
 
 import java.net.URI;
 import java.util.List;
@@ -25,55 +25,58 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/v1/beacon")
-@Tag(name = "Beacons", description = "API for the  management of  Beacons.")
+@RequestMapping("/api/v1/slotInfo")
+@Tag(name = "SlotInfos", description = "API for the  management of SlotInfos.")
 @SecurityRequirement(name = "bearerAuth")
-public class BeaconRestController {
-    BeaconService bs;
+public class SlotInfoController {
+    SlotInfoService sis;
+
     @Autowired
-    public BeaconRestController(BeaconService bs){
-        this.bs=bs;
+    public SlotInfoController(SlotInfoService sis){
+        this.sis=sis;
     }
+
     @GetMapping
-    public List<Beacon> getAllBeacons(@ParameterObject() @RequestParam(value="color",required = false) String color1){
-        if(color1!=null)
-            return bs.getBeaconByColor(color1);
-        else
-            return bs.getAllBeacons();
+    public List<SlotInfo> getAllSlotInfos(@ParameterObject @RequestParam(value="status",required = false) Integer position){
+        if(position!=null){
+            return sis.getSlotInfoByPosition(position);
+        }
+        return sis.getAllSlotInfos();
+    
     }
 
     @GetMapping("/{id}")
-    public Beacon getBeaconById(@PathVariable("id")Integer id){
-        Optional<Beacon> b=bs.getBeaconById(id);
-        if(!b.isPresent())
-            throw new ResourceNotFoundException("Beacon", "id", id);
-        return b.get();
+    public SlotInfo getSlotInfoById(@PathVariable("id")Integer id){
+        Optional<SlotInfo> g=sis.getSlotInfoById(id);
+        if(!g.isPresent())
+            throw new ResourceNotFoundException("SlotInfo", "id", id);
+        return g.get();
     }
 
     @PostMapping()
-    public ResponseEntity<Beacon> createBeacon(@Valid @RequestBody Beacon b){
-        b=bs.save(b);
+    public ResponseEntity<SlotInfo> createSlotInfo(@Valid @RequestBody SlotInfo g){
+        g=sis.save(g);
         URI location = ServletUriComponentsBuilder
                     .fromCurrentRequest()
                     .path("/{id}")
-                    .buildAndExpand(b.getId())
+                    .buildAndExpand(g.getId())
                     .toUri();
-        return ResponseEntity.created(location).body(b);
+        return ResponseEntity.created(location).body(g);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateBeacon(@Valid @RequestBody Beacon b,@PathVariable("id")Integer id){
-        Beacon gToUpdate=getBeaconById(id);
-        BeanUtils.copyProperties(b,gToUpdate, "id");
-        bs.save(gToUpdate);
+    public ResponseEntity<Void> updateSlotInfo(@Valid @RequestBody SlotInfo g,@PathVariable("id")Integer id){
+        SlotInfo gToUpdate=getSlotInfoById(id);
+        BeanUtils.copyProperties(g,gToUpdate, "id");
+        sis.save(gToUpdate);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteGame(@PathVariable("id")Integer id){
-        if(getBeaconById(id)!=null)
-            bs.delete(id);
+    public ResponseEntity<Void> deleteSlotInfo(@PathVariable("id")Integer id){
+        if(getSlotInfoById(id)!=null)
+            sis.delete(id);
         return ResponseEntity.noContent().build();
     }
-
+    
 }

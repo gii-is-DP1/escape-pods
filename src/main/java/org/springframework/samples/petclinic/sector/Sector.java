@@ -1,28 +1,32 @@
-package org.springframework.samples.petclinic.beacon;
+package org.springframework.samples.petclinic.sector;
+
+import java.util.List;
+
+import javax.sound.sampled.Line;
+
 import org.springframework.samples.petclinic.game.Game;
 import org.springframework.samples.petclinic.model.BaseEntity;
-import  org.springframework.samples.petclinic.player.Color;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
 
 @Entity
-@Getter
-@Setter
-public class Beacon extends BaseEntity {
+public class Sector extends BaseEntity{
 
     @NotNull
-    Color color1;
+    String number;
 
     @NotNull
-    Color color2;
+    Boolean scrap;
+
+    @NotNull
+    @ManyToMany
+    List<Line> lines;
 
     @ManyToOne
     @NotNull
     Game game;
-
-
+    
 }
