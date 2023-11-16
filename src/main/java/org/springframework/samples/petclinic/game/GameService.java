@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-//por ahora solo se estan sacando la lista de juegos que encajen con los fitros usados, se debe añadir las "reglas del juego aqui"
 @Service
 public class GameService {
     
@@ -42,7 +41,6 @@ public class GameService {
     public Optional<Game> getGameById(Integer id) {        
         return gr.findById(id);
     }
-
 
     @Transactional(readOnly=true)
     public List<Game> getGamesLike(String pattern){
