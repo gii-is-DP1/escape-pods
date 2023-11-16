@@ -2,11 +2,17 @@ package org.springframework.samples.petclinic.game;
 
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.samples.petclinic.model.NamedEntity;
 
 import jakarta.persistence.Entity;
-
+import jakarta.persistence.OneToMany;
+import jakarta.validation.constraints.Digits;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,13 +22,16 @@ import lombok.Setter;
 @Setter
 @EqualsAndHashCode(of="id")
 public class Game extends NamedEntity{
-    //establecemos los datos que una partida tendrá
-    String code;
+
+    @NotEmpty
+    @Max(5)
+    @Min(1)
+    Integer numPlayers;
+    
     LocalDateTime start;
     LocalDateTime finish;
-    Integer players;
+
+    @NotNull
     GameStatus status;
-
-
     
 }
