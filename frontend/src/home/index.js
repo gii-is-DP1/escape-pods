@@ -6,9 +6,8 @@ export default function Home(){
     return(
         <div className="home-page-container">
             <div className="hero-div">
-                <h1>Petclinic</h1>
-                <h3>---</h3>
-                <h3>Find the best vet for your pet</h3>                
+                <h1>Escape Pods</h1>
+                <h3>早上好中国，现在我有冰淇淋</h3>                
             </div>
         </div>
     );
