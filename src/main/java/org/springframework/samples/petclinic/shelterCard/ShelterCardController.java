@@ -1,4 +1,4 @@
-package org.springframework.samples.petclinic.game;
+package org.springframework.samples.petclinic.shelterCard;
 
 import java.net.URI;
 import java.util.List;
@@ -14,59 +14,58 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-
-
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
-//creación de operaciones crud 
-
 @RestController
-@RequestMapping("/api/v1/game")
-@Tag(name = "Games", description = "API for the  management of Games.")
+@RequestMapping("/api/v1/shelterCards")
+@Tag(name = "ShelterCards", description = "API for the  management of ShelterCards.")
 @SecurityRequirement(name = "bearerAuth")
-public class GameRestController {
-    GameService gs;
+public class ShelterCardController {
+    ShelterCardService scs;
+
     @Autowired
-    public GameRestController(GameService gs){
-        this.gs=gs;
+    public ShelterCardController(ShelterCardService scs){
+        this.scs=scs;
     }
 
     @GetMapping
-    public List<Game> getAllGames(@ParameterObject() @RequestParam(value="name",required = false) String name, @ParameterObject @RequestParam(value="status",required = false) GameStatus status){
-        if(name!=null)
-            return gs.getGamesLike(name);
-        else if(status!=null){
-            switch(status){
-                case WAITING:
-                    return gs.getWaitingGames();
-                case PLAYING:
-                    return gs.getOngoingGames();
+    public List<ShelterCard> getAllShelterCards(@ParameterObject @RequestParam(value="status",required = false) Type type){
+        if(type!=null){
+            switch(type){
+                case PINK:
+                    return scs.getShelterCardByType(Type.PINK);
+                case YELLOW:
+                    return scs.getShelterCardByType(Type.YELLOW);
+                case BLUE:
+                    return scs.getShelterCardByType(Type.BLUE);
+                case ORANGE:
+                    return scs.getShelterCardByType(Type.ORANGE);
                 default:
-                    return gs.getFinishedGames();
+                    return scs.getShelterCardByType(Type.GREEN);
             }
         }else 
-            return gs.getAllGames();
+            return scs.getAllShelterCards();
     }
 
     @GetMapping("/{id}")
-    public Game getGameById(@PathVariable("id")Integer id){
-        Optional<Game> g=gs.getGameById(id);
+    public ShelterCard getShelterCardById(@PathVariable("id")Integer id){
+        Optional<ShelterCard> g=scs.getShelterCardById(id);
         if(!g.isPresent())
-            throw new ResourceNotFoundException("Game", "id", id);
+            throw new ResourceNotFoundException("ShelterCard", "id", id);
         return g.get();
     }
 
     @PostMapping()
-    public ResponseEntity<Game> createGame(@Valid @RequestBody Game g){
-        g=gs.save(g);
+    public ResponseEntity<ShelterCard> createShelterCard(@Valid @RequestBody ShelterCard g){
+        g=scs.save(g);
         URI location = ServletUriComponentsBuilder
                     .fromCurrentRequest()
                     .path("/{id}")
@@ -76,17 +75,19 @@ public class GameRestController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateGame(@Valid @RequestBody Game g,@PathVariable("id")Integer id){
-        Game gToUpdate=getGameById(id);
+    public ResponseEntity<Void> updateShelterCard(@Valid @RequestBody ShelterCard g,@PathVariable("id")Integer id){
+        ShelterCard gToUpdate=getShelterCardById(id);
         BeanUtils.copyProperties(g,gToUpdate, "id");
-        gs.save(gToUpdate);
+        scs.save(gToUpdate);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteGame(@PathVariable("id")Integer id){
-        if(getGameById(id)!=null)
-            gs.delete(id);
+    public ResponseEntity<Void> deleteShelterCard(@PathVariable("id")Integer id){
+        if(getShelterCardById(id)!=null)
+            scs.delete(id);
         return ResponseEntity.noContent().build();
     }
+      
+    
 }

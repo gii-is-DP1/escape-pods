@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.samples.petclinic.model.NamedEntity;
+import org.springframework.samples.petclinic.shelterCard.ShelterCard;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
@@ -33,5 +34,11 @@ public class Game extends NamedEntity{
 
     @NotNull
     GameStatus status;
+
+    @OneToMany
+    @NotNull
+    List<ShelterCard> shelterCards;
+
+
     
 }
