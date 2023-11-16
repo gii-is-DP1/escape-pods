@@ -28,16 +28,16 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/v1/pods")
 @Tag(name = "Podss", description = "API for the  management of Podss.")
 @SecurityRequirement(name = "bearerAuth")
-public class PodsController {
-    PodsService ps;
+public class PodController {
+    PodService ps;
 
     @Autowired
-    public PodsController(PodsService ps){
+    public PodController(PodService ps){
         this.ps=ps;
     }
 
     @GetMapping
-    public List<Pods> getAllPodss(@ParameterObject @RequestParam(value="status",required = false) Integer capacity){
+    public List<Pod> getAllPodss(@ParameterObject @RequestParam(value="status",required = false) Integer capacity){
         if(capacity!=null){
             return ps.getPodsByCapacity(capacity);
             } 
@@ -45,8 +45,8 @@ public class PodsController {
     }
 
     @GetMapping("/{id}")
-    public Pods getPodsById(@PathVariable("id")Integer id){
-        Optional<Pods> g=ps.getPodsById(id);
+    public Pod getPodsById(@PathVariable("id")Integer id){
+        Optional<Pod> g=ps.getPodsById(id);
         if(!g.isPresent())
             throw new ResourceNotFoundException("Pods", "id", id);
             
@@ -54,7 +54,7 @@ public class PodsController {
     }
 
     @PostMapping()
-    public ResponseEntity<Pods> createPods(@Valid @RequestBody Pods g){
+    public ResponseEntity<Pod> createPods(@Valid @RequestBody Pod g){
         g=ps.save(g);
         URI location = ServletUriComponentsBuilder
                     .fromCurrentRequest()
@@ -65,8 +65,8 @@ public class PodsController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updatePods(@Valid @RequestBody Pods g,@PathVariable("id")Integer id){
-        Pods gToUpdate=getPodsById(id);
+    public ResponseEntity<Void> updatePods(@Valid @RequestBody Pod g,@PathVariable("id")Integer id){
+        Pod gToUpdate=getPodsById(id);
         BeanUtils.copyProperties(g,gToUpdate, "id");
         ps.save(gToUpdate);
         return ResponseEntity.noContent().build();

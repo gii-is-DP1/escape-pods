@@ -1,4 +1,4 @@
-package org.springframework.samples.petclinic.startValue;
+package org.springframework.samples.petclinic.statValue;
 
 import java.util.List;
 import java.util.Optional;
@@ -8,33 +8,33 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class StartValueService {
+public class StatValueService {
 
-    StartValueRepository sv;
+    StatValueRepository sv;
     
     @Autowired
-    public StartValueService(StartValueRepository sv){
+    public StatValueService(StatValueRepository sv){
         this.sv=sv;
     }
 
     @Transactional(readOnly=true)
-    public List<StartValue> getAllStartValues(){
+    public List<StatValue> getAllStartValues(){
         return sv.findAll();
     }
     
     @Transactional(readOnly=true)
-    public Optional<StartValue> getStartValueById(Integer id){
+    public Optional<StatValue> getStartValueById(Integer id){
         return sv.findById(id);
     }
 
     @Transactional
-    public StartValue save(StartValue Sv) {
+    public StatValue save(StatValue Sv) {
         sv.save(Sv);
         return Sv;
     }
 
     @Transactional(readOnly=true)
-    public List<StartValue> getStartValueByValue(Integer value){
+    public List<StatValue> getStartValueByValue(Integer value){
         return sv.findByValue(value);
     }
 

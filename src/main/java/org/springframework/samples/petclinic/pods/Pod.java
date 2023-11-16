@@ -12,7 +12,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
 @Entity
-public class Pods extends BaseEntity{
+public class Pod extends BaseEntity{
     @NotNull
     @Max(3)
     @Min(0)

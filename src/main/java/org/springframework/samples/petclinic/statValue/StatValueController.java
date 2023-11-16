@@ -1,4 +1,4 @@
-package org.springframework.samples.petclinic.startValue;
+package org.springframework.samples.petclinic.statValue;
 
 import java.net.URI;
 import java.util.List;
@@ -28,16 +28,16 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/v1/StartValue")
 @Tag(name = "StartValues", description = "API for the  management of StartValues.")
 @SecurityRequirement(name = "bearerAuth")
-public class StartValueController {
-    StartValueService sts;
+public class StatValueController {
+    StatValueService sts;
 
     @Autowired
-    public StartValueController(StartValueService sts){
+    public StatValueController(StatValueService sts){
         this.sts=sts;
     }
 
     @GetMapping
-    public List<StartValue> getAllStartValues(@ParameterObject @RequestParam(value="status",required = false) Integer value){
+    public List<StatValue> getAllStartValues(@ParameterObject @RequestParam(value="status",required = false) Integer value){
         if(value!=null){
             return sts.getStartValueByValue(value);
         }else 
@@ -45,15 +45,15 @@ public class StartValueController {
     }
 
     @GetMapping("/{id}")
-    public StartValue getStartValueById(@PathVariable("id")Integer id){
-        Optional<StartValue> g=sts.getStartValueById(id);
+    public StatValue getStartValueById(@PathVariable("id")Integer id){
+        Optional<StatValue> g=sts.getStartValueById(id);
         if(!g.isPresent())
             throw new ResourceNotFoundException("StartValue", "id", id);
         return g.get();
     }
 
     @PostMapping()
-    public ResponseEntity<StartValue> createStartValue(@Valid @RequestBody StartValue g){
+    public ResponseEntity<StatValue> createStartValue(@Valid @RequestBody StatValue g){
         g=sts.save(g);
         URI location = ServletUriComponentsBuilder
                     .fromCurrentRequest()
@@ -64,8 +64,8 @@ public class StartValueController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateStartValue(@Valid @RequestBody StartValue g,@PathVariable("id")Integer id){
-        StartValue gToUpdate=getStartValueById(id);
+    public ResponseEntity<Void> updateStartValue(@Valid @RequestBody StatValue g,@PathVariable("id")Integer id){
+        StatValue gToUpdate=getStartValueById(id);
         BeanUtils.copyProperties(g,gToUpdate, "id");
         sts.save(gToUpdate);
         return ResponseEntity.noContent().build();
