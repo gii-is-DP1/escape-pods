@@ -26,9 +26,9 @@ public class Player extends BaseEntity {
     @NotNull
     Color color;
 
-    @NotNull
-    @OneToOne
-    User user;
+//    @NotNull
+//    @OneToOne
+//    User user;
     
     @ManyToOne
     @NotNull

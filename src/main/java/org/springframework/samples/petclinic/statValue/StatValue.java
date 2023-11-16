@@ -12,7 +12,7 @@ public class StatValue extends BaseEntity{
     @NotNull
     Double value;
     
-    @ManyToOne
-    @NotNull
-    User user;
+//    @ManyToOne
+//    @NotNull
+//    User user;
 }
