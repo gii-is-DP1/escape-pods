@@ -1,4 +1,4 @@
-package org.springframework.samples.petclinic.pods;
+package org.springframework.samples.petclinic.pod;
 
 import java.net.URI;
 import java.util.List;
@@ -26,7 +26,7 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/pods")
-@Tag(name = "Podss", description = "API for the  management of Podss.")
+@Tag(name = "Pods", description = "API for the  management of Pods.")
 @SecurityRequirement(name = "bearerAuth")
 public class PodController {
     PodService ps;

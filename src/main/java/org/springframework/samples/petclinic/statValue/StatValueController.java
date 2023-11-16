@@ -25,8 +25,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/v1/StartValue")
-@Tag(name = "StartValues", description = "API for the  management of StartValues.")
+@RequestMapping("/api/v1/statValues")
+@Tag(name = "StatValues", description = "API for the  management of StatValues.")
 @SecurityRequirement(name = "bearerAuth")
 public class StatValueController {
     StatValueService sts;

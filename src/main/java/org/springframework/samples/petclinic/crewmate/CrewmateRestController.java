@@ -20,7 +20,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/v1/crewmate")
+@RequestMapping("/api/v1/crewmates")
 @Tag(name = "Crewmates", description = "API for the  management of  Crewmates.")
 @SecurityRequirement(name = "bearerAuth")
 public class CrewmateRestController {

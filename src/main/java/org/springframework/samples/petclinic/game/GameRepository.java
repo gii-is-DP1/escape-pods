@@ -14,7 +14,6 @@ public interface GameRepository extends CrudRepository<Game,Integer> {
     List<Game> findByNameContains(String pattern);
     List<Game> findByStart(LocalDateTime start);
     List<Game> findByFinish(LocalDateTime finish);
-    List<Game> findByCode(String code);
 
     List<Game> findByFinishIsNotNull();
 

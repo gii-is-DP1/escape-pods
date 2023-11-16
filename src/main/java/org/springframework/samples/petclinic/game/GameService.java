@@ -42,11 +42,6 @@ public class GameService {
     public Optional<Game> getGameById(Integer id) {        
         return gr.findById(id);
     }
-    @Transactional(readOnly=true)
-    public Game getGameByCode(String code){
-        List<Game> games=gr.findByCode(code);
-        return games.isEmpty()?null:games.get(0);
-    }
 
 
     @Transactional(readOnly=true)

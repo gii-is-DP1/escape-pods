@@ -25,7 +25,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/v1/beacon")
+@RequestMapping("/api/v1/beacons")
 @Tag(name = "Beacons", description = "API for the  management of  Beacons.")
 @SecurityRequirement(name = "bearerAuth")
 public class BeaconRestController {

@@ -4,7 +4,7 @@ import org.hibernate.annotations.ManyToAny;
 import org.springframework.samples.petclinic.model.BaseEntity;
 import  org.springframework.samples.petclinic.player.Color;
 import org.springframework.samples.petclinic.player.Player;
-import org.springframework.samples.petclinic.pods.Pod;
+import org.springframework.samples.petclinic.pod.Pod;
 import org.springframework.samples.petclinic.shelterCard.ShelterCard;
 
 import jakarta.persistence.Entity;

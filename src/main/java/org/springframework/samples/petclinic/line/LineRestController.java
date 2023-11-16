@@ -24,8 +24,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/v1/game")
-@Tag(name = "Games", description = "API for the  management of games.")
+@RequestMapping("/api/v1/lines")
+@Tag(name = "Lines", description = "API for the  management of Lines.")
 @SecurityRequirement(name = "bearerAuth")
 public class LineRestController {
     LineService ls;

@@ -25,7 +25,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/v1/sector")
+@RequestMapping("/api/v1/sectors")
 @Tag(name = "Sectors", description = "API for the  management of Sectors.")
 @SecurityRequirement(name = "bearerAuth")
 public class SectorController {

@@ -1,4 +1,4 @@
-package org.springframework.samples.petclinic.pods;
+package org.springframework.samples.petclinic.pod;
 
 import java.util.List;
 import java.util.Optional;

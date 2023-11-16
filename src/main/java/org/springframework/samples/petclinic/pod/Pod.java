@@ -1,4 +1,4 @@
-package org.springframework.samples.petclinic.pods;
+package org.springframework.samples.petclinic.pod;
 
 import org.springframework.samples.petclinic.game.Game;
 import org.springframework.samples.petclinic.model.BaseEntity;
