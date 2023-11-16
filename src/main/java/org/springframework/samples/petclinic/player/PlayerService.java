@@ -32,18 +32,6 @@ public class PlayerService {
         pr.save(p);
         return p;
     }
-<<<<<<< HEAD
-
-    @Transactional(readOnly = true)
-    public Optional<Player> getPlayerById(Integer id) {
-        return pr.findById(id);
-    }
-
-    @Transactional(readOnly = true)
-    public Player getPlayerByColor(String code) {
-        List<Player> players = pr.findByColor(code);
-        return players.isEmpty() ? null : players.get(0);
-=======
     @Transactional(readOnly=true)
     public Optional<Player> getPlayerById(Integer id) {        
         return pr.findById(id);
@@ -52,41 +40,12 @@ public class PlayerService {
     public Player getPlayerByColor(String code){
         List<Player> players=pr.findByColor(code);
         return players.isEmpty()?null:players.get(0);
->>>>>>> main
     }
 
     @Transactional()
     public void delete(Integer id) {
         pr.deleteById(id);
     }
-<<<<<<< HEAD
-
-    @Transactional(readOnly = true)
-    public List<Player> getPinkPlayer() {
-        return pr.findByColor("pink");
-    }
-
-    @Transactional(readOnly = true)
-    public List<Player> getBlackPlayer() {
-        return pr.findByColor("black");
-    }
-
-    @Transactional(readOnly = true)
-    public List<Player> getWhitePlayer() {
-        return pr.findByColor("white");
-    }
-
-    @Transactional(readOnly = true)
-    public List<Player> getBluePlayer() {
-        return pr.findByColor("blue");
-    }
-
-    @Transactional(readOnly = true)
-    public List<Player> getYellowPlayer() {
-        return pr.findByColor("yellow");
-    }
-}
-=======
     @Transactional(readOnly=true)
     public List<Player> getPinkPlayer() {
         return pr.findByColor("pink");
@@ -108,4 +67,3 @@ public class PlayerService {
         return pr.findByColor("yellow");
     }
 }
->>>>>>> main

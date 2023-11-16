@@ -94,8 +94,4 @@ public class PlayerRestController {
         return ResponseEntity.noContent().build();
     }
     
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> main
