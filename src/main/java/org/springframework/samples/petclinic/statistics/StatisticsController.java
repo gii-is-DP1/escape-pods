@@ -1,4 +1,4 @@
-package org.springframework.samples.petclinic.beacon;
+package org.springframework.samples.petclinic.statistics;
 
 import java.net.URI;
 import java.util.List;
@@ -14,66 +14,69 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/v1/beacons")
-@Tag(name = "Beacons", description = "API for the  management of  Beacons.")
+@RequestMapping("/api/v1/statistics")
+@Tag(name = "Statistics", description = "API for the  management of Statistics.")
 @SecurityRequirement(name = "bearerAuth")
-public class BeaconRestController {
-    BeaconService bs;
+public class StatisticsController {
+    StatisticsService ss;
+
     @Autowired
-    public BeaconRestController(BeaconService bs){
-        this.bs=bs;
+    public StatisticsController(StatisticsService ss){
+        this.ss=ss;
     }
+
     @GetMapping
-    public List<Beacon> getAllBeacons(@ParameterObject() @RequestParam(value="color",required = false) String color1){
-        if(color1!=null)
-            return bs.getBeaconByColor(color1);
-        else
-            return bs.getAllBeacons();
+    public List<Statistics> getAllStatisticss(@ParameterObject @RequestParam(value="status",required = false) String name){
+        if(name!=null){
+            return ss.getStatisticsByName(name);
+        }else 
+            return ss.getAllStatisticss();
     }
 
     @GetMapping("/{id}")
-    public Beacon getBeaconById(@PathVariable("id")Integer id){
-        Optional<Beacon> b=bs.getBeaconById(id);
-        if(!b.isPresent())
-            throw new ResourceNotFoundException("Beacon", "id", id);
-        return b.get();
+    public Statistics getStatisticsById(@PathVariable("id")Integer id){
+        Optional<Statistics> g=ss.getStatisticsById(id);
+        if(!g.isPresent())
+            throw new ResourceNotFoundException("Statistics", "id", id);
+        return g.get();
     }
 
     @PostMapping()
-    public ResponseEntity<Beacon> createBeacon(@Valid @RequestBody Beacon b){
-        b=bs.save(b);
+    public ResponseEntity<Statistics> createStatistics(@Valid @RequestBody Statistics g){
+        g=ss.save(g);
         URI location = ServletUriComponentsBuilder
                     .fromCurrentRequest()
                     .path("/{id}")
-                    .buildAndExpand(b.getId())
+                    .buildAndExpand(g.getId())
                     .toUri();
-        return ResponseEntity.created(location).body(b);
+        return ResponseEntity.created(location).body(g);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateBeacon(@Valid @RequestBody Beacon b,@PathVariable("id")Integer id){
-        Beacon gToUpdate=getBeaconById(id);
-        BeanUtils.copyProperties(b,gToUpdate, "id");
-        bs.save(gToUpdate);
+    public ResponseEntity<Void> updateStatistics(@Valid @RequestBody Statistics g,@PathVariable("id")Integer id){
+        Statistics gToUpdate=getStatisticsById(id);
+        BeanUtils.copyProperties(g,gToUpdate, "id");
+        ss.save(gToUpdate);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteGame(@PathVariable("id")Integer id){
-        if(getBeaconById(id)!=null)
-            bs.delete(id);
+    public ResponseEntity<Void> deleteStatistics(@PathVariable("id")Integer id){
+        if(getStatisticsById(id)!=null)
+            ss.delete(id);
         return ResponseEntity.noContent().build();
     }
-
+      
+      
 }
