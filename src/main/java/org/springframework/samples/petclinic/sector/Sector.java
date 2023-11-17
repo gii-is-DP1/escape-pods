@@ -2,9 +2,8 @@ package org.springframework.samples.petclinic.sector;
 
 import java.util.List;
 
-import javax.sound.sampled.Line;
-
 import org.springframework.samples.petclinic.game.Game;
+import org.springframework.samples.petclinic.line.Line;
 import org.springframework.samples.petclinic.model.BaseEntity;
 
 import jakarta.persistence.Entity;

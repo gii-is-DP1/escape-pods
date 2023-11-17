@@ -1,4 +1,4 @@
-package org.springframework.samples.petclinic.pods;
+package org.springframework.samples.petclinic.statValue;
 
 import java.net.URI;
 import java.util.List;
@@ -25,37 +25,36 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/v1/pods")
-@Tag(name = "Podss", description = "API for the  management of Podss.")
+@RequestMapping("/api/v1/statValues")
+@Tag(name = "StatValues", description = "API for the  management of StatValues.")
 @SecurityRequirement(name = "bearerAuth")
-public class PodsController {
-    PodsService ps;
+public class StatValueController {
+    StatValueService sts;
 
     @Autowired
-    public PodsController(PodsService ps){
-        this.ps=ps;
+    public StatValueController(StatValueService sts){
+        this.sts=sts;
     }
 
     @GetMapping
-    public List<Pods> getAllPodss(@ParameterObject @RequestParam(value="status",required = false) Integer capacity){
-        if(capacity!=null){
-            return ps.getPodsByCapacity(capacity);
-            } 
-            return ps.getAllPodss();
+    public List<StatValue> getAllStartValues(@ParameterObject @RequestParam(value="status",required = false) Integer value){
+        if(value!=null){
+            return sts.getStartValueByValue(value);
+        }else 
+            return sts.getAllStartValues();
     }
 
     @GetMapping("/{id}")
-    public Pods getPodsById(@PathVariable("id")Integer id){
-        Optional<Pods> g=ps.getPodsById(id);
+    public StatValue getStartValueById(@PathVariable("id")Integer id){
+        Optional<StatValue> g=sts.getStartValueById(id);
         if(!g.isPresent())
-            throw new ResourceNotFoundException("Pods", "id", id);
-            
+            throw new ResourceNotFoundException("StartValue", "id", id);
         return g.get();
     }
 
     @PostMapping()
-    public ResponseEntity<Pods> createPods(@Valid @RequestBody Pods g){
-        g=ps.save(g);
+    public ResponseEntity<StatValue> createStartValue(@Valid @RequestBody StatValue g){
+        g=sts.save(g);
         URI location = ServletUriComponentsBuilder
                     .fromCurrentRequest()
                     .path("/{id}")
@@ -65,18 +64,19 @@ public class PodsController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updatePods(@Valid @RequestBody Pods g,@PathVariable("id")Integer id){
-        Pods gToUpdate=getPodsById(id);
+    public ResponseEntity<Void> updateStartValue(@Valid @RequestBody StatValue g,@PathVariable("id")Integer id){
+        StatValue gToUpdate=getStartValueById(id);
         BeanUtils.copyProperties(g,gToUpdate, "id");
-        ps.save(gToUpdate);
+        sts.save(gToUpdate);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePods(@PathVariable("id")Integer id){
-        if(getPodsById(id)!=null)
-            ps.delete(id);
+    public ResponseEntity<Void> deleteStartValue(@PathVariable("id")Integer id){
+        if(getStartValueById(id)!=null)
+            sts.delete(id);
         return ResponseEntity.noContent().build();
     }
-       
+      
+    
 }

@@ -23,7 +23,6 @@ import lombok.Setter;
 @Setter
 @EqualsAndHashCode(of="id")
 public class Game extends NamedEntity{
-    //establecemos los datos que una partida tendrá
 
     @NotEmpty
     @Max(5)

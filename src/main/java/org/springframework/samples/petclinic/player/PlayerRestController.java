@@ -27,7 +27,7 @@ import jakarta.validation.Valid;
 //creación de operaciones crud
 
 @RestController
-@RequestMapping("/api/v1/player")
+@RequestMapping("/api/v1/players")
 @Tag(name = "Players", description = "API for the  management of  Players.")
 @SecurityRequirement(name = "bearerAuth")
 public class PlayerRestController {

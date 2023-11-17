@@ -17,7 +17,6 @@ import lombok.Setter;
 @Setter
 @EqualsAndHashCode(of="id")
 public class Player extends BaseEntity {
-    //establecemos los datos que una player tendrá
     @NotNull
     Integer actions;
 
@@ -27,9 +26,9 @@ public class Player extends BaseEntity {
     @NotNull
     Color color;
 
-    @NotNull
-    @OneToOne
-    User user;
+//    @NotNull
+//    @OneToOne
+//    User user;
     
     @ManyToOne
     @NotNull

@@ -26,7 +26,7 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/statistics")
-@Tag(name = "Statisticss", description = "API for the  management of Statisticss.")
+@Tag(name = "Statistics", description = "API for the  management of Statistics.")
 @SecurityRequirement(name = "bearerAuth")
 public class StatisticsController {
     StatisticsService ss;

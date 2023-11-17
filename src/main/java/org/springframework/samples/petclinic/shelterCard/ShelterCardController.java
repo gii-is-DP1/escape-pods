@@ -25,7 +25,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/v1/shelterCard")
+@RequestMapping("/api/v1/shelterCards")
 @Tag(name = "ShelterCards", description = "API for the  management of ShelterCards.")
 @SecurityRequirement(name = "bearerAuth")
 public class ShelterCardController {

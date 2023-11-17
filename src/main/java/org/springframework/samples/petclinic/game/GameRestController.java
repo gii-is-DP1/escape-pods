@@ -30,7 +30,7 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/game")
-@Tag(name = "Games", description = "API for the  management of games.")
+@Tag(name = "Games", description = "API for the  management of Games.")
 @SecurityRequirement(name = "bearerAuth")
 public class GameRestController {
     GameService gs;
@@ -40,7 +40,6 @@ public class GameRestController {
     }
 
     @GetMapping
-    //en principio se piden 2 parametros que pueden ser nulos y devolveria una lista cpmpleta de juegos
     public List<Game> getAllGames(@ParameterObject() @RequestParam(value="name",required = false) String name, @ParameterObject @RequestParam(value="status",required = false) GameStatus status){
         if(name!=null)
             return gs.getGamesLike(name);
@@ -79,7 +78,6 @@ public class GameRestController {
     @PutMapping("/{id}")
     public ResponseEntity<Void> updateGame(@Valid @RequestBody Game g,@PathVariable("id")Integer id){
         Game gToUpdate=getGameById(id);
-        //el copy properties parece que necesita los datos a alterar, un nombre de la actualizacion y el id del juego que s eactualizra
         BeanUtils.copyProperties(g,gToUpdate, "id");
         gs.save(gToUpdate);
         return ResponseEntity.noContent().build();

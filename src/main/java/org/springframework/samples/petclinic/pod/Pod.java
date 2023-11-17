@@ -1,4 +1,4 @@
-package org.springframework.samples.petclinic.pods;
+package org.springframework.samples.petclinic.pod;
 
 import org.springframework.samples.petclinic.game.Game;
 import org.springframework.samples.petclinic.model.BaseEntity;
@@ -12,7 +12,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
 @Entity
-public class Pods extends BaseEntity{
+public class Pod extends BaseEntity{
     @NotNull
     @Max(3)
     @Min(0)
