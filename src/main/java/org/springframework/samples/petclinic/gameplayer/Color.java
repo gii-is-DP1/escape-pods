@@ -1,4 +1,4 @@
-package org.springframework.samples.petclinic.player;
+package org.springframework.samples.petclinic.gameplayer;
 
 public enum Color {
     PINK, WHITE, BLACK, BLUE, YELLOW
