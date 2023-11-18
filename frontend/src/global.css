@@ -1,21 +1,32 @@
 :root{
-    --main-red-color: #c42323;
-    --main-blue-color: #2333c4;
-    --main-green-color: #23c483;
-    --green-shadow-color: rgba(46, 229, 157, 0.4);
+    --main-red-color: #ff4a4a;
+    --main-blue-color: #4022c3;
+    --main-green-color: #59ff75;
+    --green-shadow-color: rgba(46, 229, 64, 0.4);
     --blue-shadow-color: rgba(46, 92, 229, 0.4);
     --red-shadow-color: rgba(229, 46, 46, 0.4);
 }
 
 @font-face {
-    font-family: 'american-typewriter'; /*a name to be used later*/
-    src: url('./static/fonts/American\ Typewriter\ Bold.ttf'); /*URL to font*/
+    font-family: 'kanit'; /*a name to be used later*/
+    src: url('./static/fonts/Kanit-Bold.ttf'); /*URL to font*/
 }
 
 * {
-    font-family: 'american-typewriter';
+    font-family: 'kanit';
 }
 
 /* div {
     border: 1px dotted red;
 } */
+
+/*
+@font-face {
+    font-family: 'american-typewriter';
+    src: url('./static/fonts/American\ Typewriter\ Bold.ttf');
+}
+
+* {
+    font-family: 'american-typewriter';
+}
+*/
