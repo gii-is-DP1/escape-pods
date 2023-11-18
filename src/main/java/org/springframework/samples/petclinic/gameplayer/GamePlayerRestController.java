@@ -27,8 +27,8 @@ import jakarta.validation.Valid;
 //creación de operaciones crud
 
 @RestController
-@RequestMapping("/api/v1/players")
-@Tag(name = "Players", description = "API for the  management of  Players.")
+@RequestMapping("/api/v1/gamePlayers")
+@Tag(name = "gamePlayers", description = "API for the  management of  gamePlayers.")
 @SecurityRequirement(name = "bearerAuth")
 public class GamePlayerRestController {
     GamePlayerService ps;
@@ -62,7 +62,7 @@ public class GamePlayerRestController {
     public GamePlayer getPlayerById(@PathVariable("id")Integer id){
         Optional<GamePlayer> p=ps.getPlayerById(id);
         if(!p.isPresent())
-            throw new ResourceNotFoundException("Player", "id", id);
+            throw new ResourceNotFoundException("gamePlayer", "id", id);
         return p.get();
     }
 
