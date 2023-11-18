@@ -1,9 +1,9 @@
 package org.springframework.samples.petclinic.crewmate;
 
 import org.hibernate.annotations.ManyToAny;
+import org.springframework.samples.petclinic.gameplayer.Color;
+import org.springframework.samples.petclinic.gameplayer.GamePlayer;
 import org.springframework.samples.petclinic.model.BaseEntity;
-import  org.springframework.samples.petclinic.player.Color;
-import org.springframework.samples.petclinic.player.Player;
 import org.springframework.samples.petclinic.pod.Pod;
 import org.springframework.samples.petclinic.shelterCard.ShelterCard;
 
@@ -27,7 +27,7 @@ public class Crewmate extends BaseEntity{
 
     @ManyToOne
     @NotNull
-    Player player;
+    GamePlayer player;
 
     @ManyToOne(optional = true)
     ShelterCard shelterCard;

@@ -1,25 +1,35 @@
-package org.springframework.samples.petclinic.beacon;
-import org.springframework.samples.petclinic.game.Game;
-import org.springframework.samples.petclinic.gameplayer.Color;
-import org.springframework.samples.petclinic.model.BaseEntity;
+package org.springframework.samples.petclinic.gameplayer;
 
+
+import org.h2.engine.User;
+import org.springframework.samples.petclinic.game.Game;
+import org.springframework.samples.petclinic.model.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.NotNull;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
 @Getter
 @Setter
-public class Beacon extends BaseEntity {
+@EqualsAndHashCode(of="id")
+public class GamePlayer extends BaseEntity {
+    @NotNull
+    Integer actions;
 
     @NotNull
-    Color color1;
+    Integer points;
 
     @NotNull
-    Color color2;
+    Color color;
 
+//    @NotNull
+//    @OneToOne
+//    User user;
+    
     @ManyToOne
     @NotNull
     Game game;
