@@ -34,6 +34,7 @@ INSERT INTO appusers(id,username,password,authority) VALUES (21,'danbenhid','$2a
 INSERT INTO appusers(id,username,password,authority) VALUES (23,'davgodfer','$2a$10$DaS6KIEfF5CRTFrxIoGc7emY3BpZZ0.fVjwA3NiJ.BjpGNmocaS3e',3);
 INSERT INTO appusers(id,username,password,authority) VALUES (24,'gonnavrem','$2a$10$DaS6KIEfF5CRTFrxIoGc7emY3BpZZ0.fVjwA3NiJ.BjpGNmocaS3e',3);
 
+
 -- One vet user, named vet1 with passwor v3t
 /*INSERT INTO users(username,password,enabled) VALUES ('vet1','v3t',TRUE);
 INSERT INTO authorities(id,username,authority) VALUES (12,'vet1','veterinarian');*/
@@ -130,3 +131,19 @@ INSERT INTO consultation_tickets(id,description,creation_date, user_id, consulta
 INSERT INTO consultation_tickets(id,description,creation_date, user_id, consultation_id) VALUES (6, 'Try to give him some tuna to check if he eats that.', '2023-04-11 15:20', 15, 3);
 INSERT INTO consultation_tickets(id,description,creation_date, user_id, consultation_id) VALUES (7, 'My lovebird doesn''t sing as my neighbour''s one.', '2023-02-24 12:30', 5, 4);
 INSERT INTO consultation_tickets(id,description,creation_date, user_id, consultation_id) VALUES (8, 'Lovebirds do not sing.', '2023-02-24 18:30', 16, 4);
+
+
+-- Player users, named playerX with password 0wn3r
+INSERT INTO authorities(id,authority) VALUES (5,'PLAYER');
+INSERT INTO appusers(id,username,password,authority) VALUES (25,'player1','$2a$10$DaS6KIEfF5CRTFrxIoGc7emY3BpZZ0.fVjwA3NiJ.BjpGNmocaS3e',5);
+INSERT INTO appusers(id,username,password,authority) VALUES (26,'player2','$2a$10$DaS6KIEfF5CRTFrxIoGc7emY3BpZZ0.fVjwA3NiJ.BjpGNmocaS3e',5);
+INSERT INTO appusers(id,username,password,authority) VALUES (27,'player3','$2a$10$DaS6KIEfF5CRTFrxIoGc7emY3BpZZ0.fVjwA3NiJ.BjpGNmocaS3e',5);
+INSERT INTO appusers(id,username,password,authority) VALUES (28,'player4','$2a$10$DaS6KIEfF5CRTFrxIoGc7emY3BpZZ0.fVjwA3NiJ.BjpGNmocaS3e',5);
+INSERT INTO appusers(id,username,password,authority) VALUES (29,'player5','$2a$10$DaS6KIEfF5CRTFrxIoGc7emY3BpZZ0.fVjwA3NiJ.BjpGNmocaS3e',5);
+
+
+INSERT INTO players(id, profile_description, profile_picture, user_id) VALUES (1, 'PLINK', 'https://media.tenor.com/GOabrbLMl4AAAAAC/plink-cat-plink.gif', 25);
+INSERT INTO players(id, profile_description, profile_picture, user_id) VALUES (2, 'This user is suspected to be part of an online terrorist organization', 'https://pbs.twimg.com/profile_images/1699478324483866624/_Ol4uNlV_400x400.jpg', 26);
+INSERT INTO players(id, profile_description, profile_picture, user_id) VALUES (3, 'yo cuando dicen que no soy de seli', 'https://media.tenor.com/MSF0PH3M2WkAAAAC/sungchan-nct-sungchan.gif', 27);
+INSERT INTO players(id, profile_description, profile_picture, user_id) VALUES (4, '*no hace nada*', 'https://pbs.twimg.com/media/F3OcIipbMAAtbKH?format=jpg&name=medium', 28);
+INSERT INTO players(id, profile_description, profile_picture, user_id) VALUES (5, 'ou', 'https://media.tenor.com/tGiOcAGrtpsAAAAd/daniel.gif', 29);

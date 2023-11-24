@@ -71,7 +71,7 @@ export default function Home() {
     }, [jwt])
     return (
         <div>
-            {roles.includes("OWNER") &&
+            {roles.includes("PLAYER") &&
                 <div className="home-page-container">
                     <div style={{ marginBottom: 25 }}>
                         <CreateLobbyButton>
@@ -87,7 +87,7 @@ export default function Home() {
                     </div>
                 </div>
             }
-            {!roles.includes("OWNER") && !roles.includes("ADMIN") &&
+            {!roles.includes("PLAYER") && !roles.includes("ADMIN") &&
                 <div className="home-page-container">
                     <img src={"/escape-pods-logo.png"} alt="Logo" width={400} height={266} />
                     <div style={{ color: "white", fontSize: 35, marginTop: 50, textShadow: "2px 2px 2px #00000020" }}>
