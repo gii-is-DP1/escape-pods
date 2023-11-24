@@ -5,9 +5,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.samples.petclinic.model.NamedEntity;
+import org.springframework.samples.petclinic.player.Player;
 import org.springframework.samples.petclinic.shelterCard.ShelterCard;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.Digits;
 import jakarta.validation.constraints.Max;
@@ -26,7 +28,7 @@ public class Game extends NamedEntity{
 
     @NotEmpty
     @Max(5)
-    @Min(1)
+    @Min(2)
     Integer numPlayers;
     
     LocalDateTime start;
@@ -38,6 +40,10 @@ public class Game extends NamedEntity{
     @OneToMany
     @NotNull
     List<ShelterCard> shelterCards;
+
+    @NotNull
+    @OneToMany
+    List<Player> players;
 
 
     

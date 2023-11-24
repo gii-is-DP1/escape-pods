@@ -14,6 +14,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -23,13 +24,12 @@ import lombok.Setter;
 @Table(name = "players")
 public class Player extends BaseEntity {
     
-    @Column(name = "profileDescription")
+    @Column(name = "profile_description")
 	@NotEmpty
-    @Min(1)
-    @Max(50)
+	@Size(max = 80)
 	private String profileDescription;
 
-    @Column(name = "profilePicture")
+    @Column(name = "profile_picture")
 	@NotEmpty
 	private String profilePicture;
 
