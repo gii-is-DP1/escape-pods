@@ -20,31 +20,27 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-
-
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
-//creación de operaciones crud 
-
 @RestController
-@RequestMapping("/api/v1/game")
+@RequestMapping("/api/v1/games")
 @Tag(name = "Games", description = "API for the  management of Games.")
 @SecurityRequirement(name = "bearerAuth")
 public class GameRestController {
     GameService gs;
+
     @Autowired
-    public GameRestController(GameService gs){
-        this.gs=gs;
+    public GameRestController(GameService gs) {
+        this.gs = gs;
     }
 
     @GetMapping
-    public List<Game> getAllGames(@ParameterObject() @RequestParam(value="name",required = false) String name, @ParameterObject @RequestParam(value="status",required = false) GameStatus status){
-        if(name!=null)
-            return gs.getGamesLike(name);
-        else if(status!=null){
-            switch(status){
+    public List<Game> getAllGames(
+            @ParameterObject @RequestParam(value = "status", required = false) GameStatus status) {
+        if (status != null) {
+            switch (status) {
                 case WAITING:
                     return gs.getWaitingGames();
                 case PLAYING:
@@ -52,40 +48,40 @@ public class GameRestController {
                 default:
                     return gs.getFinishedGames();
             }
-        }else 
+        } else
             return gs.getAllGames();
     }
 
     @GetMapping("/{id}")
-    public Game getGameById(@PathVariable("id")Integer id){
-        Optional<Game> g=gs.getGameById(id);
-        if(!g.isPresent())
+    public Game getGameById(@PathVariable("id") Integer id) {
+        Optional<Game> g = gs.getGameById(id);
+        if (!g.isPresent())
             throw new ResourceNotFoundException("Game", "id", id);
         return g.get();
     }
 
     @PostMapping()
-    public ResponseEntity<Game> createGame(@Valid @RequestBody Game g){
-        g=gs.save(g);
+    public ResponseEntity<Game> createGame(@Valid @RequestBody Game g) {
+        g = gs.save(g);
         URI location = ServletUriComponentsBuilder
-                    .fromCurrentRequest()
-                    .path("/{id}")
-                    .buildAndExpand(g.getId())
-                    .toUri();
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(g.getId())
+                .toUri();
         return ResponseEntity.created(location).body(g);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateGame(@Valid @RequestBody Game g,@PathVariable("id")Integer id){
-        Game gToUpdate=getGameById(id);
-        BeanUtils.copyProperties(g,gToUpdate, "id");
+    public ResponseEntity<Void> updateGame(@Valid @RequestBody Game g, @PathVariable("id") Integer id) {
+        Game gToUpdate = getGameById(id);
+        BeanUtils.copyProperties(g, gToUpdate, "id");
         gs.save(gToUpdate);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteGame(@PathVariable("id")Integer id){
-        if(getGameById(id)!=null)
+    public ResponseEntity<Void> deleteGame(@PathVariable("id") Integer id) {
+        if (getGameById(id) != null)
             gs.delete(id);
         return ResponseEntity.noContent().build();
     }

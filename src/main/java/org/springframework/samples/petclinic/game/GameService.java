@@ -42,11 +42,6 @@ public class GameService {
         return gr.findById(id);
     }
 
-    @Transactional(readOnly=true)
-    public List<Game> getGamesLike(String pattern){
-        return gr.findByNameContains(pattern);
-    }
-
     @Transactional()
     public void delete(Integer id) {
         gr.deleteById(id);
