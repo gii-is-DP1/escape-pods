@@ -1,4 +1,4 @@
-.home-page-container{
+.home-page-container {
     position: absolute;
     top: 0;
     left: 0;
@@ -13,7 +13,7 @@
     flex-direction: column;
 }
 
-.hero-div{
+.hero-div {
     background-color: rgba(255, 255, 255, 0.3);
     padding: 2rem;
     border-radius: 25px;
@@ -24,7 +24,7 @@
     align-items: center;
 }
 
-.hero-div h1{
+.hero-div h1 {
     font-size: 3rem;
     font-weight: 700;
     color: #2f324f;
@@ -32,6 +32,19 @@
     text-transform: uppercase;
 }
 
-.hero-div h3{
+.hero-div h3 {
     text-align: center;
+}
+
+.button {
+    border: none;
+}
+
+.button:hover {
+    transform: scale(1.05);
+}
+
+.button:active {
+    transform: scale(0.95);
+    background-image: linear-gradient(rgb(0 0 0/15%) 0 0);
 }

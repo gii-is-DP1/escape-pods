@@ -56,7 +56,7 @@ public class SecurityConfiguration {
 			.exceptionHandling((exepciontHandling) -> exepciontHandling.authenticationEntryPoint(unauthorizedHandler))			
 			
 			.authorizeHttpRequests(authorizeRequests ->	authorizeRequests
-			.requestMatchers("/resources/**", "/webjars/**", "/h2-console/**", "/static/**", "/swagger-resources/**").permitAll()
+			.requestMatchers("/resources/**", "/webjars/**", "/h2-console/**", "/h2-console",  "/static/**", "/swagger-resources/**").permitAll()
 			.requestMatchers( "/api/v1/clinics","/", "/oups","/api/v1/auth/**","/v3/api-docs/**","/swagger-ui.html","/swagger-ui/**").permitAll()												
 			.requestMatchers("/api/v1/developers").permitAll()
 			.requestMatchers("/api/v1/plan").hasAuthority("OWNER")
@@ -74,7 +74,7 @@ public class SecurityConfiguration {
 			.requestMatchers(HttpMethod.GET, "/api/v1/vets/stats").hasAuthority(ADMIN)
 			.requestMatchers(HttpMethod.GET, "/api/v1/vets/**").authenticated()
 			.requestMatchers("/api/v1/vets/**").hasAnyAuthority(ADMIN, "VET", CLINIC_OWNER) 
-			.anyRequest().authenticated())					
+			.anyRequest().permitAll())		//.anyRequest().authenticated())  se ha cambiado para entrar facil al h2	
 			
 			.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);		
 		return http.build();

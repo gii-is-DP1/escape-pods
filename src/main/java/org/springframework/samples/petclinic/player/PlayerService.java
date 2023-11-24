@@ -1,5 +1,6 @@
 package org.springframework.samples.petclinic.player;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
@@ -52,5 +53,10 @@ public class PlayerService {
 	public void deletePlayer(int id) throws DataAccessException {
 		Player toDelete = findPlayerById(id);
 		playerRepository.delete(toDelete);
+	}
+
+	@Transactional
+	public List<Player> findPlayerByUsername(String username){
+		return playerRepository.findPlayerByUsername(username);
 	}
 }
