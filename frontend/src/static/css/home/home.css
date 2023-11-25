@@ -48,3 +48,7 @@
     transform: scale(0.95);
     background-image: linear-gradient(rgb(0 0 0/15%) 0 0);
 }
+
+.navbar {
+    background-color: #2f324f;
+}
