@@ -70,7 +70,7 @@ class GameItemsInitializers {
             game: game
         }
         beacons.push(beacon10);
-        for (let i=0; i<beacons.length; i++) {
+        for (let i = 0; i < beacons.length; i++) {
             fetch("/api/v1/beacons", {
                 headers: {
                     "Content-Type": "application/json",
@@ -80,6 +80,58 @@ class GameItemsInitializers {
                 body: JSON.stringify(beacons[i])
             })
         }
+    }
+
+    createLines(game, jwt) {
+        let value = 1;
+        for (let i = 0; i < 26; i++) {
+            const i = {
+                game: game,
+                number: value
+
+            }
+            fetch("/api/v1/lines", {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${jwt}`,
+                },
+                method: "POST",
+                body: JSON.stringify(i)
+            })
+            value = value + 1;
+        }
+
+    }
+    createSectors(game, jwt) {
+        let lines = null
+        fetch("/api/v1/lines?gameid=" + game.id, {
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${jwt}`,
+            },
+            method: "GET"
+        })
+            .then(response => response.json())
+            .then(response => lines = response)
+
+        //let sectors = []
+        const sector1 = {
+            number: 1,
+            scrap: null,
+            game: game,
+            lines: [lines.some((line) => line.number === 1),
+            lines.some((line) => line.number === 2),
+            lines.some((line) => line.number === 3)]
+        }
+        fetch("/api/v1/sectors", {
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${jwt}`,
+            },
+            method: "POST",
+            body: JSON.stringify(sector1)
+        })
+
     }
 }
 

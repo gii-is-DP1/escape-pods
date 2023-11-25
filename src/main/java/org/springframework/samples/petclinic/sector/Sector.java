@@ -15,7 +15,7 @@ import jakarta.validation.constraints.NotNull;
 public class Sector extends BaseEntity{
 
     @NotNull
-    String number;
+    Integer number;
 
     @NotNull
     Boolean scrap;
