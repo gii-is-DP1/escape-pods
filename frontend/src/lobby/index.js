@@ -6,6 +6,7 @@ import tokenService from '../services/token.service';
 import '../static/css/home/home.css';
 import "../static/css/lobby/lobby.css";
 import { Link } from 'react-router-dom';
+import itemsInitializers from "./gameItemsInitializers";
 
 //ICONOS
 import { DiAptana } from "react-icons/di";
@@ -30,7 +31,6 @@ export default function Lobby() {
     }, [jwt])
 
     function GetCurrentPlayer() {
-        console.log(myUsername)
         fetch("/api/v1/players?username=" + myUsername, {
             headers: {
                 "Content-Type": "application/json",
@@ -56,27 +56,11 @@ export default function Lobby() {
             method: "POST",
             body: JSON.stringify(newGame)
         })
-            .then(setGame(newGame))
+            .then(response => response.json())
+            .then(response => setGame(response))
     }
 
-    function CreateLobbyButton() {
-        return (
-            <Button style={{
-                backgroundColor: "#ffa555",
-                width: 350,
-                height: 150,
-                fontWeight: 10,
-                borderRadius: 30,
-                fontSize: 35,
-                boxShadow: "10px 10px 5px #00000020",
-                textShadow: "4px 4px 2px #00000020"
-            }}
-                onClick={() => CreateGame()}
-            >
-                CREATE LOBBY
-            </Button>
-        );
-    }
+
 
     return (
         <div className="home-page-container">
@@ -141,36 +125,36 @@ export default function Lobby() {
                 </div>
 
                 <Badge color="black" style={{
-                    pill: false, width: 400, height: 510, fontSize: 30, opacity: 0.5, textAlign:'center'
+                    pill: false, width: 400, height: 510, fontSize: 30, opacity: 0.5, textAlign: 'center'
                 }}>
                     Players:
                     <p></p>
-                    <p style={{ color: "white", fontSize: 15, textAlign:'left' }}>
+                    <p style={{ color: "white", fontSize: 15, textAlign: 'left' }}>
 
                         <img className="profile-picture" src={player.profilePicture} />
                         {myUsername}
 
                     </p>
                     <p></p>
-                    <p style={{ color: "white", fontSize: 15, textAlign:'left' }}>
+                    <p style={{ color: "white", fontSize: 15, textAlign: 'left' }}>
                         <img className="profile-picture" src='https://media.tenor.com/uku4KIcT-oUAAAAC/ianleong.gif' />
                         Player2
 
                     </p>
                     <p></p>
-                    <p style={{ color: "white", fontSize: 15, textAlign:'left' }}>
+                    <p style={{ color: "white", fontSize: 15, textAlign: 'left' }}>
                         <img className="profile-picture" src='https://media.tenor.com/MSF0PH3M2WkAAAAC/sungchan-nct-sungchan.gif' />
                         Player3
 
                     </p>
                     <p></p>
-                    <p style={{ color: "white", fontSize: 15, textAlign:'left' }}>
+                    <p style={{ color: "white", fontSize: 15, textAlign: 'left' }}>
                         <img className="profile-picture" src='https://pbs.twimg.com/media/F3OcIipbMAAtbKH?format=jpg&name=medium' />
                         Player4
 
                     </p>
                     <p></p>
-                    <p style={{ color: "white", fontSize: 15, textAlign:'left' }}>
+                    <p style={{ color: "white", fontSize: 15, textAlign: 'left' }}>
                         <img className="profile-picture" src='https://media.tenor.com/tGiOcAGrtpsAAAAd/daniel.gif' />
                         Player5
 
@@ -178,24 +162,21 @@ export default function Lobby() {
 
                 </Badge>
 
-                
+
                 <Badge color="black" style={{ //RATEADA MAXIMA PARA SEPARAR BOTONES
                     pill: false, width: 50, height: 1, fontSize: 30, opacity: 0
                 }}>
                     .
                 </Badge>
-
-                <Link to="/">
-                    <Button className="button" style={{
-                        backgroundColor: "#CFFF68", border: "none", width: 300, fontSize: 35, borderRadius: 20, height: 100, boxShadow: "5px 5px 5px #00000020", textShadow: "2px 2px 2px #00000020", transition: "0.15s",
-                    }} onClick={() => {
-
-
-                    }}>
-                        Start Game
-                    </Button>
-                </Link>
-
+                <Button className="button" style={{
+                    backgroundColor: "#CFFF68", border: "none", width: 300, fontSize: 35, borderRadius: 20, height: 100, boxShadow: "5px 5px 5px #00000020", textShadow: "2px 2px 2px #00000020", transition: "0.15s",
+                }} onClick={() => {
+                    CreateGame()
+                    itemsInitializers.createBeacons(game,jwt)
+                    console.log(game)
+                }}>
+                    Start Game
+                </Button>
                 <Badge color="black" style={{//RATEADA MAXIMA PARA SEPARAR BOTONES
                     pill: false, width: 50, height: 1, fontSize: 30, opacity: 0
                 }}>
