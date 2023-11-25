@@ -5,7 +5,7 @@ import '../App.css';
 import tokenService from '../services/token.service';
 import '../static/css/home/home.css';
 import "../static/css/lobby/lobby.css";
-
+import { Link } from 'react-router-dom';
 
 export default function Lobby() {
     const [roles, setRoles] = useState([]);
@@ -137,8 +137,30 @@ export default function Lobby() {
                 <p style={{ color: "white" }}>
                     {myUsername}
                 </p>
-                <img className="profile-picture" src={player.profilePicture}/>
+                <img className="profile-picture" src={player.profilePicture} />
+
+                <Link to="/">
+                    <Button className="done-button" style={{
+                        backgroundColor: "#FF8368", border: "none", boxShadow: "5px 5px 5px #00000020", textShadow: "2px 2px 2px #00000020", transition: "0.15s",
+                    }} onClick={() => {
+
+
+                    }}>
+                        Leave Lobby
+                    </Button>
+                </Link>
+                <Link to="/">
+                    <Button className="done-button" style={{
+                        backgroundColor: "#CFFF68", border: "none", boxShadow: "5px 5px 5px #00000020", textShadow: "2px 2px 2px #00000020", transition: "0.15s",
+                    }} onClick={() => {
+
+
+                    }}>
+                        Start Game
+                    </Button>
+                </Link>
             </div>
         </div >
     );
+    
 }

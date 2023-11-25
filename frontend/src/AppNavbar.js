@@ -57,7 +57,7 @@ function AppNavbar() {
         if (role === "OWNER") {
             ownerLinks = (
                 <>
-{/*                    <NavItem>
+                    {/*                    <NavItem>
                         <NavLink style={{ color: "white" }} tag={Link} to="/myPets">My Pets</NavLink>
                     </NavItem>
                     <NavItem>
@@ -66,8 +66,8 @@ function AppNavbar() {
                     <NavItem>
                         <NavLink style={{ color: "white" }} tag={Link} to="/plan">Plan</NavLink>
                     </NavItem>*/}
-                    <NavItem> 
-                     <NavLink style={{ color: "white" }} tag={Link} to="/achievements">Achievements</NavLink>
+                    <NavItem>
+                        <NavLink style={{ color: "white" }} tag={Link} to="/achievements">Achievements</NavLink>
                     </NavItem>
 
                 </>
@@ -114,14 +114,14 @@ function AppNavbar() {
                 </NavItem>
             </>
         )
-/*
-                <NavItem>
-                    <NavLink style={{ color: "white" }} id="docs" tag={Link} to="/docs">Docs</NavLink>
-                </NavItem>
-                <NavItem>
-                    <NavLink style={{ color: "white" }} id="plans" tag={Link} to="/plans">Pricing Plans</NavLink>
-                </NavItem>
-*/
+        /*
+                        <NavItem>
+                            <NavLink style={{ color: "white" }} id="docs" tag={Link} to="/docs">Docs</NavLink>
+                        </NavItem>
+                        <NavItem>
+                            <NavLink style={{ color: "white" }} id="plans" tag={Link} to="/plans">Pricing Plans</NavLink>
+                        </NavItem>
+        */
     } else {
         userLinks = (
             <>
@@ -138,14 +138,14 @@ function AppNavbar() {
                 </NavItem>
             </>
         )
-/*
-                <NavItem>
-                    <NavLink style={{ color: "white" }} id="docs" tag={Link} to="/docs">Docs</NavLink>
-                </NavItem>
-                <NavItem>
-                    <NavLink style={{ color: "white" }} id="plans" tag={Link} to="/plans">Pricing Plans</NavLink>
-                </NavItem>
-*/
+        /*
+                        <NavItem>
+                            <NavLink style={{ color: "white" }} id="docs" tag={Link} to="/docs">Docs</NavLink>
+                        </NavItem>
+                        <NavItem>
+                            <NavLink style={{ color: "white" }} id="plans" tag={Link} to="/plans">Pricing Plans</NavLink>
+                        </NavItem>
+        */
 
     }
 

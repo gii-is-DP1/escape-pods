@@ -61,6 +61,7 @@ function HowToPlayButton() {
             textShadow: "2px 2px 2px #00000020"
         }}
             onClick={() => window.open("https://drive.google.com/file/d/11oSXNXpRMSdqJDTp8a_Ww2MrMLq0N9lm/view?usp=drive_link", "_blank", "noreferrer")}>
+
             HOW TO PLAY
         </Button>
     );
