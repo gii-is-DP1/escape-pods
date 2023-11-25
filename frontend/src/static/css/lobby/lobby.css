@@ -41,3 +41,8 @@
     transform: scale(0.95);
     background-image: linear-gradient(rgb(0 0 0/15%) 0 0);
 }
+.button {
+    border: none;
+    flex: 1;
+    align-self: 'center';
+}
