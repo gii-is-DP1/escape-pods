@@ -3,3 +3,41 @@
     width: 75px;
     height: 75px;
 }
+
+.modal .modal-content {
+    align-items: center;
+    flex-direction: column;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    background-color: #2f324f;
+    border: none;
+}
+
+
+.modal-button{
+    margin-top: 10px;
+    margin-bottom: 10px;
+    height: 50px;
+    width: 50px;
+}
+
+.modal-button:hover {
+    transform: scale(1.05);
+}
+
+.modal-button:active {
+    transform: scale(0.95);
+    background-image: linear-gradient(rgb(0 0 0/15%) 0 0);
+}
+
+.done-button{
+}
+
+.done-button:hover {
+    transform: scale(1.05);
+}
+
+.done-button:active {
+    transform: scale(0.95);
+    background-image: linear-gradient(rgb(0 0 0/15%) 0 0);
+}

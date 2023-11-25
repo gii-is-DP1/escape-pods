@@ -3,6 +3,7 @@ import { Navbar, NavbarBrand, NavLink, NavItem, Nav, NavbarText, NavbarToggler, 
 import { Link } from 'react-router-dom';
 import tokenService from './services/token.service';
 import jwt_decode from "jwt-decode";
+import "./static/css/home/home.css";
 
 function AppNavbar() {
     const [roles, setRoles] = useState([]);
@@ -150,7 +151,7 @@ function AppNavbar() {
 
     return (
         <div>
-            <Navbar expand="md" dark color="dark">
+            <Navbar expand="md" cssModule={"navbar"}>
                 <NavbarBrand href="/">
                     <img alt="logo" src="/escape-pods-logo.png" style={{ height: 40, width: 60 }} />
                 </NavbarBrand>
