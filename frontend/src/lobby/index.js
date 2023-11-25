@@ -1,11 +1,16 @@
 import jwt_decode from "jwt-decode";
 import React, { useEffect, useState } from 'react';
-import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
+import { Button, Modal, ModalBody, ModalFooter, ModalHeader, Badge } from "reactstrap";
 import '../App.css';
 import tokenService from '../services/token.service';
 import '../static/css/home/home.css';
 import "../static/css/lobby/lobby.css";
 import { Link } from 'react-router-dom';
+
+//ICONOS
+import { DiAptana } from "react-icons/di";
+import { MdAdd } from "react-icons/md";
+
 
 export default function Lobby() {
     const [roles, setRoles] = useState([]);
@@ -134,24 +139,55 @@ export default function Lobby() {
                         </ModalFooter>
                     </Modal>
                 </div>
-                <p style={{ color: "white" }}>
-                    {myUsername}
-                </p>
-                <img className="profile-picture" src={player.profilePicture} />
+
+                <Badge color="black" style={{
+                    pill: false, width: 400, height: 510, fontSize: 30, opacity: 0.5, textAlign:'center'
+                }}>
+                    Players:
+                    <p></p>
+                    <p style={{ color: "white", fontSize: 15, textAlign:'left' }}>
+
+                        <img className="profile-picture" src={player.profilePicture} />
+                        {myUsername}
+
+                    </p>
+                    <p></p>
+                    <p style={{ color: "white", fontSize: 15, textAlign:'left' }}>
+                        <img className="profile-picture" src='https://media.tenor.com/uku4KIcT-oUAAAAC/ianleong.gif' />
+                        Player2
+
+                    </p>
+                    <p></p>
+                    <p style={{ color: "white", fontSize: 15, textAlign:'left' }}>
+                        <img className="profile-picture" src='https://media.tenor.com/MSF0PH3M2WkAAAAC/sungchan-nct-sungchan.gif' />
+                        Player3
+
+                    </p>
+                    <p></p>
+                    <p style={{ color: "white", fontSize: 15, textAlign:'left' }}>
+                        <img className="profile-picture" src='https://pbs.twimg.com/media/F3OcIipbMAAtbKH?format=jpg&name=medium' />
+                        Player4
+
+                    </p>
+                    <p></p>
+                    <p style={{ color: "white", fontSize: 15, textAlign:'left' }}>
+                        <img className="profile-picture" src='https://media.tenor.com/tGiOcAGrtpsAAAAd/daniel.gif' />
+                        Player5
+
+                    </p>
+
+                </Badge>
+
+                
+                <Badge color="black" style={{ //RATEADA MAXIMA PARA SEPARAR BOTONES
+                    pill: false, width: 50, height: 1, fontSize: 30, opacity: 0
+                }}>
+                    .
+                </Badge>
 
                 <Link to="/">
-                    <Button className="done-button" style={{
-                        backgroundColor: "#FF8368", border: "none", boxShadow: "5px 5px 5px #00000020", textShadow: "2px 2px 2px #00000020", transition: "0.15s",
-                    }} onClick={() => {
-
-
-                    }}>
-                        Leave Lobby
-                    </Button>
-                </Link>
-                <Link to="/">
-                    <Button className="done-button" style={{
-                        backgroundColor: "#CFFF68", border: "none", boxShadow: "5px 5px 5px #00000020", textShadow: "2px 2px 2px #00000020", transition: "0.15s",
+                    <Button className="button" style={{
+                        backgroundColor: "#CFFF68", border: "none", width: 300, fontSize: 35, borderRadius: 20, height: 100, boxShadow: "5px 5px 5px #00000020", textShadow: "2px 2px 2px #00000020", transition: "0.15s",
                     }} onClick={() => {
 
 
@@ -159,8 +195,26 @@ export default function Lobby() {
                         Start Game
                     </Button>
                 </Link>
+
+                <Badge color="black" style={{//RATEADA MAXIMA PARA SEPARAR BOTONES
+                    pill: false, width: 50, height: 1, fontSize: 30, opacity: 0
+                }}>
+                    .
+                </Badge>
+
+                <Link to="/">
+                    <Button className="button" style={{
+                        backgroundColor: "#FF8368", border: "none", width: 175, fontSize: 20, borderRadius: 15, height: 55, boxShadow: "5px 5px 5px #00000020", textShadow: "2px 2px 2px #00000020", transition: "0.15s",
+                    }} onClick={() => {
+
+
+                    }}>
+                        Leave Lobby
+                    </Button>
+                </Link>
+
             </div>
         </div >
     );
-    
+
 }
