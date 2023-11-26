@@ -1,7 +1,22 @@
+.lobby-page-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url('../../images/escape-pods-background.png');
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+}
+
 .profile-picture{
     border-radius: 50%;
-    width: 75px;
-    height: 75px;
+    width: 65px;
+    height: 65px;
 }
 
 .modal .modal-content {
@@ -43,6 +58,42 @@
 }
 .button {
     border: none;
-    flex: 1;
-    align-self: 'center';
+    align-self: center;
+    align-content: center;
+    align-items: center;
+}
+
+.button-container {
+    padding-left: 20px;
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+    align-items: center;
+    margin-top: 70px;
+    margin-right: 5%;
+}
+
+.player-list {
+    backdrop-filter: blur(50px);
+}
+
+.list-item-container {
+    display: flex;
+    flex-direction: row;
+    align-self: center;
+    align-items: center;
+    margin-bottom: 20px;
+
+}
+
+.list-player-name {
+    margin-left: 20px;
+    color: white;
+    font-size: 22px;
+    align-self: center;
+}
+
+.ul {
+    list-style-type: none;
+    width: 350px;
 }

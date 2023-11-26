@@ -14,7 +14,7 @@
 }
 
 .hero-div {
-    background-color: rgba(255, 255, 255, 0.3);
+    background-color: rgba(0, 0, 0, 0.5);
     padding: 2rem;
     border-radius: 25px;
     backdrop-filter: blur(10px);
@@ -22,14 +22,17 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    margin-right: 50px;
+    width: 400px;
+    margin-top: 65px;
 }
 
 .hero-div h1 {
-    font-size: 3rem;
-    font-weight: 700;
-    color: #2f324f;
+    font-size: 40px;
+    color: #ffffff;
     text-align: center;
     text-transform: uppercase;
+    margin-bottom: 25px;
 }
 
 .hero-div h3 {
