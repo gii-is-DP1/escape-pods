@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
 import org.springframework.samples.petclinic.game.Game;
@@ -42,11 +43,13 @@ public class LineRestController {
     
 
     @GetMapping
-    public List<Line> getAllLines(@ParameterObject @RequestParam(value="gameid",required= false) Integer gameid){
+    public ResponseEntity<List<Line>> getAllLines(@ParameterObject @RequestParam(value="gameid",required= false) Integer gameid){
         if(gameid != null){
-            return ls.getAllLinesByGameId(gameid);
+            return new ResponseEntity<>((List<Line>) ls.getAllLinesByGameId(gameid), HttpStatus.OK);
         }else
-        return ls.getAllLines();
+        return new ResponseEntity<>((List<Line>) ls.getAllLines(), HttpStatus.OK);
+        
+        
     }
 
 

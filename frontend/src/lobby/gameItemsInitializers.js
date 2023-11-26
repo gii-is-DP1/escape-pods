@@ -102,7 +102,7 @@ class GameItemsInitializers {
         }
         
     }
-    
+    /*
     getLineOfGameByNumber(lines, num) {
        
         let res = {}
@@ -114,8 +114,8 @@ class GameItemsInitializers {
             }
         }
         return res;
-    }
-    createSectors(game, jwt) {
+    }*/
+    generateines(game,jwt){
         var lines= []
     
         fetch("/api/v1/lines?gameid=" + game.id, {
@@ -135,17 +135,42 @@ class GameItemsInitializers {
                 console.log(lines)
                 console.log(lines.find(line=> {return line.number===1}))
             })
-            .then(console.log(lines))
-            .then(console.log(lines.find(line=> {return line.number===1})))
+          return lines;
+    }
+
+    async createSectors(game, jwt) {
+
+        var lines= []
+    
+        await fetch("/api/v1/lines?gameid=" + game.id, {
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${jwt}`,
+            },
+            method: "GET",
+           
+        })
+            .then(response => response.json())
+            .then(data=> {
+                for(const l of data){
+                   lines.push(l);
+                   
+                }
+                console.log(lines)
+                console.log(lines.find(line=> {return line.number===1}))
+            })
+          
 
         const sector1 = {
-            number: 1,
-            scrap: null,
+            number:1,
+            scrap: false,
             game: game,
             lines: [lines.find(line=> {return line.number===1}),
                 lines.find(line=> {return line.number===2}),
                 lines.find(line=> {return line.number===3}) ]
         }
+        console.log(sector1)
+
         fetch("/api/v1/sectors", {
             headers: {
                 "Content-Type": "application/json",
