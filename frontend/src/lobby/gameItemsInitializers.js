@@ -100,28 +100,51 @@ class GameItemsInitializers {
             })
             value = value + 1;
         }
-
+        
+    }
+    
+    getLineOfGameByNumber(lines, num) {
+       
+        let res = {}
+        for (let i = 0; i < lines.length; i++) {
+            console.log(lines[i])
+            if (lines[i].number === num) {
+                res = lines[i];
+                console.log(lines[i].number)
+            }
+        }
+        return res;
     }
     createSectors(game, jwt) {
-        let lines = null
+        var lines= []
+    
         fetch("/api/v1/lines?gameid=" + game.id, {
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${jwt}`,
             },
-            method: "GET"
+            method: "GET",
+           
         })
             .then(response => response.json())
-            .then(response => lines = response)
+            .then(data=> {
+                for(const l of data){
+                   lines.push(l);
+                   
+                }
+                console.log(lines)
+                console.log(lines.find(line=> {return line.number===1}))
+            })
+            .then(console.log(lines))
+            .then(console.log(lines.find(line=> {return line.number===1})))
 
-        //let sectors = []
         const sector1 = {
             number: 1,
             scrap: null,
             game: game,
-            lines: [lines.some((line) => line.number === 1),
-            lines.some((line) => line.number === 2),
-            lines.some((line) => line.number === 3)]
+            lines: [lines.find(line=> {return line.number===1}),
+                lines.find(line=> {return line.number===2}),
+                lines.find(line=> {return line.number===3}) ]
         }
         fetch("/api/v1/sectors", {
             headers: {
@@ -131,6 +154,7 @@ class GameItemsInitializers {
             method: "POST",
             body: JSON.stringify(sector1)
         })
+        
 
     }
 }

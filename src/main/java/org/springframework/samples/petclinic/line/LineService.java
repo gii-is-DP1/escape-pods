@@ -41,8 +41,8 @@ public class LineService {
     public void delete(Integer id) {
         lr.deleteById(id);
     }
-
-    public List<Line> getAllinesByGame(Game game) {
-        return lr.findByGame(game);
+    @Transactional()
+    public List<Line> getAllLinesByGameId(Integer gameId) {
+        return lr.findByGameId(gameId);
     }
 }

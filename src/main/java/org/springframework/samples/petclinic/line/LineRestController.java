@@ -32,18 +32,19 @@ import jakarta.validation.Valid;
 @SecurityRequirement(name = "bearerAuth")
 public class LineRestController {
     LineService ls;
-    GameService gs;
 
     @Autowired
     public LineRestController(LineService ls){
         this.ls=ls;
+        
     }
+    
     
 
     @GetMapping
-    public List<Line> getAllLines(@ParameterObject @RequestParam(value="gameid",required= false) Integer gameId){
-        if(gameId!=null){
-            return ls.getAllinesByGame(gs.getGameById(gameId).get());
+    public List<Line> getAllLines(@ParameterObject @RequestParam(value="gameid",required= false) Integer gameid){
+        if(gameid != null){
+            return ls.getAllLinesByGameId(gameid);
         }else
         return ls.getAllLines();
     }
