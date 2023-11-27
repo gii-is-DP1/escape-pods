@@ -28,14 +28,22 @@
     border: none;
 }
 
-.modal-join-lobby {
+.modal-dialog.modal-join-lobby {
     align-items: center;
     flex-direction: column;
     margin-top: 20px;
     margin-bottom: 40px;
     background-color: #2f324f;
     border: none;
+    border-radius: 20px;
+    margin-top: 7.5%;
+    align-self: center;
 }
+
+.modal-dialog {
+    margin: 0px;
+}
+
 
 
 .modal-button{
@@ -108,8 +116,14 @@
     font-size: 22px;
 }
 
-.ul {
+.ul-players {
+    list-style-type: none;
+}
+
+.ul-games {
     list-style-type: none;
     width: 350px;
-    height: 500px;
+    height: 350px;
+    overflow: hidden;
+    overflow-y: scroll;
 }
