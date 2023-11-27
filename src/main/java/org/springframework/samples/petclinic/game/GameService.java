@@ -29,7 +29,7 @@ public class GameService {
 
     @Transactional(readOnly=true)
     public List<Game> getWaitingGames(){
-        return gr.findByStart(null);
+        return gr.findByStatus(GameStatus.WAITING);
     }
 
     @Transactional

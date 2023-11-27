@@ -7,8 +7,11 @@ import java.util.Optional;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
+import org.springframework.samples.petclinic.player.Player;
+import org.springframework.security.config.web.server.ServerHttpSecurity.HttpsRedirectSpec;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,19 +40,19 @@ public class GameRestController {
     }
 
     @GetMapping
-    public List<Game> getAllGames(
+    public ResponseEntity<List<Game>> getAllGames(
             @ParameterObject @RequestParam(value = "status", required = false) GameStatus status) {
         if (status != null) {
             switch (status) {
                 case WAITING:
-                    return gs.getWaitingGames();
+                    return new ResponseEntity<>((List<Game>) gs.getWaitingGames(),HttpStatus.OK);
                 case PLAYING:
-                    return gs.getOngoingGames();
+                    return new ResponseEntity<>((List<Game>) gs.getOngoingGames(),HttpStatus.OK);
                 default:
-                    return gs.getFinishedGames();
+                    return new ResponseEntity<>((List<Game>) gs.getFinishedGames(),HttpStatus.OK);
             }
         } else
-            return gs.getAllGames();
+            return new ResponseEntity<>((List<Game>) gs.getAllGames(),HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
