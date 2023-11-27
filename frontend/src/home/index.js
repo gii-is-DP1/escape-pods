@@ -110,12 +110,12 @@ export default function Home() {
     }
 
     const waitingGamesList = waitingGames.map(game =>
-        <li key={game.id} className='list-games-name'style={{ display: "flex", justifyContent: 'space-between', marginBottom:10}}>
+        <li key={game.id} className='list-games-name'style={{ display: "flex", justifyContent: 'space-between', marginBottom:10, marginRight:10}}>
             <span>
                 {game.id}
             </span>
             <Button className="done-button" style={{
-                backgroundColor: "#ffa952",
+                backgroundColor: "#CFFF68",
                 border: "none",
                 boxShadow: "5px 5px 5px #00000020",
                 textShadow: "2px 2px 2px #00000020",
@@ -159,12 +159,12 @@ export default function Home() {
     return (
         <div>
             <div>
-                <Modal isOpen={visible} centered="true" fade="true" scrollable="true" className="modal-join-lobby">
+                <Modal isOpen={visible} fade="true" className="modal-join-lobby" >
                     <ModalHeader style={{ color: "white", textShadow: "2px 2px 2px #00000020"}}>
                         Select the game
                     </ModalHeader>
-                    <ModalBody style={{ flexDirection: "row" }}>
-                        <ul className="ul">
+                    <ModalBody style={{ flexDirection: "row"}}>
+                        <ul className="ul-games">
                             {waitingGamesList}
                         </ul>
                     </ModalBody>

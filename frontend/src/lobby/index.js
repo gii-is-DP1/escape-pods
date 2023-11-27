@@ -157,7 +157,7 @@ export default function Lobby() {
             <div className="hero-div">
                 <h1>Players {players.length}/{numPlayers}</h1>
                 
-                <ul className="ul">
+                <ul className="ul-players">
                     {playerList}
                 </ul>
             </div>
