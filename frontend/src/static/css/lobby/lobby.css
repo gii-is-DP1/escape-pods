@@ -28,6 +28,15 @@
     border: none;
 }
 
+.modal-join-lobby {
+    align-items: center;
+    flex-direction: column;
+    margin-top: 20px;
+    margin-bottom: 40px;
+    background-color: #2f324f;
+    border: none;
+}
+
 
 .modal-button{
     margin-top: 10px;
@@ -93,7 +102,14 @@
     align-self: center;
 }
 
+.list-games-name {
+    margin-left: 50px;
+    color: white;
+    font-size: 22px;
+}
+
 .ul {
     list-style-type: none;
     width: 350px;
+    height: 500px;
 }
