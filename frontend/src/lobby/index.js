@@ -17,12 +17,11 @@ export default function Lobby() {
     const [roles, setRoles] = useState([]);
     const [myPlayer, setMyPlayer] = useState({})
     const [game, setGame] = useState({});
-    const [numPlayers, setNumPlayers] = useState(2);
     const [players, setPlayers] = useState([]);
     const jwt = tokenService.getLocalAccessToken();
     const myUsername = jwt_decode(jwt).sub;
 
-    const gameId = window.location.href.split("/")[4] // extrae la id de la partida desde la ruta spliteandola por las / en un array, cuidado que el indice del array que devuelve el split no empieza en [0] sino en [1] por algu motivo
+    const gameId = window.location.href.split("/")[4] // extrae la id de la partida desde la ruta spliteandola por las / en un array, cuidado que el indice del array que devuelve el split no empieza en [0] sino en [1] por algu motivo ([-1] tampoco funciona)
 
     useEffect(() => {
         if (jwt) {
@@ -46,8 +45,7 @@ export default function Lobby() {
     }
 
     async function GetCurrentGame() {
-        const currentGame = await fetchCurrentGame()
-        setGame(currentGame)
+        setGame(await fetchCurrentGame())
     }
 
     async function fetchCurrentGame() {
@@ -75,8 +73,7 @@ export default function Lobby() {
     return (
         <div className="lobby-page-container">
             <div className="hero-div">
-                <h1>Players {JSON.stringify(game) === "{}" ? "0" : game.players.length}/{numPlayers}</h1> {/*misma comprobacion que arriba pero esta vez para players.length*/}
-
+                <h1>Players {JSON.stringify(game) === "{}" ? "0" : game.players.length}/{game.numPlayers}</h1> {/*misma comprobacion que arriba pero esta vez para players.length*/}
                 <ul className="ul-players">
                     {playerList}
                 </ul>
