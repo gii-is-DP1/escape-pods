@@ -124,6 +124,32 @@ export default function Home() {
         return games;
     }
 
+
+    async function addPlayerToGame(id) {
+
+        const updatedPlayers = waitingGames.find((game) => game.id === id).players
+        updatedPlayers.push(myPlayer)
+
+        const updatedGame = {
+            numPlayers: waitingGames.find((game) => game.id === id).numPlayers,
+            start: waitingGames.find((game) => game.id === id).start,
+            finish: waitingGames.find((game) => game.id === id).finish,
+            status: waitingGames.find((game) => game.id === id).status,
+            players: updatedPlayers
+        }
+        await fetch(`/api/v1/games/${id}`, {
+            headers: {
+                "Authorization": ' Bearer ${ jwt }',
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            method: 'PUT',
+            body: JSON.stringify(updatedGame)
+        });
+        window.location.href = `/lobby/${id}`
+    }
+
+
     const waitingGamesList = waitingGames.map(game =>
         <li key={game.id} className='list-games-name' style={{ display: "flex", justifyContent: 'space-between', marginBottom: 10, marginRight: 10 }}>
             <span>
@@ -138,6 +164,7 @@ export default function Home() {
             }}
                 onClick={() => {
                     setVisible(false)
+                    addPlayerToGame(game.id)
                 }}>
                 JOIN
             </Button>
