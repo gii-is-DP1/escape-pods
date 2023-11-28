@@ -20,7 +20,6 @@ export default function Lobby() {
     const [players, setPlayers] = useState([]);
     const jwt = tokenService.getLocalAccessToken();
     const myUsername = jwt_decode(jwt).sub;
-
     const gameId = window.location.href.split("/")[4] // extrae la id de la partida desde la ruta spliteandola por las / en un array, cuidado que el indice del array que devuelve el split no empieza en [0] sino en [1] por algu motivo ([-1] tampoco funciona)
 
     useEffect(() => {
@@ -48,7 +47,7 @@ export default function Lobby() {
         setGame(await fetchCurrentGame())
     }
 
-    
+
     async function fetchCurrentGame() {
         const response = await fetch(`/api/v1/games/${gameId}`, {
             headers: {
@@ -63,9 +62,9 @@ export default function Lobby() {
 
 
     async function removePlayerFromGame() {
-
-        const updatedPlayers = game.players
-        updatedPlayers.splice(game.players.indexOf(myPlayer),1)
+        const currentGame = await fetchCurrentGame()
+        const updatedPlayers = currentGame.players
+        updatedPlayers.splice(currentGame.players.findIndex(player => player.id === myPlayer.id), 1)
 
         const updatedGame = {
             numPlayers: game.numPlayers,
@@ -85,7 +84,7 @@ export default function Lobby() {
         });
     }
 
-    async function deleteGame() {        
+    async function deleteGame() {
         await fetch(`/api/v1/games/${game.id}`, {
             headers: {
                 "Authorization": ' Bearer ${ jwt }',
@@ -102,7 +101,7 @@ export default function Lobby() {
             <div className="list-item-container" style={{ marginBottom: "20" }}>
                 <img className="profile-picture" src={player.profilePicture} />
                 <div className="list-player-name">
-                    {myUsername}
+                    {player.user.username}
                 </div>
             </div>
         </li>)
@@ -148,6 +147,7 @@ export default function Lobby() {
                     marginBottom: 20
                 }} onClick={() => {
                     console.log(game.players)
+                    console.log(game.players.findIndex(player => player.id === myPlayer.id))
                     GetCurrentGame()
                 }}>
                     pruebita xd
@@ -165,11 +165,11 @@ export default function Lobby() {
                         transition: "0.15s",
                         marginBottom: 20
                     }} onClick={() => {
-                        if(game.players.length===1){
-                        deleteGame()
+                        if (game.players.length === 1) {
+                            deleteGame()
                         } else
-                        removePlayerFromGame()
-                        
+                            removePlayerFromGame()
+
 
 
                     }}>

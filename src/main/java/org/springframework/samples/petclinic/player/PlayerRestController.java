@@ -59,6 +59,7 @@ public class PlayerRestController {
 		return new ResponseEntity<>(playerService.findPlayerById(id), HttpStatus.OK);
 	}
 
+	//Este creo que al final no hace falta
 	@GetMapping(value = "/{id}/username")
 	public ResponseEntity<String> findUsernameByPlayerId(@PathVariable("id") int id) {
 		return new ResponseEntity<>(playerService.findPlayerById(id).getUser().getUsername(), HttpStatus.OK);
