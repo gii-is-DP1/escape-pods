@@ -111,6 +111,7 @@ export default function Lobby() {
                     marginBottom: 20
                 }} onClick={() => {
                     console.log(game.players)
+                    GetCurrentGame()
                 }}>
                     pruebita xd
                 </Button>
