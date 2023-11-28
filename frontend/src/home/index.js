@@ -128,10 +128,7 @@ export default function Home() {
     async function addPlayerToGame(id) {
 
         const updatedPlayers = waitingGames.find((game) => game.id === id).players
-        console.log(myPlayer)
-        console.log(waitingGames.find((game) => game.id === id).players)
         updatedPlayers.push(myPlayer)
-        console.log(updatedPlayers)
 
         const updatedGame = {
             numPlayers: waitingGames.find((game) => game.id === id).numPlayers,
