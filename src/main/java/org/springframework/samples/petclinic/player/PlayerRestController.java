@@ -43,19 +43,25 @@ public class PlayerRestController {
 	}
 
 	@GetMapping
-	public ResponseEntity<List<Player>> getAllPlayers(@RequestParam(value = "username", required = false) String username) {
-		if(username == null) {
+	public ResponseEntity<List<Player>> getAllPlayers(
+			@RequestParam(value = "username", required = false) String username) {
+		if (username == null) {
 			return new ResponseEntity<>((List<Player>) playerService.findAll(), HttpStatus.OK);
-			
+
 		} else {
 			return new ResponseEntity<>((List<Player>) playerService.findPlayerByUsername(username), HttpStatus.OK);
 		}
 
 	}
 
-	@GetMapping(value = "{playerId}")
-	public ResponseEntity<Player> findById(@PathVariable("playerId") int id) {
+	@GetMapping(value = "/{id}")
+	public ResponseEntity<Player> findById(@PathVariable("id") int id) {
 		return new ResponseEntity<>(playerService.findPlayerById(id), HttpStatus.OK);
+	}
+
+	@GetMapping(value = "/{id}/username")
+	public ResponseEntity<String> findUsernameByPlayerId(@PathVariable("id") int id) {
+		return new ResponseEntity<>(playerService.findPlayerById(id).getUser().getUsername(), HttpStatus.OK);
 	}
 
 	@PostMapping()
