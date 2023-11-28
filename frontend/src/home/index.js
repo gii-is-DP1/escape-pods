@@ -36,18 +36,18 @@ export default function Home() {
     const [myPlayer, setMyPlayer] = useState({});
     const [numPlayers, setNumPlayers] = useState(2);
     const jwt = tokenService.getLocalAccessToken();
-    const myUsername = jwt_decode(jwt).sub;
 
     useEffect(() => {
         if (jwt) {
             setRoles(jwt_decode(jwt).authorities);
-            GetCurrentPlayer(myUsername)
+            GetCurrentPlayer()
             getGames()
         }
     }, [jwt])
 
     function GetCurrentPlayer() {
-        fetch("/api/v1/players?username=" + myUsername, {
+        const username = jwt_decode(jwt).sub
+        fetch("/api/v1/players?username=" + username, {
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${jwt}`,
@@ -207,7 +207,7 @@ export default function Home() {
             }}
                 onClick={() => {
                     setVisible(true)
-                    fetchAllGames()
+                    getGames()
                 }}
             >
 
