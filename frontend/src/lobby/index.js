@@ -48,6 +48,7 @@ export default function Lobby() {
         setGame(await fetchCurrentGame())
     }
 
+    
     async function fetchCurrentGame() {
         const response = await fetch(`/api/v1/games/${gameId}`, {
             headers: {
@@ -59,6 +60,31 @@ export default function Lobby() {
         const fetchedGame = await response.json();
         return fetchedGame
     }
+
+
+    async function removePlayerFromGame() {
+
+        const updatedPlayers = game.players
+        updatedPlayers.splice(game.players.indexOf(myPlayer),1)
+
+        const updatedGame = {
+            numPlayers: game.numPlayers,
+            start: game.start,
+            finish: game.finish,
+            status: game.status,
+            players: updatedPlayers
+        }
+        await fetch(`/api/v1/games/${game.id}`, {
+            headers: {
+                "Authorization": ' Bearer ${ jwt }',
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            method: 'PUT',
+            body: JSON.stringify(updatedGame)
+        });
+    }
+
 
     const playerList = JSON.stringify(game) === "{}" ? null : game.players.map(player =>   //se está comprobando si game es un objeto vacío para que no de problemas al leer undefined de game.players antes de que el estado adquiera valor
         <li key={player.id}>
@@ -128,6 +154,7 @@ export default function Lobby() {
                         transition: "0.15s",
                         marginBottom: 20
                     }} onClick={() => {
+                        removePlayerFromGame()
 
 
                     }}>
