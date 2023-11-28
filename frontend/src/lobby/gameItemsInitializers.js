@@ -102,41 +102,6 @@ class GameItemsInitializers {
         }
         
     }
-    /*
-    getLineOfGameByNumber(lines, num) {
-       
-        let res = {}
-        for (let i = 0; i < lines.length; i++) {
-            console.log(lines[i])
-            if (lines[i].number === num) {
-                res = lines[i];
-                console.log(lines[i].number)
-            }
-        }
-        return res;
-    }*/
-    generateines(game,jwt){
-        var lines= []
-    
-        fetch("/api/v1/lines?gameid=" + game.id, {
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${jwt}`,
-            },
-            method: "GET",
-           
-        })
-            .then(response => response.json())
-            .then(data=> {
-                for(const l of data){
-                   lines.push(l);
-                   
-                }
-                console.log(lines)
-                console.log(lines.find(line=> {return line.number===1}))
-            })
-          return lines;
-    }
 
     async createSectors(game, jwt) {
 
@@ -156,31 +121,166 @@ class GameItemsInitializers {
                    lines.push(l);
                    
                 }
-                console.log(lines)
-                console.log(lines.find(line=> {return line.number===1}))
+                
             })
           
+        let sectors=[]
 
         const sector1 = {
             number:1,
             scrap: false,
-            game: game,
-            lines: [lines.find(line=> {return line.number===1}),
-                lines.find(line=> {return line.number===2}),
-                lines.find(line=> {return line.number===3}) ]
+            lines: [lines.find(line=>  line.number===1),
+                lines.find(line=> line.number===4),
+                lines.find(line=>  line.number===5)],
+                game:game
         }
-        console.log(sector1)
+        sectors.push(sector1)
 
-        fetch("/api/v1/sectors", {
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${jwt}`,
-            },
-            method: "POST",
-            body: JSON.stringify(sector1)
-        })
+        const sector2 = {
+            number:2,
+            scrap: false,
+            lines: [lines.find(line=>  line.number===1),
+                lines.find(line=> line.number===2),
+                lines.find(line=>  line.number===3)],
+                game:game
+        }
+        sectors.push(sector2)
+
+        const sector3 = {
+            number:3,
+            scrap: false,
+            lines: [lines.find(line=>  line.number===3),
+                lines.find(line=> line.number===6),
+                lines.find(line=>  line.number===7)],
+                game:game
+        }
+        sectors.push(sector3)
+
+        const sector4 = {
+            number:4,
+            scrap: false,
+            lines: [lines.find(line=>  line.number===4),
+                lines.find(line=> line.number===8),
+                lines.find(line=>  line.number===10),
+                lines.find(line=>  line.number===11)],
+                game:game
+        }
+        sectors.push(sector4)
+
+        const sector5 = {
+            number:5,
+            scrap: false,
+            lines: [lines.find(line=>  line.number===2),
+                lines.find(line=> line.number===5),
+                lines.find(line=>  line.number===6),
+                lines.find(line=>  line.number===8),
+                lines.find(line=> line.number===9),
+                lines.find(line=>  line.number===12)],
+                game:game
+        }
+        sectors.push(sector5)
+
+        const sector6 = {
+            number:6,
+            scrap: false,
+            lines: [lines.find(line=>  line.number===7),
+                lines.find(line=> line.number===9),
+                lines.find(line=>  line.number===13),
+                lines.find(line=>  line.number===14)],
+                game:game
+        }
+        sectors.push(sector6)
+
+        const sector7 = {
+            number:7,
+            scrap: false,
+            lines: [lines.find(line=>  line.number===10),
+                lines.find(line=> line.number===15),
+                lines.find(line=>  line.number===18),
+                lines.find(line=>  line.number===19)],
+                game:game
+        }
+        sectors.push(sector7)
+
+        const sector8 = {
+            number:8,
+            scrap: false,
+            lines: [lines.find(line=>  line.number===12),
+                lines.find(line=> line.number===11),
+                lines.find(line=>  line.number===13),
+                lines.find(line=>  line.number===15),
+                lines.find(line=>  line.number===16),
+                lines.find(line=>  line.number===17)],
+                game:game
+        }
+        sectors.push(sector8)
+
+        const sector9 = {
+            number:9,
+            scrap: false,
+            lines: [lines.find(line=>  line.number===14),
+                lines.find(line=> line.number===17),
+                lines.find(line=>  line.number===20),
+                lines.find(line=>  line.number===21)],
+                game:game
+        }
+        sectors.push(sector9)
+
+        const sector10 = {
+            number:10,
+            scrap: false,
+            lines: [lines.find(line=>  line.number===16),
+                lines.find(line=> line.number===19),
+                lines.find(line=>  line.number===20),
+                lines.find(line=>  line.number===22),
+                lines.find(line=>  line.number===23),
+                lines.find(line=>  line.number===24)],
+                game:game
+        }
+        sectors.push(sector10)
+
+        const sector11 = {
+            number:11,
+            scrap: false,
+            lines: [lines.find(line=>  line.number===25),
+                lines.find(line=> line.number===22),
+                lines.find(line=>  line.number===18)],
+                game:game
+        }
+        sectors.push(sector11)
+
+        const sector12 = {
+            number:12,
+            scrap: false,
+            lines: [lines.find(line=>  line.number===25),
+                lines.find(line=> line.number===26),
+                lines.find(line=>  line.number===23)],
+                game:game
+        }
+        sectors.push(sector12)
+
+        const sector13 = {
+            number:13,
+            scrap: false,
+            lines: [lines.find(line=>  line.number===26),
+                lines.find(line=> line.number===21),
+                lines.find(line=>  line.number===24)],
+                game:game
+        }
+        sectors.push(sector13)
         
-
+        for(let i=0; i< sectors.length; i++){
+            fetch("/api/v1/sectors", {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${jwt}`,
+                },
+                method: "POST",
+                body: JSON.stringify(sectors[i])
+            })
+    }
+        
+    
     }
 }
 
