@@ -147,7 +147,7 @@ export default function Lobby() {
                     alignSelf: "center",
                     marginBottom: 20
                 }} onClick={() => {
-                    CreateGame()
+                    
                     console.log(game)
                    itemsInitializers.GameItemsInitializer(game,jwt)
                 }}>
