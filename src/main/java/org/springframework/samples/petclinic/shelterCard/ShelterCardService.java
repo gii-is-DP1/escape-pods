@@ -38,6 +38,11 @@ public class ShelterCardService {
         return sc.findByType(type);
     }
 
+     @Transactional(readOnly=true)
+    public List<ShelterCard> getShelterCardByGameId(Integer id){
+        return sc.findByGameId(id);
+    }
+
     @Transactional()
     public void delete(Integer id) {
         sc.deleteById(id);

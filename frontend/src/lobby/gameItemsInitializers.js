@@ -101,7 +101,7 @@ class GameItemsInitializers {
         }
     }
 
-    async getLines(game,jwt){
+    async getLines(game, jwt) {
         const fetchedLines = await fetch("/api/v1/lines?gameid=" + game.id, {
             headers: {
                 "Content-Type": "application/json",
@@ -258,7 +258,7 @@ class GameItemsInitializers {
             game: game
         }
         sectors.push(sector13)
-        
+
         for (let i = 0; i < sectors.length; i++) {
             fetch("/api/v1/sectors", {
                 headers: {
@@ -389,42 +389,42 @@ class GameItemsInitializers {
     async createShelters(game, jwt) {
         var shelters = []
         const types = this.shuffleColors(["YELLOW", "PINK", "BLUE", "GREEN", "ORANGE"])
-        const sectors= await this.getSectors(game,jwt)
+        const sectors = await this.getSectors(game, jwt)
 
-       
+
         const shelter1 = {
-            explosion:3,
-            type:types[0],
-            game:game,
+            explosion: 3,
+            type: types[0],
+            game: game,
             sector: sectors.find(sector => sector.number === 11)
         }
         shelters.push(shelter1)
 
         const shelter2 = {
-            explosion:4,
-            type:types[0],
-            game:game,
+            explosion: 4,
+            type: types[0],
+            game: game,
             sector: sectors.find(sector => sector.number === 12)
         }
         shelters.push(shelter2)
 
         const shelter3 = {
-            explosion:3,
-            type:types[0],
-            game:game,
+            explosion: 3,
+            type: types[0],
+            game: game,
             sector: sectors.find(sector => sector.number === 12)
         }
         shelters.push(shelter3)
 
         const shelter4 = {
-            explosion:5,
-            type:types[0],
-            game:game,
+            explosion: 4,
+            type: types[0],
+            game: game,
             sector: sectors.find(sector => sector.number === 13)
         }
         shelters.push(shelter4)
 
-        for(let i=0; i<shelters.length; i++){
+        for (let i = 0; i < shelters.length; i++) {
             fetch("/api/v1/shelterCards", {
                 headers: {
                     "Content-Type": "application/json",
@@ -437,14 +437,69 @@ class GameItemsInitializers {
 
     }
 
-    async GameItemsInitializer(game,jwt){
-        await this.createBeacons(game,jwt)
-        await this.createLines(game,jwt)
-        await this.createSectors(game,jwt)
-        await this.createPods(game, jwt)
+    async getShelters(game, jwt) {
+        const shelters = await fetch("/api/v1/shelterCards?gameid=" + game.id, {
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${jwt}`,
+            },
+            method: "GET",
+
+        })
+        return await shelters.json()
+    }
+
+    async createSlotInfos(game, jwt) {
+        const shelters = await this.getShelters(game, jwt)
+
+
+        for (let i = 0; i < shelters.length; i++) {
+            for (let j = 0; j < 5; j++) {
+
+                let randomRole = this.shuffleColors(["CAPTAIN", "ENGINEER", "SCIENTIST"])
+                let score = 2;
+                if (j < 2) {
+                    score = Math.round(Math.random() * (5 - 3) + 3)
+
+                } else {
+                    score = Math.round(Math.random() * (4 - 2) + 2)
+                    /* EN CASO DE QUERER IPLEMNETAR QUE LOS 2 ULTIMOS ESPACIOS DEL REFUGIO ROSA NO NECESITEN ROL
+                    if(j>2 && shelters[i].type=="PINK"){
+                        roleNeeded=false;
+                    }*/
+                }
+
+                fetch("/api/v1/slotInfo", {
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${jwt}`,
+                    },
+                    method: "POST",
+                    body: JSON.stringify({
+                        position: j,
+                        slotScore: score,
+                        role: randomRole[0],
+                        shelterCard: shelters[i],
+                        roleNeeded: true
+
+                    })
+                    
+                })
+                console.log(shelters[i])
+            }
+        }
+    }
+
+    async GameItemsInitializer(game, jwt) {
         await this.createGamePlayers(game, jwt)
-        await this.createCrewmates(game, jwt)
+        await this.createBeacons(game, jwt)
+        await this.createLines(game, jwt)
+        await this.createPods(game, jwt)
+        await this.createSectors(game, jwt)
         await this.createShelters(game, jwt)
+        
+        await this.createCrewmates(game, jwt)
+        await this.createSlotInfos(game, jwt)
     }
 
 }

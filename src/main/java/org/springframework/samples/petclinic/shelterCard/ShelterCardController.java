@@ -38,7 +38,8 @@ public class ShelterCardController {
     }
 
     @GetMapping
-    public List<ShelterCard> getAllShelterCards(@ParameterObject @RequestParam(value="status",required = false) Type type){
+    public List<ShelterCard> getAllShelterCards(@ParameterObject @RequestParam(value="status",required = false) Type type,
+    @ParameterObject @RequestParam(value="gameid",required = false) Integer gameid){
         if(type!=null){
             switch(type){
                 case PINK:
@@ -52,8 +53,9 @@ public class ShelterCardController {
                 default:
                     return scs.getShelterCardByType(Type.GREEN);
             }
-        }else 
-            return scs.getAllShelterCards();
+        }else if(type==null && gameid!=null ){
+            return scs.getShelterCardByGameId(gameid);}
+        return scs.getAllShelterCards();
     }
 
     @GetMapping("/{id}")
