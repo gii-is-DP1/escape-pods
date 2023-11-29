@@ -374,32 +374,29 @@ class GameItemsInitializers {
         }
     }
 
-    async createShelters(game, jwt) {
-        var sectors = []
-        const types = this.shuffleColors(["YELLOW", "PINK", "BLUE", "GREEN", "ORANGE"])
-        let shelters=[]
-
-        await fetch("/api/v1/sectors?gameid=" + game.id, {
+    async getSectors(game, jwt) {
+        const sectors = await fetch("/api/v1/sectors?gameid=" + game.id, {
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${jwt}`,
             },
             method: "GET",
 
-        }).then(response => response.json())
-            .then(data => {
-                for (const l of data) {
-                    sectors.push(l);
+        })
+        return await sectors.json()
+    }
 
-                }
-                console.log(sectors)
+    async createShelters(game, jwt) {
+        var shelters = []
+        const types = this.shuffleColors(["YELLOW", "PINK", "BLUE", "GREEN", "ORANGE"])
+        const sectors= await this.getSectors(game,jwt)
 
-            })
+       
         const shelter1 = {
             explosion:3,
             type:types[0],
             game:game,
-            sector:sectors.find(sector => sector.number === 11)
+            sector: sectors.find(sector => sector.number === 11)
         }
         shelters.push(shelter1)
 
@@ -407,7 +404,7 @@ class GameItemsInitializers {
             explosion:4,
             type:types[0],
             game:game,
-            sector:sectors.find(sector => sector.number === 12)
+            sector: sectors.find(sector => sector.number === 12)
         }
         shelters.push(shelter2)
 
@@ -415,7 +412,7 @@ class GameItemsInitializers {
             explosion:3,
             type:types[0],
             game:game,
-            sector:sectors.find(sector => sector.number === 12)
+            sector: sectors.find(sector => sector.number === 12)
         }
         shelters.push(shelter3)
 
@@ -423,7 +420,7 @@ class GameItemsInitializers {
             explosion:5,
             type:types[0],
             game:game,
-            sector:sectors.find(sector => sector.number === 13)
+            sector: sectors.find(sector => sector.number === 13)
         }
         shelters.push(shelter4)
 
@@ -439,7 +436,20 @@ class GameItemsInitializers {
         }
 
     }
+
+    async GameItemsInitializer(game,jwt){
+        await this.createBeacons(game,jwt)
+        await this.createLines(game,jwt)
+        await this.createSectors(game,jwt)
+        await this.createPods(game, jwt)
+        await this.createGamePlayers(game, jwt)
+        await this.createCrewmates(game, jwt)
+        await this.createShelters(game, jwt)
+    }
+
 }
+
+
 
 const itemsInitializers = new GameItemsInitializers();
 export default itemsInitializers;

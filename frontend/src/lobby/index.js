@@ -173,11 +173,7 @@ export default function Lobby() {
                 }} onClick={() => {
                     CreateGame()
                     console.log(game)
-                    itemsInitializers.createLines(game,jwt)
-                    itemsInitializers.createSectors(game,jwt)
-                    itemsInitializers.createPods(game,jwt)
-                    itemsInitializers.createGamePlayers(game,jwt)
-                    itemsInitializers.createCrewmates(game,jwt)
+                   itemsInitializers.GameItemsInitializer(game,jwt)
                 }}>
                     Start Game
                 </Button>

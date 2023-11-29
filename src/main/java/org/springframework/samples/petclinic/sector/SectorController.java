@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -33,54 +32,54 @@ public class SectorController {
     SectorService scs;
 
     @Autowired
-    public SectorController(SectorService scs){
-        this.scs=scs;
+    public SectorController(SectorService scs) {
+        this.scs = scs;
     }
 
     @GetMapping
-    public List<Sector> getAllSectors(@ParameterObject @RequestParam(value="status",required = false) Boolean scrap,
-    @ParameterObject @RequestParam(value="gameid",required = false) Integer gameid ){
-        if(scrap!=null){
+    public List<Sector> getAllSectors(@ParameterObject @RequestParam(value = "status", required = false) Boolean scrap,
+            @ParameterObject @RequestParam(value = "gameid", required = false) Integer gameid) {
+        if (scrap != null) {
             return scs.getSectorScrapped(scrap);
-            }else if(scrap==null && gameid!=null){
-                return scs.getAllSectorsByGameId(gameid);
-            }
-            return scs.getAllSectors();
+        } else if (scrap == null && gameid != null) {
+            return scs.getAllSectorsByGameId(gameid);
+        }
+        return scs.getAllSectors();
     }
 
     @GetMapping("/{id}")
-    public Sector getSectorById(@PathVariable("id")Integer id){
-        Optional<Sector> g=scs.getSectorById(id);
-        if(!g.isPresent())
+    public Sector getSectorById(@PathVariable("id") Integer id) {
+        Optional<Sector> g = scs.getSectorById(id);
+        if (!g.isPresent())
             throw new ResourceNotFoundException("Sector", "id", id);
-            
+
         return g.get();
     }
 
     @PostMapping()
-    public ResponseEntity<Sector> createSector(@Valid @RequestBody Sector g){
-        g=scs.save(g);
+    public ResponseEntity<Sector> createSector(@Valid @RequestBody Sector g) {
+        g = scs.save(g);
         URI location = ServletUriComponentsBuilder
-                    .fromCurrentRequest()
-                    .path("/{id}")
-                    .buildAndExpand(g.getId())
-                    .toUri();
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(g.getId())
+                .toUri();
         return ResponseEntity.created(location).body(g);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateSector(@Valid @RequestBody Sector g,@PathVariable("id")Integer id){
-        Sector gToUpdate=getSectorById(id);
-        BeanUtils.copyProperties(g,gToUpdate, "id");
+    public ResponseEntity<Void> updateSector(@Valid @RequestBody Sector g, @PathVariable("id") Integer id) {
+        Sector gToUpdate = getSectorById(id);
+        BeanUtils.copyProperties(g, gToUpdate, "id");
         scs.save(gToUpdate);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteSector(@PathVariable("id")Integer id){
-        if(getSectorById(id)!=null)
+    public ResponseEntity<Void> deleteSector(@PathVariable("id") Integer id) {
+        if (getSectorById(id) != null)
             scs.delete(id);
         return ResponseEntity.noContent().build();
     }
-      
+
 }
