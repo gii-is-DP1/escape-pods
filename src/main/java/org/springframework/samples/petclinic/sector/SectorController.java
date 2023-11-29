@@ -38,10 +38,13 @@ public class SectorController {
     }
 
     @GetMapping
-    public List<Sector> getAllSectors(@ParameterObject @RequestParam(value="status",required = false) Boolean scrap){
+    public List<Sector> getAllSectors(@ParameterObject @RequestParam(value="status",required = false) Boolean scrap,
+    @ParameterObject @RequestParam(value="gameid",required = false) Integer gameid ){
         if(scrap!=null){
             return scs.getSectorScrapped(scrap);
-            } 
+            }else if(scrap==null && gameid!=null){
+                return scs.getAllSectorsByGameId(gameid);
+            }
             return scs.getAllSectors();
     }
 

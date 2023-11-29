@@ -174,6 +174,9 @@ export default function Lobby() {
                     CreateGame()
                     itemsInitializers.createLines(game,jwt)
                     itemsInitializers.createSectors(game,jwt)
+                    itemsInitializers.createPods(game,jwt)
+                    itemsInitializers.createGamePlayers(game,jwt)
+                    itemsInitializers.createCrewmates(game,jwt)
                     console.log(game)
                 }}>
                     Start Game

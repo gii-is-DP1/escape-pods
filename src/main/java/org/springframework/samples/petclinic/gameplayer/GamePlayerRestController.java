@@ -9,6 +9,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
+import org.springframework.samples.petclinic.player.Player;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,18 +33,21 @@ import jakarta.validation.Valid;
 @SecurityRequirement(name = "bearerAuth")
 public class GamePlayerRestController {
     GamePlayerService ps;
+
     @Autowired
-    public GamePlayerRestController(GamePlayerService ps){
-        this.ps=ps;
+    public GamePlayerRestController(GamePlayerService ps) {
+        this.ps = ps;
     }
 
     @GetMapping
-    public List<GamePlayer> getAllPlayers(@ParameterObject() @RequestParam(value="color",required = false) Color color){
-        if(color!=null){
-            switch(color){
+    public List<GamePlayer> getAllPlayers(
+            @ParameterObject() @RequestParam(value = "color", required = false) Color color,
+            @ParameterObject() @RequestParam(value = "gameid", required = false) Integer gameid) {
+        if (color != null) {
+            switch (color) {
                 case PINK:
                     return ps.getPinkPlayer();
-                    
+
                 case BLACK:
                     return ps.getBlackPlayer();
                 case WHITE:
@@ -53,45 +57,48 @@ public class GamePlayerRestController {
                 default:
                     return ps.getYellowPlayer();
             }
-        }else{
-            return ps.getAllPlayers();
+        } else if (color == null && gameid != null) {
+            return ps.getGamePlayersByGameId(gameid);
         }
+        return ps.getAllPlayers();
     }
 
+    
+
     @GetMapping("/{id}")
-    public GamePlayer getPlayerById(@PathVariable("id")Integer id){
-        Optional<GamePlayer> p=ps.getPlayerById(id);
-        if(!p.isPresent())
+    public GamePlayer getPlayerById(@PathVariable("id") Integer id) {
+        Optional<GamePlayer> p = ps.getPlayerById(id);
+        if (!p.isPresent())
             throw new ResourceNotFoundException("gamePlayer", "id", id);
         return p.get();
     }
 
     @PostMapping()
-    public ResponseEntity<GamePlayer> createGame(@Valid @RequestBody GamePlayer p){
-        p=ps.save(p);
+    public ResponseEntity<GamePlayer> createGame(@Valid @RequestBody GamePlayer p) {
+        p = ps.save(p);
         URI location = ServletUriComponentsBuilder
-                    .fromCurrentRequest()
-                    .path("/{id}")
-                    .buildAndExpand(p.getId())
-                    .toUri();
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(p.getId())
+                .toUri();
         return ResponseEntity.created(location).body(p);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updatePlayer(@Valid @RequestBody GamePlayer p,@PathVariable("id")Integer id){
-        GamePlayer pToUpdate=getPlayerById(id);
-        //el copy properties parece que necesita los datos a alterar,
-        //un nombre de la actualizacion y el id del juego que se actualizara
-        BeanUtils.copyProperties(p,pToUpdate, "id");
+    public ResponseEntity<Void> updatePlayer(@Valid @RequestBody GamePlayer p, @PathVariable("id") Integer id) {
+        GamePlayer pToUpdate = getPlayerById(id);
+        // el copy properties parece que necesita los datos a alterar,
+        // un nombre de la actualizacion y el id del juego que se actualizara
+        BeanUtils.copyProperties(p, pToUpdate, "id");
         ps.save(pToUpdate);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePlayer(@PathVariable("id")Integer id){
-        if(getPlayerById(id)!=null)
+    public ResponseEntity<Void> deletePlayer(@PathVariable("id") Integer id) {
+        if (getPlayerById(id) != null)
             ps.delete(id);
         return ResponseEntity.noContent().build();
     }
-    
+
 }

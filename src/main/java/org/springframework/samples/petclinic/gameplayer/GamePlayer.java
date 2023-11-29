@@ -4,6 +4,8 @@ package org.springframework.samples.petclinic.gameplayer;
 import org.h2.engine.User;
 import org.springframework.samples.petclinic.game.Game;
 import org.springframework.samples.petclinic.model.BaseEntity;
+import org.springframework.samples.petclinic.player.Player;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
@@ -26,9 +28,9 @@ public class GamePlayer extends BaseEntity {
     @NotNull
     Color color;
 
-//    @NotNull
-//    @OneToOne
-//    User user;
+    @NotNull
+    @OneToOne
+    Player player;
     
     @ManyToOne
     @NotNull
