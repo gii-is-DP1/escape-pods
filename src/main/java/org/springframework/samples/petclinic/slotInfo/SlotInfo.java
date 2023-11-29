@@ -10,8 +10,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -29,10 +29,16 @@ public class SlotInfo extends BaseEntity{
     Role role;
 
     @NotNull
+    @Min(2)
+    @Max(5)
+    Integer slotScore;
+    
+    @NotNull
     Boolean roleNeeded;
 
-    @NotNull
+    
     @ManyToOne
+    @NotNull
     ShelterCard shelter;
     
 }

@@ -25,7 +25,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/v1/slotInfo")
+@RequestMapping("/api/v1/slotInfos")
 @Tag(name = "SlotInfos", description = "API for the  management of SlotInfos.")
 @SecurityRequirement(name = "bearerAuth")
 public class SlotInfoController {

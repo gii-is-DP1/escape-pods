@@ -452,10 +452,11 @@ class GameItemsInitializers {
     async createSlotInfos(game, jwt) {
         const shelters = await this.getShelters(game, jwt)
 
-
+        let slotInfos=[]
         for (let i = 0; i < shelters.length; i++) {
+            let shelterI= shelters[i]
             for (let j = 0; j < 5; j++) {
-
+                
                 let randomRole = this.shuffleColors(["CAPTAIN", "ENGINEER", "SCIENTIST"])
                 let score = 2;
                 if (j < 2) {
@@ -468,35 +469,39 @@ class GameItemsInitializers {
                         roleNeeded=false;
                     }*/
                 }
-
-                fetch("/api/v1/slotInfo", {
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${jwt}`,
-                    },
-                    method: "POST",
-                    body: JSON.stringify({
-                        position: j,
-                        slotScore: score,
-                        role: randomRole[0],
-                        shelterCard: shelters[i],
-                        roleNeeded: true
-
-                    })
-                    
-                })
-                console.log(shelters[i])
+                const slotInfo={
+                    position: j,
+                    slotScore: score,
+                    role: randomRole[0],
+                    shelter: shelterI,
+                    roleNeeded: true
+                }
+                slotInfos.push(slotInfo)
             }
+        }
+        console.log(JSON.stringify(slotInfos[17]))
+        for(let i=0; i<slotInfos.length; i++){
+            fetch("/api/v1/slotInfos", {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${jwt}`,
+                },
+                method: "POST",
+                body: JSON.stringify(slotInfos[i])
+                
+            })
         }
     }
 
     async GameItemsInitializer(game, jwt) {
         await this.createGamePlayers(game, jwt)
-        await this.createBeacons(game, jwt)
         await this.createLines(game, jwt)
-        await this.createPods(game, jwt)
+        await this.createBeacons(game, jwt)
+        
         await this.createSectors(game, jwt)
         await this.createShelters(game, jwt)
+        await this.createPods(game, jwt)
+        
         
         await this.createCrewmates(game, jwt)
         await this.createSlotInfos(game, jwt)
