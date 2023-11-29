@@ -19,7 +19,7 @@ public class GamePlayerService {
     }
 
     @Transactional(readOnly = true)
-    public List<GamePlayer> getAllPlayers() {
+    public List<GamePlayer> getAllGamePlayers() {
         return pr.findAll();
     }
     
@@ -31,7 +31,7 @@ public class GamePlayerService {
     }
 
     @Transactional(readOnly = true)
-    public Optional<GamePlayer> getPlayerById(Integer id) {
+    public Optional<GamePlayer> getGamePlayerById(Integer id) {
         return pr.findById(id);
     }
 
@@ -41,12 +41,10 @@ public class GamePlayerService {
     }
 
     @Transactional(readOnly = true)
-    public GamePlayer getPlayerByColor(String code) {
+    public GamePlayer getGamePlayerByColor(String code) {
         List<GamePlayer> players = pr.findByColor(code);
         return players.isEmpty() ? null : players.get(0);
     }
-
-   
 
     @Transactional()
     public void delete(Integer id) {
@@ -54,27 +52,27 @@ public class GamePlayerService {
     }
 
     @Transactional(readOnly = true)
-    public List<GamePlayer> getPinkPlayer() {
+    public List<GamePlayer> getPinkGamePlayer() {
         return pr.findByColor("pink");
     }
 
     @Transactional(readOnly = true)
-    public List<GamePlayer> getBlackPlayer() {
+    public List<GamePlayer> getBlackGamePlayer() {
         return pr.findByColor("black");
     }
 
     @Transactional(readOnly = true)
-    public List<GamePlayer> getWhitePlayer() {
+    public List<GamePlayer> getWhiteGamePlayer() {
         return pr.findByColor("white");
     }
 
     @Transactional(readOnly = true)
-    public List<GamePlayer> getBluePlayer() {
+    public List<GamePlayer> getBlueGamePlayer() {
         return pr.findByColor("blue");
     }
 
     @Transactional(readOnly = true)
-    public List<GamePlayer> getYellowPlayer() {
+    public List<GamePlayer> getYellowGamePlayer() {
         return pr.findByColor("yellow");
     }
 }

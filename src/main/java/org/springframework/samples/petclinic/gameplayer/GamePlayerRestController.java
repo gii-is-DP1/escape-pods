@@ -40,41 +40,40 @@ public class GamePlayerRestController {
     }
 
     @GetMapping
-    public List<GamePlayer> getAllPlayers(
+    public List<GamePlayer> getAllGamePlayers(
             @ParameterObject() @RequestParam(value = "color", required = false) Color color,
             @ParameterObject() @RequestParam(value = "gameid", required = false) Integer gameid) {
         if (color != null) {
             switch (color) {
                 case PINK:
-                    return ps.getPinkPlayer();
-
+                    return ps.getPinkGamePlayer();
                 case BLACK:
-                    return ps.getBlackPlayer();
+                    return ps.getBlackGamePlayer();
                 case WHITE:
-                    return ps.getWhitePlayer();
+                    return ps.getWhiteGamePlayer();
                 case BLUE:
-                    return ps.getBluePlayer();
+                    return ps.getBlueGamePlayer();
                 default:
-                    return ps.getYellowPlayer();
+                    return ps.getYellowGamePlayer();
             }
         } else if (color == null && gameid != null) {
             return ps.getGamePlayersByGameId(gameid);
         }
-        return ps.getAllPlayers();
+        return ps.getAllGamePlayers();
     }
 
     
 
     @GetMapping("/{id}")
-    public GamePlayer getPlayerById(@PathVariable("id") Integer id) {
-        Optional<GamePlayer> p = ps.getPlayerById(id);
+    public GamePlayer getGamePlayerById(@PathVariable("id") Integer id) {
+        Optional<GamePlayer> p = ps.getGamePlayerById(id);
         if (!p.isPresent())
             throw new ResourceNotFoundException("gamePlayer", "id", id);
         return p.get();
     }
 
     @PostMapping()
-    public ResponseEntity<GamePlayer> createGame(@Valid @RequestBody GamePlayer p) {
+    public ResponseEntity<GamePlayer> createGamePlayer(@Valid @RequestBody GamePlayer p) {
         p = ps.save(p);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -85,8 +84,8 @@ public class GamePlayerRestController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updatePlayer(@Valid @RequestBody GamePlayer p, @PathVariable("id") Integer id) {
-        GamePlayer pToUpdate = getPlayerById(id);
+    public ResponseEntity<Void> updateGamePlayer(@Valid @RequestBody GamePlayer p, @PathVariable("id") Integer id) {
+        GamePlayer pToUpdate = getGamePlayerById(id);
         // el copy properties parece que necesita los datos a alterar,
         // un nombre de la actualizacion y el id del juego que se actualizara
         BeanUtils.copyProperties(p, pToUpdate, "id");
@@ -95,8 +94,8 @@ public class GamePlayerRestController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePlayer(@PathVariable("id") Integer id) {
-        if (getPlayerById(id) != null)
+    public ResponseEntity<Void> deleteGamePlayer(@PathVariable("id") Integer id) {
+        if (getGamePlayerById(id) != null)
             ps.delete(id);
         return ResponseEntity.noContent().build();
     }
