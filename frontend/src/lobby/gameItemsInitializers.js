@@ -317,6 +317,7 @@ class GameItemsInitializers {
             })
         }
     }
+
     shuffleColors(colors) {
         return colors.sort(() => Math.random() - 0.5);
     }
@@ -343,29 +344,22 @@ class GameItemsInitializers {
         }
     }
 
-
-    async createCrewmates(game, jwt) {
-
-        const roles = ["CAPTAIN", "ENGINEER", "SCIENTIST"]
-        const players = game.players
-
-        
-
-        const gamePlayers = []
-        await fetch("/api/v1/gamePlayers?gameid=" + game.id, {
+    async getGamePlayers(game, jwt) {
+        const gamePlayers = await fetch("/api/v1/gamePlayers?gameid=" + game.id, {
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${jwt}`,
             },
             method: "GET",
         })
-            .then(response => response.json())
-            .then(data => {
-                for (const l of data) {
-                    gamePlayers.push(l);
-                }
-                console.log(gamePlayers)
-            })
+        return gamePlayers.json()
+    }
+
+    async createCrewmates(game, jwt) {
+
+        const roles = ["CAPTAIN", "ENGINEER", "SCIENTIST"]
+        const players = game.players
+        const gamePlayers = await this.getGamePlayers(game, jwt)
 
         for (let i = 0; i < players.length; i++) {
             for (let j = 0; j < roles.length; j++) {
@@ -382,8 +376,6 @@ class GameItemsInitializers {
                             role: roles[j],
                             player: gamePlayers[i],
                             game: game,
-                            pod: null,
-                            ShelterCard: null
                         })
                     })
 

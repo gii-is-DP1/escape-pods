@@ -172,12 +172,12 @@ export default function Lobby() {
                     backgroundColor: "#CFFF68", border: "none", width: 300, fontSize: 35, borderRadius: 20, height: 100, boxShadow: "5px 5px 5px #00000020", textShadow: "2px 2px 2px #00000020", transition: "0.15s",
                 }} onClick={() => {
                     CreateGame()
+                    console.log(game)
                     itemsInitializers.createLines(game,jwt)
                     itemsInitializers.createSectors(game,jwt)
                     itemsInitializers.createPods(game,jwt)
                     itemsInitializers.createGamePlayers(game,jwt)
                     itemsInitializers.createCrewmates(game,jwt)
-                    console.log(game)
                 }}>
                     Start Game
                 </Button>
