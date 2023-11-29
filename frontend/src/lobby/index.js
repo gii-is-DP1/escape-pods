@@ -147,8 +147,9 @@ export default function Lobby() {
                     alignSelf: "center",
                     marginBottom: 20
                 }} onClick={() => {
-                    itemsInitializers.createBeacons(game, jwt)
+                    CreateGame()
                     console.log(game)
+                   itemsInitializers.GameItemsInitializer(game,jwt)
                 }}>
                     START GAME
                 </Button>

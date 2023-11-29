@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.samples.petclinic.game.Game;
+import org.springframework.samples.petclinic.game.GameRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class LineService {
     
     LineRepository lr;
-
+    GameRepository gr;
     @Autowired
     public LineService(LineRepository lr){
         this.lr=lr;
@@ -38,5 +40,9 @@ public class LineService {
     @Transactional()
     public void delete(Integer id) {
         lr.deleteById(id);
+    }
+    @Transactional()
+    public List<Line> getAllLinesByGameId(Integer gameId) {
+        return lr.findByGameId(gameId);
     }
 }

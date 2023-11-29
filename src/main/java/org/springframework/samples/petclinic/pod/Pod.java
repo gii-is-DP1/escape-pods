@@ -10,8 +10,12 @@ import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
+@Getter
+@Setter
 public class Pod extends BaseEntity{
     @NotNull
     @Max(3)
@@ -24,7 +28,6 @@ public class Pod extends BaseEntity{
     Integer capacity;
 
     @OneToOne
-    @NotNull
     Sector sector;
 
     @ManyToOne

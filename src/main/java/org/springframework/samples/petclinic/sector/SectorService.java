@@ -39,6 +39,11 @@ public class SectorService {
     }
 
     @Transactional()
+    public List<Sector> getAllSectorsByGameId(Integer gameId) {
+        return s.findByGameId(gameId);
+    }
+
+    @Transactional()
     public void delete(Integer id) {
         s.deleteById(id);
     }

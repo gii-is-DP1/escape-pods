@@ -14,12 +14,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -37,7 +37,8 @@ public class ShelterCardController {
     }
 
     @GetMapping
-    public List<ShelterCard> getAllShelterCards(@ParameterObject @RequestParam(value="status",required = false) Type type){
+    public List<ShelterCard> getAllShelterCards(@ParameterObject @RequestParam(value="status",required = false) Type type,
+    @ParameterObject @RequestParam(value="gameid",required = false) Integer gameid){
         if(type!=null){
             switch(type){
                 case PINK:
@@ -51,8 +52,9 @@ public class ShelterCardController {
                 default:
                     return scs.getShelterCardByType(Type.GREEN);
             }
-        }else 
-            return scs.getAllShelterCards();
+        }else if(type==null && gameid!=null ){
+            return scs.getShelterCardByGameId(gameid);}
+        return scs.getAllShelterCards();
     }
 
     @GetMapping("/{id}")
