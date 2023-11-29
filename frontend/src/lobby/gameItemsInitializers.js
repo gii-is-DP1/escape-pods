@@ -83,12 +83,11 @@ class GameItemsInitializers {
     }
 
     createLines(game, jwt) {
-        let value = 1;
+        let n = 1;
         for (let i = 0; i < 26; i++) {
             const i = {
                 game: game,
-                number: value
-
+                number: n
             }
             fetch("/api/v1/lines", {
                 headers: {
@@ -98,31 +97,23 @@ class GameItemsInitializers {
                 method: "POST",
                 body: JSON.stringify(i)
             })
-            value = value + 1;
+            n = n + 1;
         }
-
     }
 
-    async createSectors(game, jwt) {
-
-        var lines = []
-
-        await fetch("/api/v1/lines?gameid=" + game.id, {
+    async getLines(game,jwt){
+        const fetchedLines = await fetch("/api/v1/lines?gameid=" + game.id, {
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${jwt}`,
             },
             method: "GET",
         })
-            .then(response => response.json())
-            .then(data => {
-                for (const l of data) {
-                    lines.push(l);
+        return await fetchedLines.json()
+    }
 
-                }
-
-            })
-
+    async createSectors(game, jwt) {
+        const lines = await this.getLines(game, jwt)
         let sectors = []
 
         const sector1 = {
@@ -267,7 +258,7 @@ class GameItemsInitializers {
             game: game
         }
         sectors.push(sector13)
-
+        
         for (let i = 0; i < sectors.length; i++) {
             fetch("/api/v1/sectors", {
                 headers: {
@@ -352,7 +343,7 @@ class GameItemsInitializers {
             },
             method: "GET",
         })
-        return gamePlayers.json()
+        return await gamePlayers.json()
     }
 
     async createCrewmates(game, jwt) {
@@ -378,11 +369,9 @@ class GameItemsInitializers {
                             game: game,
                         })
                     })
-
                 }
             }
         }
-
     }
 
     async createShelters(game, jwt) {
