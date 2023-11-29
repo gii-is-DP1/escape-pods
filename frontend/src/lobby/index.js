@@ -29,14 +29,18 @@ export default function Lobby() {
         if (jwt) {
             setRoles(jwt_decode(jwt).authorities);
             GetCurrentPlayer();
-            let intervalID=setInterval(()=>{
-                GetCurrentGame();
-            }, 1000);
-            return ()=> {
-                clearInterval(intervalID);
-            };
+            refresher();
         }
     }, [jwt])
+
+    function refresher() {
+        let intervalID = setInterval(() => {
+            GetCurrentGame();
+        }, 1000);
+        return () => {
+            clearInterval(intervalID);
+        };
+    }
 
     function GetCurrentPlayer() {
         fetch("/api/v1/players?username=" + myUsername, {
@@ -102,13 +106,23 @@ export default function Lobby() {
         });
     }
 
+    async function startGame() {
+        try {
+            await GetCurrentGame()
+            await itemsInitializers.GameItemsInitializer(game, jwt)
+            window.location.href = `/game/${gameId}`
+        } catch {
+            alert("The game couldn´t be created. Please try again")
+        }
+    }
+
 
     const playerList = JSON.stringify(game) === "{}" ? null : game.players.map(player =>   //se está comprobando si game es un objeto vacío para que no de problemas al leer undefined de game.players antes de que el estado adquiera valor
         <li key={player.id}>
             <div className="list-item-container" style={{ marginBottom: "20" }}>
                 <img className="profile-picture" src={player.profilePicture} />
                 <div className="list-player-name">
-                    {player.user.username}
+                    {player.user.username} {player === game.players[0] ? "(owner)" : ""}
                 </div>
             </div>
         </li>)
@@ -123,8 +137,10 @@ export default function Lobby() {
             </div>
             <div className="button-separed" style={{ marginRight: 0, marginLeft: 60 }}>
 
-                <div className="hero-div2" style={{ borderRadius: 20, width: 300, height: 170,
-                     fontSize: 25, marginBottom:20, marginRight:10 }}>
+                <div className="hero-div2" style={{
+                    borderRadius: 20, width: 300, height: 170,
+                    fontSize: 25, marginBottom: 20, marginRight: 10
+                }}>
                     <p style={{ color: 'white' }}>Lobby ID :</p>
                     <Badge color="danger" style={{
                         pill: false, width: 260, height: 70, fontSize: 30, textAlign: 'center'
@@ -132,7 +148,7 @@ export default function Lobby() {
                         {game.id}
                     </Badge>
                 </div>
-                
+
 
                 <Button className="button" style={{
                     backgroundColor: "#CFFF68",
@@ -147,30 +163,15 @@ export default function Lobby() {
                     alignSelf: "center",
                     marginBottom: 20
                 }} onClick={() => {
-                    
-                    console.log(game)
-                   itemsInitializers.GameItemsInitializer(game,jwt)
+                    if (myPlayer.id === game.players[0].id) {
+                        startGame()
+                    } else {
+                        console.log(myPlayer.id)
+                        console.log(game.players[0].id)
+                        alert("Only the lobby owner can start the game")
+                    }
                 }}>
                     START GAME
-                </Button>
-
-                <Button className="button" style={{
-                    backgroundColor: "#CFFF68",
-                    border: "none",
-                    width: 300,
-                    fontSize: 35,
-                    borderRadius: 20,
-                    height: 100,
-                    boxShadow: "5px 5px 5px #00000020",
-                    textShadow: "2px 2px 2px #00000020",
-                    transition: "0.15s",
-                    marginBottom: 20
-                }} onClick={() => {
-                    console.log(game.players)
-                    console.log(game.players.findIndex(player => player.id === myPlayer.id))
-                    GetCurrentGame()
-                }}>
-                    pruebita xd
                 </Button>
                 <Link to="/">
                     <Button className="button" style={{
@@ -187,9 +188,9 @@ export default function Lobby() {
                     }} onClick={() => {
                         if (game.players.length === 1) {
                             deleteGame()
-                        } else
+                        } else {
                             removePlayerFromGame()
-
+                        }
                     }}>
                         LEAVE LOBBY
                     </Button>
@@ -215,7 +216,7 @@ export default function Lobby() {
                     <p style={{ backgroundColor: "#0000006a", color: 'white', borderRadius: 7, width: 400, height: 565 }}>
                         <p style={{ color: 'white', textAlign: 'center', fontSize: 30 }}>Friends</p>
                         <p style={{ color: 'white', textAlign: 'left', margin: 20 }}> <img className="profile-picture" src='https://media.tenor.com/uku4KIcT-oUAAAAC/ianleong.gif' />
-                            player2 <Button className="button" style={{ color: 'white', backgroundColor:"#00000000"}}
+                            player2 <Button className="button" style={{ color: 'white', backgroundColor: "#00000000" }}
                                 onClick={() => {
 
                                 }}>
@@ -237,7 +238,7 @@ export default function Lobby() {
 
                         </p>
                         <p style={{ color: 'white', textAlign: 'left', fontSize: 25, margin: 20 }}>Chat :
-                            <Button className="button" style={{ color: 'white',backgroundColor:"#00000000"}}
+                            <Button className="button" style={{ color: 'white', backgroundColor: "#00000000" }}
                                 onClick={() => {
                                     // es el chat activo, deberia cambiar al pulsarlo.
                                     <RiChat4Line style={{ fontSize: 30 }} />
