@@ -143,12 +143,12 @@ INSERT INTO appusers(id,username,password,authority) VALUES (29,'player5','$2a$1
 
 
 INSERT INTO players(id, profile_description, profile_picture, user_id) VALUES (1, 'PLINK', 'https://media.tenor.com/GOabrbLMl4AAAAAC/plink-cat-plink.gif', 25);
-INSERT INTO players(id, profile_description, profile_picture, user_id) VALUES (2, 'This user is suspected to be part of an online terrorist organization', 'https://media.tenor.com/uku4KIcT-oUAAAAC/ianleong.gif', 26);
+INSERT INTO players(id, profile_description, profile_picture, user_id) VALUES (2, 'See you space cowboy...', 'https://media.tenor.com/uku4KIcT-oUAAAAC/ianleong.gif', 26);
 INSERT INTO players(id, profile_description, profile_picture, user_id) VALUES (3, 'yo cuando dicen que no soy de seli', 'https://media.tenor.com/MSF0PH3M2WkAAAAC/sungchan-nct-sungchan.gif', 27);
 INSERT INTO players(id, profile_description, profile_picture, user_id) VALUES (4, '*no hace nada*', 'https://pbs.twimg.com/media/F3OcIipbMAAtbKH?format=jpg&name=medium', 28);
 INSERT INTO players(id, profile_description, profile_picture, user_id) VALUES (5, 'ou', 'https://media.tenor.com/tGiOcAGrtpsAAAAd/daniel.gif', 29);
 
-INSERT INTO games(id, num_players, start, finish, status) VALUES (1, 5, '2022-01-02 19:33', '2022-01-02 19:34', 'FINISHED');
+INSERT INTO games(id, num_players, start, finish, status) VALUES (1, 5, '2022-01-02 19:33', '2022-01-02 19:34', 'WAITING');
 
 INSERT INTO games_players(game_id, players_id) VALUES (1, 1);
 INSERT INTO games_players(game_id, players_id) VALUES (1, 2);

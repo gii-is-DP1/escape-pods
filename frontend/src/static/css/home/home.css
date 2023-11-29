@@ -12,24 +12,41 @@
     align-items: center;
     flex-direction: column;
 }
+.home-page-container2 {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url('../../images/home_background.jpg');
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
 
 .hero-div {
-    background-color: rgba(255, 255, 255, 0.3);
+    background-color: rgba(0, 0, 0, 0.5);
     padding: 2rem;
     border-radius: 25px;
     backdrop-filter: blur(10px);
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
+    align-items: right;
+    margin-right: 50px;
+    width: 400px;
+    margin-top: 65px;
 }
 
 .hero-div h1 {
-    font-size: 3rem;
-    font-weight: 700;
-    color: #2f324f;
+    font-size: 40px;
+    color: #ffffff;
     text-align: center;
     text-transform: uppercase;
+    margin-bottom: 25px;
 }
 
 .hero-div h3 {

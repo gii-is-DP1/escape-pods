@@ -1,6 +1,6 @@
 import jwt_decode from "jwt-decode";
 import React, { useEffect, useState } from 'react';
-import { Button, Modal, ModalBody, ModalFooter, ModalHeader, Badge } from "reactstrap";
+import { Button, Badge, UncontrolledCollapse } from "reactstrap";
 import '../App.css';
 import tokenService from '../services/token.service';
 import '../static/css/home/home.css';
@@ -10,23 +10,31 @@ import itemsInitializers from "./gameItemsInitializers";
 
 //ICONOS
 import { DiAptana } from "react-icons/di";
-import { MdAdd } from "react-icons/md";
+import { MdAdd, MdOutlinePersonAddAlt1 } from "react-icons/md";
+import { TiTick } from "react-icons/ti";
+import { RiChatOffLine, RiChat4Line, RiCodeFill } from "react-icons/ri";
+
 
 
 export default function Lobby() {
     const [roles, setRoles] = useState([]);
-    const jwt = tokenService.getLocalAccessToken();
-    const [collapsed, setCollapsed] = useState(true);
-    const [player, setPlayer] = useState({})
-    const myUsername = jwt_decode(jwt).sub;
+    const [myPlayer, setMyPlayer] = useState({})
     const [game, setGame] = useState({});
-    const [numPlayers, setNumPlayers] = useState(2);
-    const [visible, setVisible] = useState(true);
+    const [players, setPlayers] = useState([]);
+    const jwt = tokenService.getLocalAccessToken();
+    const myUsername = jwt_decode(jwt).sub;
+    const gameId = window.location.href.split("/")[4] // extrae la id de la partida desde la ruta spliteandola por las / en un array, cuidado que el indice del array que devuelve el split no empieza en [0] sino en [1] por algu motivo ([-1] tampoco funciona)
 
     useEffect(() => {
         if (jwt) {
             setRoles(jwt_decode(jwt).authorities);
-            GetCurrentPlayer(myUsername);
+            GetCurrentPlayer();
+            let intervalID=setInterval(()=>{
+                GetCurrentGame();
+            }, 1000);
+            return ()=> {
+                clearInterval(intervalID);
+            };
         }
     }, [jwt])
 
@@ -39,162 +47,215 @@ export default function Lobby() {
             method: "GET"
         })
             .then(response => response.json())
-            .then(response => { setPlayer(response[0]); })
+            .then(response => { setMyPlayer(response[0]) })
     }
 
-    function CreateGame() {
-        const newGame = {
-            numPlayers: numPlayers,
-            status: "WAITING",
-            players: [player],
-        }
-        fetch("/api/v1/games", {
+    async function GetCurrentGame() {
+        setGame(await fetchCurrentGame())
+    }
+
+
+    async function fetchCurrentGame() {
+        const response = await fetch(`/api/v1/games/${gameId}`, {
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${jwt}`,
             },
-            method: "POST",
-            body: JSON.stringify(newGame)
+            method: "GET"
         })
-            .then(response => response.json())
-            .then(response => setGame(response))
+        const fetchedGame = await response.json();
+        return fetchedGame
     }
 
 
+    async function removePlayerFromGame() {
+        const currentGame = await fetchCurrentGame()
+        const updatedPlayers = currentGame.players
+        updatedPlayers.splice(currentGame.players.findIndex(player => player.id === myPlayer.id), 1)
+
+        const updatedGame = {
+            numPlayers: game.numPlayers,
+            start: game.start,
+            finish: game.finish,
+            status: game.status,
+            players: updatedPlayers
+        }
+        await fetch(`/api/v1/games/${game.id}`, {
+            headers: {
+                "Authorization": ' Bearer ${ jwt }',
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            method: 'PUT',
+            body: JSON.stringify(updatedGame)
+        });
+    }
+
+    async function deleteGame() {
+        await fetch(`/api/v1/games/${game.id}`, {
+            headers: {
+                "Authorization": ' Bearer ${ jwt }',
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            method: 'DELETE',
+        });
+    }
+
+
+    const playerList = JSON.stringify(game) === "{}" ? null : game.players.map(player =>   //se está comprobando si game es un objeto vacío para que no de problemas al leer undefined de game.players antes de que el estado adquiera valor
+        <li key={player.id}>
+            <div className="list-item-container" style={{ marginBottom: "20" }}>
+                <img className="profile-picture" src={player.profilePicture} />
+                <div className="list-player-name">
+                    {player.user.username}
+                </div>
+            </div>
+        </li>)
 
     return (
-        <div className="home-page-container">
-            <div>
-                <div>
-                    <Modal isOpen={visible} centered="true" className="modal" style={{ height: "65%" }}>
-                        <ModalHeader style={{ color: "white", textShadow: "2px 2px 2px #00000020" }}>
-                            Select the number of players
-                        </ModalHeader>
-                        <ModalBody style={{ flexDirection: "row" }}>
-                            <Button className="modal-button" style={{
-                                backgroundColor: "#ff4a4a",
-                                border: "none",
-                                borderRadius: "50%",
-                                textAlign: "center",
-                                fontSize: 25,
-                                color: "white",
-                                boxShadow: "3px 3px 5px #00000020",
-                                textShadow: "2px 2px 2px #00000020"
-                            }}
-                                onClick={() => numPlayers > 2 ? setNumPlayers(numPlayers - 1) : null}
-                            >
-                                -
-                            </Button>
-                            <p style={{
-                                paddingTop: 15,
-                                marginLeft: 5,
-                                marginRight: 5,
-                                textAlign: "center",
-                                fontSize: 22,
-                                color: "white",
-                                textShadow: "2px 2px 2px #00000020"
-                            }}>
-                                {numPlayers}
-                            </p>
-                            <Button className="modal-button" style={{
-                                transition: "0.15s",
-                                backgroundColor: "#59ff75",
-                                border: "none",
-                                borderRadius: "50%",
-                                textAlign: "center",
-                                fontSize: 25,
-                                boxShadow: "3px 3px 5px #00000020",
-                                textShadow: "2px 2px 2px #00000020"
-                            }}
-                                onClick={() => numPlayers < 5 ? setNumPlayers(numPlayers + 1) : null}
-                            >
-                                +
-                            </Button>
-                        </ModalBody>
-                        <ModalFooter>
-                            <Button className="done-button" style={{
-                                backgroundColor: "#ffa952", border: "none", boxShadow: "5px 5px 5px #00000020", textShadow: "2px 2px 2px #00000020", transition: "0.15s",
-                            }} onClick={() => {
-                                setVisible(false);
-                                CreateGame()
-                            }}>
-                                Done
-                            </Button>
-                        </ModalFooter>
-                    </Modal>
+        <div className="lobby-page-container">
+            <div className="hero-div">
+                <h1>Players {JSON.stringify(game) === "{}" ? "0" : game.players.length}/{game.numPlayers}</h1> {/*misma comprobacion que arriba pero esta vez para players.length*/}
+                <ul className="ul-players">
+                    {playerList}
+                </ul>
+            </div>
+            <div className="button-separed" style={{ marginRight: 0, marginLeft: 60 }}>
+
+                <div className="hero-div2" style={{ borderRadius: 20, width: 300, height: 170,
+                     fontSize: 25, marginBottom:20, marginRight:10 }}>
+                    <p style={{ color: 'white' }}>Lobby ID :</p>
+                    <Badge color="danger" style={{
+                        pill: false, width: 260, height: 70, fontSize: 30, textAlign: 'center'
+                    }}>
+                        {game.id}
+                    </Badge>
                 </div>
+                
 
-                <Badge color="black" style={{
-                    pill: false, width: 400, height: 510, fontSize: 30, opacity: 0.5, textAlign: 'center'
-                }}>
-                    Players:
-                    <p></p>
-                    <p style={{ color: "white", fontSize: 15, textAlign: 'left' }}>
-
-                        <img className="profile-picture" src={player.profilePicture} />
-                        {myUsername}
-
-                    </p>
-                    <p></p>
-                    <p style={{ color: "white", fontSize: 15, textAlign: 'left' }}>
-                        <img className="profile-picture" src='https://media.tenor.com/uku4KIcT-oUAAAAC/ianleong.gif' />
-                        Player2
-
-                    </p>
-                    <p></p>
-                    <p style={{ color: "white", fontSize: 15, textAlign: 'left' }}>
-                        <img className="profile-picture" src='https://media.tenor.com/MSF0PH3M2WkAAAAC/sungchan-nct-sungchan.gif' />
-                        Player3
-
-                    </p>
-                    <p></p>
-                    <p style={{ color: "white", fontSize: 15, textAlign: 'left' }}>
-                        <img className="profile-picture" src='https://pbs.twimg.com/media/F3OcIipbMAAtbKH?format=jpg&name=medium' />
-                        Player4
-
-                    </p>
-                    <p></p>
-                    <p style={{ color: "white", fontSize: 15, textAlign: 'left' }}>
-                        <img className="profile-picture" src='https://media.tenor.com/tGiOcAGrtpsAAAAd/daniel.gif' />
-                        Player5
-
-                    </p>
-
-                </Badge>
-
-
-                <Badge color="black" style={{ //RATEADA MAXIMA PARA SEPARAR BOTONES
-                    pill: false, width: 50, height: 1, fontSize: 30, opacity: 0
-                }}>
-                    .
-                </Badge>
                 <Button className="button" style={{
-                    backgroundColor: "#CFFF68", border: "none", width: 300, fontSize: 35, borderRadius: 20, height: 100, boxShadow: "5px 5px 5px #00000020", textShadow: "2px 2px 2px #00000020", transition: "0.15s",
+                    backgroundColor: "#CFFF68",
+                    border: "none",
+                    width: 300,
+                    fontSize: 35,
+                    borderRadius: 20,
+                    height: 100,
+                    boxShadow: "5px 5px 5px #00000020",
+                    textShadow: "2px 2px 2px #00000020",
+                    transition: "0.15s",
+                    alignSelf: "center",
+                    marginBottom: 20
                 }} onClick={() => {
                     CreateGame()
                     console.log(game)
                    itemsInitializers.GameItemsInitializer(game,jwt)
                 }}>
-                    Start Game
+                    START GAME
                 </Button>
-                <Badge color="black" style={{//RATEADA MAXIMA PARA SEPARAR BOTONES
-                    pill: false, width: 50, height: 1, fontSize: 30, opacity: 0
-                }}>
-                    .
-                </Badge>
 
+                <Button className="button" style={{
+                    backgroundColor: "#CFFF68",
+                    border: "none",
+                    width: 300,
+                    fontSize: 35,
+                    borderRadius: 20,
+                    height: 100,
+                    boxShadow: "5px 5px 5px #00000020",
+                    textShadow: "2px 2px 2px #00000020",
+                    transition: "0.15s",
+                    marginBottom: 20
+                }} onClick={() => {
+                    console.log(game.players)
+                    console.log(game.players.findIndex(player => player.id === myPlayer.id))
+                    GetCurrentGame()
+                }}>
+                    pruebita xd
+                </Button>
                 <Link to="/">
                     <Button className="button" style={{
-                        backgroundColor: "#FF8368", border: "none", width: 175, fontSize: 20, borderRadius: 15, height: 55, boxShadow: "5px 5px 5px #00000020", textShadow: "2px 2px 2px #00000020", transition: "0.15s",
+                        backgroundColor: "#FF8368",
+                        border: "none",
+                        width: 175,
+                        fontSize: 20,
+                        borderRadius: 15,
+                        height: 55,
+                        boxShadow: "5px 5px 5px #00000020",
+                        textShadow: "2px 2px 2px #00000020",
+                        transition: "0.15s",
+                        marginBottom: 20
                     }} onClick={() => {
-
+                        if (game.players.length === 1) {
+                            deleteGame()
+                        } else
+                            removePlayerFromGame()
 
                     }}>
-                        Leave Lobby
+                        LEAVE LOBBY
                     </Button>
                 </Link>
-
             </div>
+            <div>
+                <Button
+                    //color="dark"
+                    id="toggler"
+                    style={{
+                        marginBottom: '1rem', backgroundColor: "#fefefe2d",
+                        alignItems: 'center', height: 50, marginLeft: 60, marginRight: 10
+                    }}
+                >
+                    <RiCodeFill style={{ fontSize: 30 }} />
+
+                </Button>
+            </div>
+
+            <div style={{ marginTop: 50 }}>
+                <UncontrolledCollapse horizontal toggler="#toggler" >
+
+                    <p style={{ backgroundColor: "#0000006a", color: 'white', borderRadius: 7, width: 400, height: 565 }}>
+                        <p style={{ color: 'white', textAlign: 'center', fontSize: 30 }}>Friends</p>
+                        <p style={{ color: 'white', textAlign: 'left', margin: 20 }}> <img className="profile-picture" src='https://media.tenor.com/uku4KIcT-oUAAAAC/ianleong.gif' />
+                            player2 <Button className="button" style={{ color: 'white', backgroundColor:"#00000000"}}
+                                onClick={() => {
+
+                                }}>
+                                <MdOutlinePersonAddAlt1 style={{ fontSize: 30 }} />
+                            </Button>
+
+                        </p>
+
+                        <p style={{ color: 'white', textAlign: 'left', margin: 20 }}> <img className="profile-picture" src='https://media.tenor.com/MSF0PH3M2WkAAAAC/sungchan-nct-sungchan.gif' />
+                            player3 <TiTick style={{ fontSize: 30 }} />
+
+                        </p>
+                        <p style={{ color: 'white', textAlign: 'left', margin: 20 }}> <img className="profile-picture" src='https://pbs.twimg.com/media/F3OcIipbMAAtbKH?format=jpg&name=medium' />
+                            player4 <TiTick style={{ fontSize: 30 }} />
+
+                        </p>
+                        <p style={{ color: 'white', textAlign: 'left', margin: 20 }}> <img className="profile-picture" src='https://media.tenor.com/tGiOcAGrtpsAAAAd/daniel.gif' />
+                            player5 <TiTick style={{ fontSize: 30 }} />
+
+                        </p>
+                        <p style={{ color: 'white', textAlign: 'left', fontSize: 25, margin: 20 }}>Chat :
+                            <Button className="button" style={{ color: 'white',backgroundColor:"#00000000"}}
+                                onClick={() => {
+                                    // es el chat activo, deberia cambiar al pulsarlo.
+                                    <RiChat4Line style={{ fontSize: 30 }} />
+
+                                }}>
+                                <RiChatOffLine style={{ fontSize: 30 }} />
+                            </Button></p>
+                        <Badge color="secondary" style={{
+                            width: 400, height: 50, fontSize: 30, textlign: 'center', borderRadius: 15
+                        }}>
+                            hello dudes!
+                        </Badge>
+
+                    </p>
+                </UncontrolledCollapse>
+            </div>
+
+
         </div >
     );
 

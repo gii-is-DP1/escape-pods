@@ -12,7 +12,7 @@ public interface GameRepository extends CrudRepository<Game,Integer> {
 
     List<Game> findByStart(LocalDateTime start);
     List<Game> findByFinish(LocalDateTime finish);
-
+    List<Game> findByStatus(GameStatus status);
     List<Game> findByFinishIsNotNull();
 
     List<Game> findByFinishIsNullAndStartIsNotNull();
