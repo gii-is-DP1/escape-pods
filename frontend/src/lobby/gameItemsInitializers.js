@@ -351,7 +351,7 @@ class GameItemsInitializers {
 
         
 
-        const gamePlayers = []
+        var gamePlayers = []
         await fetch("/api/v1/gamePlayers?gameid=" + game.id, {
             headers: {
                 "Content-Type": "application/json",
@@ -394,7 +394,10 @@ class GameItemsInitializers {
     }
 
     async createShelters(game, jwt) {
-        const sectors = []
+        var sectors = []
+        const types = this.shuffleColors(["YELLOW", "PINK", "BLUE", "GREEN", "ORANGE"])
+        let shelters=[]
+
         await fetch("/api/v1/sectors?gameid=" + game.id, {
             headers: {
                 "Content-Type": "application/json",
@@ -408,11 +411,52 @@ class GameItemsInitializers {
                     sectors.push(l);
 
                 }
+                console.log(sectors)
 
             })
         const shelter1 = {
-
+            explosion:3,
+            type:types[0],
+            game:game,
+            sector:sectors.find(sector => sector.number === 11)
         }
+        shelters.push(shelter1)
+
+        const shelter2 = {
+            explosion:4,
+            type:types[0],
+            game:game,
+            sector:sectors.find(sector => sector.number === 12)
+        }
+        shelters.push(shelter2)
+
+        const shelter3 = {
+            explosion:3,
+            type:types[0],
+            game:game,
+            sector:sectors.find(sector => sector.number === 12)
+        }
+        shelters.push(shelter3)
+
+        const shelter4 = {
+            explosion:5,
+            type:types[0],
+            game:game,
+            sector:sectors.find(sector => sector.number === 13)
+        }
+        shelters.push(shelter4)
+
+        for(let i=0; i<shelters.length; i++){
+            fetch("/api/v1/shelterCards", {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${jwt}`,
+                },
+                method: "POST",
+                body: JSON.stringify(shelters[i])
+            })
+        }
+
     }
 }
 
