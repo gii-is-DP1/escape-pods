@@ -24,9 +24,45 @@ export default function Game() {
         }
     }, [jwt])
 
+    async function GetCurrentGame() {
+        setGame(await fetchCurrentGame())
+    }
+    
+    async function fetchCurrentGame() {
+        const response = await fetch(`/api/v1/games/${gameId}`, {
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${jwt}`,
+            },
+            method: "GET"
+        })
+        const fetchedGame = await response.json();
+        return fetchedGame
+    }
+
     return (
         <div className="game-page-container">
             <img src='https://media.tenor.com/fR9Tu9qbtm4AAAAM/kerr-floppa.gif' />
+            <Button className="button" style={{
+                backgroundColor: "#CFFF68",
+                border: "none",
+                width: 300,
+                fontSize: 35,
+                borderRadius: 20,
+                height: 100,
+                boxShadow: "5px 5px 5px #00000020",
+                textShadow: "2px 2px 2px #00000020",
+                transition: "0.15s",
+                alignSelf: "center",
+                marginBottom: 20
+            }} onClick={() => {
+                GetCurrentGame()
+                console.log(game.status)
+                GetCurrentGame()
+                console.log(game.status)
+            }}>
+                Prueba
+            </Button>
         </div >
     );
 
