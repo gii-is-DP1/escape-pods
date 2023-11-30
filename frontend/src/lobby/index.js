@@ -56,6 +56,9 @@ export default function Lobby() {
 
     async function GetCurrentGame() {
         setGame(await fetchCurrentGame())
+        if(game.status === "PLAYING"){
+            window.location.href = `/game/${gameId}`
+        }
     }
 
 
@@ -108,12 +111,34 @@ export default function Lobby() {
 
     async function startGame() {
         try {
+            await setGameToPlaying()
             await GetCurrentGame()
             await itemsInitializers.GameItemsInitializer(game, jwt)
             window.location.href = `/game/${gameId}`
         } catch {
             alert("The game couldn´t be created. Please try again")
         }
+    }
+
+    async function setGameToPlaying(){
+        const gameInProgress = {
+            numPlayers: game.numPlayers,
+            start: game.start,
+            finish: game.finish,
+            status: "PLAYING",
+            players: game.players
+        }
+        await fetch(`/api/v1/games/${game.id}`, {
+            headers: {
+                "Authorization": ' Bearer ${ jwt }',
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            method: 'PUT',
+            body: JSON.stringify(gameInProgress)
+            
+        })
+        GetCurrentGame()
     }
 
 
@@ -165,8 +190,12 @@ export default function Lobby() {
                 }} onClick={() => {
                     if (myPlayer.id === game.players[0].id) {
                         startGame()
+                        
+
+
                     } else {
                         console.log(myPlayer.id)
+                        console.log(GetCurrentGame().status)
                         console.log(game.players[0].id)
                         alert("Only the lobby owner can start the game")
                     }
