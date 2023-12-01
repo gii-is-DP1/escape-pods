@@ -56,11 +56,7 @@ export default function Lobby() {
 
     async function GetCurrentGame() {
         setGame(await fetchCurrentGame())
-        if(game.status === "PLAYING"){
-            window.location.href = `/game/${gameId}`
-        }
     }
-
 
     async function fetchCurrentGame() {
         const response = await fetch(`/api/v1/games/${gameId}`, {
@@ -71,6 +67,9 @@ export default function Lobby() {
             method: "GET"
         })
         const fetchedGame = await response.json();
+        if (fetchedGame.status === "PLAYING") {
+            window.location.href = `/game/${gameId}`
+        }
         return fetchedGame
     }
 
@@ -109,18 +108,7 @@ export default function Lobby() {
         });
     }
 
-    async function startGame() {
-        try {
-            await setGameToPlaying()
-            await GetCurrentGame()
-            await itemsInitializers.GameItemsInitializer(game, jwt)
-            window.location.href = `/game/${gameId}`
-        } catch {
-            alert("The game couldn´t be created. Please try again")
-        }
-    }
-
-    async function setGameToPlaying(){
+    async function setGameToPlaying() {
         const gameInProgress = {
             numPlayers: game.numPlayers,
             start: game.start,
@@ -136,9 +124,18 @@ export default function Lobby() {
             },
             method: 'PUT',
             body: JSON.stringify(gameInProgress)
-            
         })
-        GetCurrentGame()
+    }
+
+    async function startGame() {
+        try {
+            await GetCurrentGame()
+            await itemsInitializers.GameItemsInitializer(game, jwt)
+            await setGameToPlaying()
+            window.location.href = `/game/${gameId}`
+        } catch {
+            alert("The game couldn't be created. Please try again")
+        }
     }
 
 
@@ -190,7 +187,7 @@ export default function Lobby() {
                 }} onClick={() => {
                     if (myPlayer.id === game.players[0].id) {
                         startGame()
-                        
+
 
 
                     } else {

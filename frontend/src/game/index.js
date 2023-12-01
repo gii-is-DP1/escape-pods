@@ -21,6 +21,7 @@ export default function Game() {
     useEffect(() => {
         if (jwt) {
             setRoles(jwt_decode(jwt).authorities);
+            GetCurrentGame()
         }
     }, [jwt])
 
@@ -56,9 +57,6 @@ export default function Game() {
                 alignSelf: "center",
                 marginBottom: 20
             }} onClick={() => {
-                GetCurrentGame()
-                console.log(game.status)
-                GetCurrentGame()
                 console.log(game.status)
             }}>
                 Prueba
