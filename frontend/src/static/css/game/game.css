@@ -9,6 +9,31 @@
     background-size: cover;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: left;
     flex-direction: column;
+
 }
+
+.game-board {
+    position: absolute;
+    background-image: url('../../images/escape-pods-board-horizontal.jpg');
+    background-size: cover;
+    display: flex;
+    max-width: 710px;
+    max-height: 500px;
+    height: 100%;
+    width: 100%;
+    margin-top: 66px;
+}
+
+.pod3 {
+    position: absolute;
+    background-image: url('../../images/pod3.png');
+    background-size: cover;
+    display: flex;
+    max-width: 100px;
+    max-height: 100px;
+    height: 100%;
+    width: 100%;
+}
+
