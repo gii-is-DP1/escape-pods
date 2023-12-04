@@ -38,7 +38,7 @@ public class PodController {
     }
 
     @GetMapping
-    public List<Pod> getAllPodss(@ParameterObject @RequestParam(value="status",required = false) Integer capacity){
+    public List<Pod> getAllPods(@ParameterObject @RequestParam(value="status",required = false) Integer capacity){
         if(capacity!=null){
             return ps.getPodsByCapacity(capacity);
             } 
