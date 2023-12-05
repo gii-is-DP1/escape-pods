@@ -90,21 +90,13 @@ export default function Game() {
         const currentGame = await fetchCurrentGame();
         setGame(currentGame);
         setSectors(await itemGetters.fetchSectors(currentGame.id, jwt));
-        console.log(sectors)
         setBeacons(await itemGetters.fetchBeacons(currentGame.id, jwt));
-        console.log(beacons)
         setLines(await itemGetters.fetchLines(currentGame.id, jwt));
-        console.log(lines)
         setCrewmates(await itemGetters.fetchCrewmates(currentGame.id, jwt));
-        console.log(crewmates)
         setPods(await itemGetters.fetchPods(currentGame.id, jwt));
-        console.log(pods)
         setGamePlayers(await itemGetters.fetchGamePlayers(currentGame.id, jwt));
-        console.log(gamePlayers)
         setShelterCards(await itemGetters.fetchShelterCards(currentGame.id, jwt));
-        console.log(shelterCards)
         setSlotInfos(await itemGetters.fetchSlotInfos(currentGame.id, jwt));  
-        console.log(slotInfos)
     }
 
     async function fetchCurrentGame() {
@@ -254,6 +246,13 @@ export default function Game() {
                         }} onClick={() => {
                             movePodDemo(10)
                             console.log(sectors)
+                            console.log(beacons)   
+                            console.log(lines)
+                            console.log(gamePlayers)
+                            console.log(pods)
+                            console.log(crewmates)
+                            console.log(shelterCards)
+                            console.log(slotInfos)
                         }}>
                             SECTOR 10
                         </Button>

@@ -390,7 +390,7 @@ class GameItemsInitializers {
         var shelters = []
         const types = this.shuffleColors(["YELLOW", "PINK", "BLUE", "GREEN", "ORANGE"])
         const sectors = await this.getSectors(game, jwt)
-
+        console.log(sectors)
 
         const shelter1 = {
             explosion: 3,
@@ -451,7 +451,6 @@ class GameItemsInitializers {
 
     async createSlotInfos(game, jwt) {
         const shelters = await this.getShelters(game, jwt)
-
         let slotInfos=[]
         for (let i = 0; i < shelters.length; i++) {
             let shelterI= shelters[i]
@@ -474,12 +473,12 @@ class GameItemsInitializers {
                     slotScore: score,
                     role: randomRole[0],
                     shelter: shelterI,
-                    roleNeeded: true
+                    roleNeeded: true,
+                    game: game
                 }
                 slotInfos.push(slotInfo)
             }
         }
-        console.log(JSON.stringify(slotInfos[17]))
         for(let i=0; i<slotInfos.length; i++){
             fetch("/api/v1/slotInfos", {
                 headers: {
@@ -494,15 +493,12 @@ class GameItemsInitializers {
     }
 
     async GameItemsInitializer(game, jwt) {
-        await this.createGamePlayers(game, jwt)
         await this.createLines(game, jwt)
         await this.createBeacons(game, jwt)
-        
         await this.createSectors(game, jwt)
-        await this.createShelters(game, jwt)
+        await this.createGamePlayers(game, jwt)
         await this.createPods(game, jwt)
-        
-        
+        await this.createShelters(game, jwt)
         await this.createCrewmates(game, jwt)
         await this.createSlotInfos(game, jwt)
     }

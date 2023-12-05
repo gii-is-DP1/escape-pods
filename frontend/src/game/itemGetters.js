@@ -23,7 +23,7 @@ class ItemGetters {
         return fetchedBeacons
     }
 
-    async fetchedLines(gameId, jwt) {
+    async fetchLines(gameId, jwt) {
         const response = await fetch("/api/v1/lines?gameid=" + gameId, {
             headers: {
                 "Content-Type": "application/json",
@@ -83,7 +83,7 @@ class ItemGetters {
         return fetchedShelterCards
     }
 
-    async fetchedSlotInfos(gameId, jwt) {
+    async fetchSlotInfos(gameId, jwt) {
         const response = await fetch("/api/v1/slotInfos?gameid=" + gameId, {
             headers: {
                 "Content-Type": "application/json",
