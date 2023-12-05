@@ -1,6 +1,7 @@
 package org.springframework.samples.petclinic.crewmate;
 
 import org.hibernate.annotations.ManyToAny;
+import org.springframework.samples.petclinic.game.Game;
 import org.springframework.samples.petclinic.gameplayer.Color;
 import org.springframework.samples.petclinic.gameplayer.GamePlayer;
 import org.springframework.samples.petclinic.model.BaseEntity;
@@ -34,5 +35,9 @@ public class Crewmate extends BaseEntity{
 
     @ManyToOne(optional = true)
     Pod pod;
+
+    @ManyToOne
+    @NotNull
+    Game game;
     
 }

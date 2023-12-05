@@ -38,6 +38,12 @@ public class SlotInfoService {
         return si.findByPosition(postion);
     }
 
+    @Transactional(readOnly=true)
+    public List<SlotInfo> getSlotInfoByGameId(Integer id){
+        return si.findByGameId(id);
+    }
+
+
     @Transactional()
     public void delete(Integer id) {
         si.deleteById(id);

@@ -45,6 +45,11 @@ public class PodService {
         return p.findByEmptySlots(emptySlots);
     }
 
+    @Transactional(readOnly=true)
+    public List<Pod> getPodsByGameId(Integer id){
+        return p.findByGameId(id);
+    }
+
 
     @Transactional()
     public void delete(Integer id) {

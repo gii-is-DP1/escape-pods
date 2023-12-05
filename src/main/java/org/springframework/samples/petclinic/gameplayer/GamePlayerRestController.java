@@ -9,7 +9,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
-import org.springframework.samples.petclinic.player.Player;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -58,7 +57,7 @@ public class GamePlayerRestController {
             }
         } else if (color == null && gameid != null) {
             return ps.getGamePlayersByGameId(gameid);
-        }
+        } else
         return ps.getAllGamePlayers();
     }
 

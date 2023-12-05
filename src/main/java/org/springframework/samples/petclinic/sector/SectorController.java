@@ -43,8 +43,9 @@ public class SectorController {
             return scs.getSectorScrapped(scrap);
         } else if (scrap == null && gameid != null) {
             return scs.getAllSectorsByGameId(gameid);
+        }else{
+            return scs.getAllSectors();
         }
-        return scs.getAllSectors();
     }
 
     @GetMapping("/{id}")
