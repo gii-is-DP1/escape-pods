@@ -45,11 +45,14 @@ export default function Game() {
         472,
         539, 600, 539]
 
-    const y = [null, 92, 199, 306,
-        92, 199, 306,
-        92, 199, 306,
+    const y = [null, 92, 199, 310,
+        92, 199, 310,
+        92, 199, 310,
         199,
-        92, 199, 306]
+        92, 199, 310]
+
+    const hangarX = [ -30, 30, 30, -10, -20, 20 ] //coordenadas X del hangar para [pod3, pod21, pod22, pod11, pod12, pod13]
+    const hangarY = [ 199, 92, 310, -10, 410, 410 ] // coordenadas Y del hangar para [pod3, pod21, pod22, pod11, pod12, pod13]
 
     const [coordPod3, setCoordPod3] = useState([-30, 199])
 
@@ -95,8 +98,31 @@ export default function Game() {
         setSectors(await itemGetters.fetchSectors(game.id, jwt));
     }
 
+    // pod de capacidad 3
     const pod3 =
-        <div className="pod3" style={{ left: coordPod3[0], top: coordPod3[1] }}>
+        <div className="pod3" style={true ? { left: hangarX[0], top: hangarY[0] } : null}>
+        </div>
+
+    // pods de capacidad 2
+    const pod21 =
+        <div className="pod2" style={true ? { left: hangarX[1], top: hangarY[1] } : null}>
+        </div>
+
+    const pod22 =
+        <div className="pod2" style={true ? { left: hangarX[2], top: hangarY[2] } : null}>
+        </div>
+
+    // pods de capacidad 1
+    const pod11 =
+        <div className="pod1" style={true ? { left: hangarX[3], top: hangarY[3] } : null}>
+        </div>
+
+    const pod12 =
+        <div className="pod1" style={true ? { left: hangarX[4], top: hangarY[4] } : null}>
+        </div>
+
+    const pod13 =
+        <div className="pod1" style={true ? { left: hangarX[5], top: hangarY[5] } : null}>
         </div>
 
     function Sector(props) {
@@ -147,6 +173,11 @@ export default function Game() {
                         <Sector x={x[12]} y={y[12]} sector={sectors.find(sector => sector.number === 12)} />
                         <Sector x={x[13]} y={y[13]} sector={sectors.find(sector => sector.number === 13)} />
                         {pod3}
+                        {pod21}
+                        {pod22}
+                        {pod11}
+                        {pod12}
+                        {pod13}
                     </div>
                     <div style={{ flexDirection: "column", marginLeft: 710, marginTop: 70, height: "100%", alignContent: "center", alignItems: "center" }}>
                         <Button className="button" style={{
