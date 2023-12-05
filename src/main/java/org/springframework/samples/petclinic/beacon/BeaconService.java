@@ -33,6 +33,11 @@ public class BeaconService {
         return br.findByColor1(color1);
     }
 
+    @Transactional(readOnly=true)
+    public List<Beacon> getBeaconsByGameId(Integer id){
+        return br.findByGameId(id);
+    }
+
     @Transactional
     public Beacon save(Beacon b) {
         br.save(b);

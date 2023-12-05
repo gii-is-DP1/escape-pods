@@ -1,5 +1,6 @@
 package org.springframework.samples.petclinic.crewmate;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,17 @@ public class CrewmateService {
     public Optional<Crewmate> getCrewmateById(Integer id) {
         return cr.findById(id);
     }
+
+    @Transactional(readOnly = true)
+    public List<Crewmate> getAllCrewmates() {
+        return cr.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public List<Crewmate> getAllCrewmatesByGameId(Integer gameId) {
+        return cr.findByGameId(gameId);
+    }
+
 
     @Transactional()
     public void delete() {

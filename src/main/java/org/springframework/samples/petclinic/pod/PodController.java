@@ -38,11 +38,15 @@ public class PodController {
     }
 
     @GetMapping
-    public List<Pod> getAllPods(@ParameterObject @RequestParam(value="status",required = false) Integer capacity){
+    public List<Pod> getAllPods(@ParameterObject @RequestParam(value="status",required = false) Integer capacity,
+    @ParameterObject @RequestParam(value = "gameid", required = false) Integer gameid){
         if(capacity!=null){
             return ps.getPodsByCapacity(capacity);
-            } 
+        }if(gameid!=null){
+            return ps.getPodsByGameId(gameid);
+        } else{
             return ps.getAllPodss();
+        }
     }
 
     @GetMapping("/{id}")

@@ -30,48 +30,55 @@ import jakarta.validation.Valid;
 @SecurityRequirement(name = "bearerAuth")
 public class BeaconRestController {
     BeaconService bs;
+
     @Autowired
-    public BeaconRestController(BeaconService bs){
-        this.bs=bs;
+    public BeaconRestController(BeaconService bs) {
+        this.bs = bs;
     }
+
     @GetMapping
-    public List<Beacon> getAllBeacons(@ParameterObject() @RequestParam(value="color",required = false) String color1){
-        if(color1!=null)
+    public List<Beacon> getAllBeacons(@ParameterObject() @RequestParam(value="color",required = false) String color1,
+    @ParameterObject @RequestParam(value = "gameid", required = false) Integer gameid){
+        if(color1!=null){
             return bs.getBeaconByColor(color1);
+        }
+        if(gameid!= null){
+            return bs.getBeaconsByGameId(gameid);
+        }
         else
             return bs.getAllBeacons();
     }
 
     @GetMapping("/{id}")
-    public Beacon getBeaconById(@PathVariable("id")Integer id){
-        Optional<Beacon> b=bs.getBeaconById(id);
-        if(!b.isPresent())
+    public Beacon getBeaconById(@PathVariable("id") Integer id) {
+        Optional<Beacon> b = bs.getBeaconById(id);
+        if (!b.isPresent())
             throw new ResourceNotFoundException("Beacon", "id", id);
         return b.get();
     }
 
     @PostMapping()
-    public ResponseEntity<Beacon> createBeacon(@Valid @RequestBody Beacon b){
-        b=bs.save(b);
+    public ResponseEntity<Beacon> createBeacon(@Valid @RequestBody Beacon b) {
+        b = bs.save(b);
         URI location = ServletUriComponentsBuilder
-                    .fromCurrentRequest()
-                    .path("/{id}")
-                    .buildAndExpand(b.getId())
-                    .toUri();
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(b.getId())
+                .toUri();
         return ResponseEntity.created(location).body(b);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateBeacon(@Valid @RequestBody Beacon b,@PathVariable("id")Integer id){
-        Beacon gToUpdate=getBeaconById(id);
-        BeanUtils.copyProperties(b,gToUpdate, "id");
+    public ResponseEntity<Void> updateBeacon(@Valid @RequestBody Beacon b, @PathVariable("id") Integer id) {
+        Beacon gToUpdate = getBeaconById(id);
+        BeanUtils.copyProperties(b, gToUpdate, "id");
         bs.save(gToUpdate);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteGame(@PathVariable("id")Integer id){
-        if(getBeaconById(id)!=null)
+    public ResponseEntity<Void> deleteGame(@PathVariable("id") Integer id) {
+        if (getBeaconById(id) != null)
             bs.delete(id);
         return ResponseEntity.noContent().build();
     }
