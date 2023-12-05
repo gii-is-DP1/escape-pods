@@ -3,6 +3,7 @@ package org.springframework.samples.petclinic.slotInfo;
 
 
 import org.springframework.samples.petclinic.crewmate.Role;
+import org.springframework.samples.petclinic.game.Game;
 import org.springframework.samples.petclinic.model.BaseEntity;
 import org.springframework.samples.petclinic.shelterCard.ShelterCard;
 
@@ -40,5 +41,10 @@ public class SlotInfo extends BaseEntity{
     @ManyToOne
     @NotNull
     ShelterCard shelter;
+
+    @ManyToOne
+    @NotNull
+    Game game;
+    
     
 }

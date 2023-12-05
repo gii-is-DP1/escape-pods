@@ -64,6 +64,7 @@ public class CrewmateRestController {
         return ResponseEntity.created(location).body(c);
     }
 
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCrewmate() {
         cs.delete();
