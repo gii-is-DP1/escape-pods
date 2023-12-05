@@ -17,7 +17,17 @@ export default function Game() {
     const [myPlayer, setMyPlayer] = useState({})
     const [game, setGame] = useState({});
     const [players, setPlayers] = useState([]);
+
+    //entidades de la partida
     const [sectors, setSectors] = useState([]);
+    const [beacons, setBeacons] = useState([]);
+    const [lines, setLines] = useState([]);
+    const [gamePlayers, setGamePlayers] = useState([]);
+    const [pods, setPods] = useState([]);
+    const [crewmates, setCrewmates] = useState([]);
+    const [shelterCards, setShelterCards] = useState([]);
+    const [slotInfos, setSlotInfos] = useState([]);
+
     const jwt = tokenService.getLocalAccessToken();
     const myUsername = jwt_decode(jwt).sub;
     const gameId = parseInt(window.location.href.split("/")[4]) // extrae la id de la partida desde la ruta spliteandola por las / en un array, cuidado que el indice del array que devuelve el split no empieza en [0] sino en [1] por algu motivo ([-1] tampoco funciona)
@@ -80,6 +90,21 @@ export default function Game() {
         const currentGame = await fetchCurrentGame();
         setGame(currentGame);
         setSectors(await itemGetters.fetchSectors(currentGame.id, jwt));
+        console.log(sectors)
+        setBeacons(await itemGetters.fetchBeacons(currentGame.id, jwt));
+        console.log(beacons)
+        setLines(await itemGetters.fetchLines(currentGame.id, jwt));
+        console.log(lines)
+        setCrewmates(await itemGetters.fetchCrewmates(currentGame.id, jwt));
+        console.log(crewmates)
+        setPods(await itemGetters.fetchPods(currentGame.id, jwt));
+        console.log(pods)
+        setGamePlayers(await itemGetters.fetchGamePlayers(currentGame.id, jwt));
+        console.log(gamePlayers)
+        setShelterCards(await itemGetters.fetchShelterCards(currentGame.id, jwt));
+        console.log(shelterCards)
+        setSlotInfos(await itemGetters.fetchSlotInfos(currentGame.id, jwt));  
+        console.log(slotInfos)
     }
 
     async function fetchCurrentGame() {
