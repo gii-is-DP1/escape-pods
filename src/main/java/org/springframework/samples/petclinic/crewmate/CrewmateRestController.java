@@ -5,19 +5,21 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
+import org.springframework.samples.petclinic.pod.Pod;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -65,6 +67,13 @@ public class CrewmateRestController {
         return ResponseEntity.created(location).body(c);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> updateCrewmate(@Valid @RequestBody Crewmate c, @PathVariable("id") Integer id) {
+        Crewmate crewmateToUpdate = getCrewmateById(id);
+        BeanUtils.copyProperties(c, crewmateToUpdate, "id");
+        cs.save(crewmateToUpdate);
+        return ResponseEntity.noContent().build();
+    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCrewmate() {
