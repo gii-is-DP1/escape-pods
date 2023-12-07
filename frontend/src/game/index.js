@@ -24,6 +24,13 @@ export default function Game() {
     const [lines, setLines] = useState([]);
     const [gamePlayers, setGamePlayers] = useState([]);
     const [pods, setPods] = useState([]);
+    const [pod1, setPod1] = useState({});
+    const [pod2, setPod2] = useState({});
+    const [pod3, setPod3] = useState({});
+    const [pod4, setPod4] = useState({});
+    const [pod5, setPod5] = useState({});
+    const [pod6, setPod6] = useState({});
+    const [numeratedPods, setNumeratedPods] = useState([])
     const [crewmates, setCrewmates] = useState([]);
     const [shelterCards, setShelterCards] = useState([]);
     const [slotInfos, setSlotInfos] = useState([]);
@@ -61,18 +68,27 @@ export default function Game() {
         199,
         92, 199, 310]
 
-    const hangarX = [ -30, 30, 30, -10, -20, 20 ] //coordenadas X del hangar para [pod3, pod21, pod22, pod11, pod12, pod13]
-    const hangarY = [ 199, 92, 310, -10, 410, 410 ] // coordenadas Y del hangar para [pod3, pod21, pod22, pod11, pod12, pod13]
+    const hangarX = [-30, 30, 30, -10, -20, 20] //coordenadas X del hangar para [pod3, pod21, pod22, pod11, pod12, pod13]
+    const hangarY = [199, 92, 310, -10, 410, 410] // coordenadas Y del hangar para [pod3, pod21, pod22, pod11, pod12, pod13]
 
-    const [coordPod3, setCoordPod3] = useState([-30, 199])
 
     useEffect(() => {
         if (jwt) {
             setRoles(jwt_decode(jwt).authorities);
             GetCurrentPlayer();
             GetGame();
+            refresher();
         }
     }, [jwt])
+
+    function refresher() {
+        let intervalID = setInterval(() => {
+            GetGame();
+        }, 2500);
+        return () => {
+            clearInterval(intervalID);
+        };
+    }
 
     function GetCurrentPlayer() {
         fetch("/api/v1/players?username=" + myUsername, {
@@ -88,23 +104,70 @@ export default function Game() {
 
     async function GetGame() {
         const currentGame = await fetchCurrentGame();
+        const fetchedPods = await itemGetters.fetchPods(currentGame.id, jwt);
         setGame(currentGame);
         setSectors(await itemGetters.fetchSectors(currentGame.id, jwt));
-        console.log(sectors)
         setBeacons(await itemGetters.fetchBeacons(currentGame.id, jwt));
-        console.log(beacons)
         setLines(await itemGetters.fetchLines(currentGame.id, jwt));
-        console.log(lines)
         setCrewmates(await itemGetters.fetchCrewmates(currentGame.id, jwt));
-        console.log(crewmates)
-        setPods(await itemGetters.fetchPods(currentGame.id, jwt));
-        console.log(pods)
+        setPods(fetchedPods);
         setGamePlayers(await itemGetters.fetchGamePlayers(currentGame.id, jwt));
-        console.log(gamePlayers)
         setShelterCards(await itemGetters.fetchShelterCards(currentGame.id, jwt));
-        console.log(shelterCards)
-        setSlotInfos(await itemGetters.fetchSlotInfos(currentGame.id, jwt));  
-        console.log(slotInfos)
+        setSlotInfos(await itemGetters.fetchSlotInfos(currentGame.id, jwt));
+        podSetter(fetchedPods);
+    }
+
+    async function podSetter(pods) {
+        // pod de capacidad 3
+        setPod1(
+            emptyChecker("array", pods) ? "XD" : {
+                data: pods.find(pod => pod.number === 1),
+                html:
+                    <div className="pod3" style={pods.find(pod => pod.number === 1).sector === null ? { left: hangarX[0], top: hangarY[0] } : null}>
+                    </div>
+            })
+        // pods de capacidad 2
+        setPod2(
+            emptyChecker("array", pods) ? null : {
+                data: pods.find(pod => pod.number === 2),
+                html:
+                    <div className="pod2" style={pods.find(pod => pod.number === 2).sector === null ? { left: hangarX[1], top: hangarY[1] } : null}>
+                    </div>
+            }
+        )
+        setPod3(
+            emptyChecker("array", pods) ? null : {
+                data: pods.find(pod => pod.number === 3),
+                html:
+                    <div className="pod2" style={pods.find(pod => pod.number === 3).sector === null ? { left: hangarX[2], top: hangarY[2] } : null}>
+                    </div>
+            }
+        )
+        // pods de capacidad 1
+        setPod4(
+            emptyChecker("array", pods) ? null : {
+                data: pods.find(pod => pod.number === 4),
+                html:
+                    <div className="pod1" style={pods.find(pod => pod.number === 4).sector === null ? { left: hangarX[3], top: hangarY[3] } : null}>
+                    </div>
+            }
+        )
+        setPod5(
+            emptyChecker("array", pods) ? null : {
+                data: pods.find(pod => pod.number === 5),
+                html:
+                    <div className="pod1" style={pods.find(pod => pod.number === 5).sector === null ? { left: hangarX[4], top: hangarY[4] } : null}>
+                    </div>
+            }
+        )
+        setPod6(
+            emptyChecker("array", pods) ? null : {
+                data: pods.find(pod => pod.number === 6),
+                html:
+                    <div className="pod1" style={pods.find(pod => pod.number === 6).sector === null ? { left: hangarX[5], top: hangarY[5] } : null}>
+                    </div>
+            }
+        )
     }
 
     async function fetchCurrentGame() {
@@ -119,49 +182,90 @@ export default function Game() {
         return fetchedGame
     }
 
-    async function fetchGameItems() {
-        setSectors(await itemGetters.fetchSectors(game.id, jwt));
-    }
-
-    // pod de capacidad 3
-    const pod3 =
-        <div className="pod3" style={true ? { left: hangarX[0], top: hangarY[0] } : null}>
-        </div>
-
-    // pods de capacidad 2
-    const pod21 =
-        <div className="pod2" style={true ? { left: hangarX[1], top: hangarY[1] } : null}>
-        </div>
-
-    const pod22 =
-        <div className="pod2" style={true ? { left: hangarX[2], top: hangarY[2] } : null}>
-        </div>
-
-    // pods de capacidad 1
-    const pod11 =
-        <div className="pod1" style={true ? { left: hangarX[3], top: hangarY[3] } : null}>
-        </div>
-
-    const pod12 =
-        <div className="pod1" style={true ? { left: hangarX[4], top: hangarY[4] } : null}>
-        </div>
-
-    const pod13 =
-        <div className="pod1" style={true ? { left: hangarX[5], top: hangarY[5] } : null}>
-        </div>
+    /*
+        // pod de capacidad 3
+        const pod1 = emptyChecker("array", pods) ? null :{
+            data: pods.find(pod => pod.number === 1),
+            html:
+                <div className="pod3" style={pods.find(pod => pod.number === 1).sector === null ? { left: hangarX[0], top: hangarY[0] } : null}>
+                </div>
+        }
+    
+        // pods de capacidad 2
+        const pod2 = emptyChecker("array", pods) ? null : {
+            data: pods.find(pod => pod.number === 2),
+            html:
+                <div className="pod2" style={pods.find(pod => pod.number === 2).sector === null ? { left: hangarX[1], top: hangarY[1] } : null}>
+                </div>
+        }
+    
+        const pod3 = emptyChecker("array", pods) ? null : {
+            data: pods.find(pod => pod.number === 3),
+            html:
+                <div className="pod2" style={pods.find(pod => pod.number === 3).sector === null? { left: hangarX[2], top: hangarY[2] } : null}>
+                </div>
+        }
+    
+        // pods de capacidad 1
+        const pod4 = emptyChecker("array", pods) ? null : {
+            data: pods.find(pod => pod.number === 4),
+            html:
+                <div className="pod1" style={pods.find(pod => pod.number === 4).sector === null ? { left: hangarX[3], top: hangarY[3] } : null}>
+                </div>
+        }
+    
+        const pod5 = emptyChecker("array", pods) ? null : {
+            data: pods.find(pod => pod.number === 5),
+            html:
+                <div className="pod1" style={pods.find(pod => pod.number === 5).sector === null ? { left: hangarX[4], top: hangarY[4] } : null}>
+                </div>
+        }
+    
+        const pod6 = emptyChecker("array", pods) ? null : {
+            data: pods.find(pod => pod.number === 6),
+            html:
+                <div className="pod1" style={pods.find(pod => pod.number === 6).sector === null ? { left: hangarX[5], top: hangarY[5] } : null}>
+                </div>
+        }
+    */
 
     function Sector(props) {
+        if (props.sector === undefined) {
+            return null
+        }
         return (
             <div style={{ width: 100, height: 100, position: "absolute", left: props.x, top: props.y }}>
-                <Button style={{ border: "none", width: 100, height: 100, borderRadius: 50, boxShadow: "5px 5px 5px #00000020", textShadow: "2px 2px 2px #00000020", transition: "0.15s" }}>
+                {pod1.data.sector && pod1.data.sector.number === props.sector.number ? pod1.html : null}
+                {pod2.data.sector && pod2.data.sector.number === props.sector.number ? pod2.html : null}
+                {pod3.data.sector && pod3.data.sector.number === props.sector.number ? pod3.html : null}
+                {pod4.data.sector && pod4.data.sector.number === props.sector.number ? pod4.html : null}
+                {pod5.data.sector && pod5.data.sector.number === props.sector.number ? pod5.html : null}
+                {pod6.data.sector && pod6.data.sector.number === props.sector.number ? pod6.html : null}
+                <Button style={{ border: "none", opacity: 0.3, width: 100, height: 100, borderRadius: 50, boxShadow: "5px 5px 5px #00000020", textShadow: "2px 2px 2px #00000020", transition: "0.15s" }}>
                     {props.sector.number}
                 </Button>
             </div>
         )
     }
 
-    function movePodDemo(sector) {
-        setCoordPod3([x[sector], y[sector]])
+    async function movePodDemo(pod, sector) {
+        const movedPod = {
+            emptySlots: pod.emptySlots,
+            capacity: pod.capacity,
+            number: pod.number,
+            sector: sector,
+            game: game
+
+        }
+        await fetch(`/api/v1/pods/${pod.id}`, {
+            headers: {
+                "Authorization": ' Bearer ${ jwt }',
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            method: 'PUT',
+            body: JSON.stringify(movedPod)
+        })
     }
 
     function emptyChecker(type, a) { //comprueba si el elemento a de tipo type está vacío
@@ -176,9 +280,8 @@ export default function Game() {
 
     return (
         <>
-            {!emptyChecker("array", sectors) &&
+            {!emptyChecker("array", sectors) && !emptyChecker("object", pod1) &&
                 <div className="game-page-container">
-
                     <div className="game-board">
                         <Sector x={x[1]} y={y[1]} sector={sectors.find(sector => sector.number === 1)} />
                         <Sector x={x[2]} y={y[2]} sector={sectors.find(sector => sector.number === 2)} />
@@ -197,12 +300,12 @@ export default function Game() {
                         <Sector x={x[11]} y={y[11]} sector={sectors.find(sector => sector.number === 11)} />
                         <Sector x={x[12]} y={y[12]} sector={sectors.find(sector => sector.number === 12)} />
                         <Sector x={x[13]} y={y[13]} sector={sectors.find(sector => sector.number === 13)} />
-                        {pod3}
-                        {pod21}
-                        {pod22}
-                        {pod11}
-                        {pod12}
-                        {pod13}
+                        {pod1.data.sector === null ? pod1.html : null}
+                        {pod2.data.sector === null ? pod2.html : null}
+                        {pod3.data.sector === null ? pod3.html : null}
+                        {pod4.data.sector === null ? pod4.html : null}
+                        {pod5.data.sector === null ? pod5.html : null}
+                        {pod6.data.sector === null ? pod6.html : null}
                     </div>
                     <div style={{ flexDirection: "column", marginLeft: 710, marginTop: 70, height: "100%", alignContent: "center", alignItems: "center" }}>
                         <Button className="button" style={{
@@ -218,9 +321,9 @@ export default function Game() {
                             alignSelf: "center",
                             marginBottom: 20
                         }} onClick={() => {
-                            movePodDemo(3)
+                            movePodDemo(pods.find(pod => pod.number === 2), sectors.find(sector => sector.number === 2))
                         }}>
-                            SECTOR 3
+                            POD DE 2 SECTOR 2
                         </Button>
                         <Button className="button" style={{
                             backgroundColor: "#CFFF68",
@@ -235,9 +338,9 @@ export default function Game() {
                             alignSelf: "center",
                             marginBottom: 20
                         }} onClick={() => {
-                            movePodDemo(4)
+                            movePodDemo(pods.find(pod => pod.number === 1), sectors.find(sector => sector.number === 10))
                         }}>
-                            SECTOR 4
+                            POD DE 3 SECTOR 10
                         </Button>
                         <Button className="button" style={{
                             backgroundColor: "#CFFF68",
@@ -252,10 +355,56 @@ export default function Game() {
                             alignSelf: "center",
                             marginBottom: 20
                         }} onClick={() => {
-                            movePodDemo(10)
+                            movePodDemo(pods.find(pod => pod.number === 4), sectors.find(sector => sector.number === 6))
+                        }}>
+                            POD DE 1 SECTOR 6
+                        </Button>
+                        <Button className="button" style={{
+                            backgroundColor: "#CFFF68",
+                            border: "none",
+                            width: 300,
+                            fontSize: 35,
+                            borderRadius: 20,
+                            height: 100,
+                            boxShadow: "5px 5px 5px #00000020",
+                            textShadow: "2px 2px 2px #00000020",
+                            transition: "0.15s",
+                            alignSelf: "center",
+                            marginBottom: 20
+                        }} onClick={() => {
+                            GetGame()
+                        }}>
+                            Recargar
+                        </Button>
+                        <Button className="button" style={{
+                            backgroundColor: "#CFFF68",
+                            border: "none",
+                            width: 300,
+                            fontSize: 35,
+                            borderRadius: 20,
+                            height: 100,
+                            boxShadow: "5px 5px 5px #00000020",
+                            textShadow: "2px 2px 2px #00000020",
+                            transition: "0.15s",
+                            alignSelf: "center",
+                            marginBottom: 20
+                        }} onClick={() => {
                             console.log(sectors)
+                            console.log(beacons)
+                            console.log(lines)
+                            console.log(gamePlayers)
+                            console.log(pods)
+                            console.log(crewmates)
+                            console.log(shelterCards)
+                            console.log(slotInfos)
+                            console.log(pod1)
+                            console.log(pod2)
+                            console.log(pod3)
+                            console.log(pod4)
+                            console.log(pod5)
+                            console.log(pod6)
                         }}>
-                            SECTOR 10
+                            pruebita xd
                         </Button>
                     </div>
                 </div >

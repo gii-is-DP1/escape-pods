@@ -221,7 +221,7 @@ export default function Home() {
     return (
         <div>
             <div>
-                <Modal isOpen={numPlayersVisible} centered="true" className="modal" style={{ height: "65%" }}>
+                <Modal isOpen={numPlayersVisible} centered={true} className="modal" style={{ height: "65%" }}>
                     <ModalHeader style={{ color: "white", textShadow: "2px 2px 2px #00000020" }}>
                         Select the number of players
                     </ModalHeader>
@@ -287,7 +287,7 @@ export default function Home() {
                 </Modal>
             </div>
             <div>
-                <Modal isOpen={visible} fade="true" className="modal-join-lobby" >
+                <Modal isOpen={visible} className="modal-join-lobby" >
                     <ModalHeader style={{ color: "white", textShadow: "2px 2px 2px #00000020" }}>
                         Select the game
                     </ModalHeader>
