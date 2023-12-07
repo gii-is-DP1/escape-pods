@@ -153,24 +153,24 @@ function AppNavbar() {
 
     return (
         <div>
-            <Navbar expand="md" cssModule={"navbar"}>
-                <NavbarBrand href="/">
-                    <img alt="logo" src="/escape-pods-logo.png" style={{ height: 40, width: 60 }} />
-                </NavbarBrand>
-                <NavbarToggler onClick={toggleNavbar} className="ms-2" />
-                <Collapse isOpen={!collapsed} navbar>
-                    <Nav className="me-auto mb-2 mb-lg-0" navbar>
-                        {userLinks}
-                        {adminLinks}
-                        {ownerLinks}
-                    </Nav>
-                    <Nav className="ms-auto mb-2 mb-lg-0" navbar>
-                        {publicLinks}
-                        {userLogout}
-                    </Nav>
-                </Collapse>
-            </Navbar>
-        </div>
+            <Navbar expand="md">
+            <NavbarBrand href="/">
+                <img alt="logo" src="/escape-pods-logo.png" style={{ height: 40, width: 60 }} />
+            </NavbarBrand>
+            <NavbarToggler onClick={toggleNavbar} className="ms-2" />
+            <Collapse isOpen={!collapsed} navbar>
+                <Nav className="me-auto mb-2 mb-lg-0" navbar>
+                    {userLinks}
+                    {adminLinks}
+                    {ownerLinks}
+                </Nav>
+                <Nav className="ms-auto mb-2 mb-lg-0" navbar>
+                    {publicLinks}
+                    {userLogout}
+                </Nav>
+            </Collapse>
+        </Navbar>
+        </div >
     );
 }
 

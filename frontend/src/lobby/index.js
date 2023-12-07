@@ -5,7 +5,6 @@ import '../App.css';
 import tokenService from '../services/token.service';
 import '../static/css/home/home.css';
 import "../static/css/lobby/lobby.css";
-import Processing from "../static/images/processing.gif";
 import { Link } from 'react-router-dom';
 import itemsInitializers from "./gameItemsInitializers";
 
@@ -32,7 +31,7 @@ export default function Lobby() {
             setRoles(jwt_decode(jwt).authorities);
             GetCurrentPlayer();
             GetCurrentGame();
-            //            refresher();
+            refresher();
         }
     }, [jwt])
 

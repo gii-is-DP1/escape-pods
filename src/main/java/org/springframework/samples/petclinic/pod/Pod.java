@@ -27,6 +27,11 @@ public class Pod extends BaseEntity{
     @Min(1)
     Integer capacity;
 
+    @NotNull
+    @Min(1)
+    @Max(6)
+    Integer number; //representa al pod dentro de cada partida: 1 para pod de capacidad 3, 2 y 3 para capacidad 2, resto para capacidad 1
+
     @OneToOne
     Sector sector;
 

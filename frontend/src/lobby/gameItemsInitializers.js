@@ -278,14 +278,16 @@ class GameItemsInitializers {
             pods.push({
                 emptySlots: 2,
                 capacity: 2,
+                number: i === 0 ? 2 : 3,     // para que los pods de capacidad 2 sean los pods 2 y 3
                 game: game,
                 sector: null
             })
         }
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < 3; i++) {
             pods.push({
                 emptySlots: 1,
                 capacity: 1,
+                number: i === 0 ? 4 : i === 1 ? 5 : 6, // para que los pods de capacidad 1 sean los pods 4, 5, 6
                 game: game,
                 sector: null
             })
@@ -293,6 +295,7 @@ class GameItemsInitializers {
         pods.push({
             emptySlots: 3,
             capacity: 3,
+            number: 1,
             game: game,
             sector: null
         })
@@ -451,11 +454,11 @@ class GameItemsInitializers {
 
     async createSlotInfos(game, jwt) {
         const shelters = await this.getShelters(game, jwt)
-        let slotInfos=[]
+        let slotInfos = []
         for (let i = 0; i < shelters.length; i++) {
-            let shelterI= shelters[i]
+            let shelterI = shelters[i]
             for (let j = 0; j < 5; j++) {
-                
+
                 let randomRole = this.shuffleColors(["CAPTAIN", "ENGINEER", "SCIENTIST"])
                 let score = 2;
                 if (j < 2) {
@@ -468,7 +471,7 @@ class GameItemsInitializers {
                         roleNeeded=false;
                     }*/
                 }
-                const slotInfo={
+                const slotInfo = {
                     position: j,
                     slotScore: score,
                     role: randomRole[0],
@@ -479,7 +482,7 @@ class GameItemsInitializers {
                 slotInfos.push(slotInfo)
             }
         }
-        for(let i=0; i<slotInfos.length; i++){
+        for (let i = 0; i < slotInfos.length; i++) {
             fetch("/api/v1/slotInfos", {
                 headers: {
                     "Content-Type": "application/json",
@@ -487,7 +490,7 @@ class GameItemsInitializers {
                 },
                 method: "POST",
                 body: JSON.stringify(slotInfos[i])
-                
+
             })
         }
     }
