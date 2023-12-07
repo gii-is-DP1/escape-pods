@@ -326,9 +326,9 @@ export default function Home() {
                 </div>
             }
             {!roles.includes("PLAYER") && !roles.includes("ADMIN") &&
-                <div className="home-page-container2">
-                    
-                    <div style={{ color: "white", fontSize: 35, marginTop:-10,marginRight:60, textShadow: "2px 2px 2px #00000020" }}>
+                <div className="home-page-container">
+                <img src={"/escape-pods-logo.png"} alt="Logo" width={400} height={266} />
+                <div style={{ color: "white", fontSize: 35, marginTop: 50, textShadow: "2px 2px 2px #00000020" }}>
                         REGISTER OR LOG IN TO START PLAYING
                     </div>
                 </div>
