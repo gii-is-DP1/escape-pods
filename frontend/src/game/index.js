@@ -27,16 +27,13 @@ export default function Game() {
     const [lines, setLines] = useState([]);
     const [gamePlayers, setGamePlayers] = useState([]);
     const [pods, setPods] = useState([]);
-    const [pod1, setPod1] = useState({});
-    const [pod2, setPod2] = useState({});
-    const [pod3, setPod3] = useState({});
-    const [pod4, setPod4] = useState({});
-    const [pod5, setPod5] = useState({});
-    const [pod6, setPod6] = useState({});
-    const [numeratedPods, setNumeratedPods] = useState([])
     const [crewmates, setCrewmates] = useState([]);
     const [shelterCards, setShelterCards] = useState([]);
     const [slotInfos, setSlotInfos] = useState([]);
+    const [piloting, setPiloting] = useState(false);
+    const [selectingSector, setSelectingSector] = useState(false);
+    const [selectedSector, setSelectedSector] = useState({});
+    const [selectedPod, setSelectedPod] = useState({});
 
     const jwt = tokenService.getLocalAccessToken();
     const myUsername = jwt_decode(jwt).sub;
@@ -121,218 +118,18 @@ export default function Game() {
 
     async function GetGame() {
         const currentGame = await fetchCurrentGame();
-        const fetchedPods = await itemGetters.fetchPods(currentGame.id, jwt);
-        const fetchedCrewmates = await itemGetters.fetchCrewmates(currentGame.id, jwt);
         setGame(currentGame);
-        podSetter(fetchedPods, fetchedCrewmates);
+        setPods(await itemGetters.fetchPods(currentGame.id, jwt));
+        setCrewmates(await itemGetters.fetchCrewmates(currentGame.id, jwt));
         setSectors(await itemGetters.fetchSectors(currentGame.id, jwt));
         setBeacons(await itemGetters.fetchBeacons(currentGame.id, jwt));
         setLines(await itemGetters.fetchLines(currentGame.id, jwt));
-        setCrewmates(fetchedCrewmates);
-        setPods(fetchedPods);
         setGamePlayers(await itemGetters.fetchGamePlayers(currentGame.id, jwt));
         setShelterCards(await itemGetters.fetchShelterCards(currentGame.id, jwt));
         setSlotInfos(await itemGetters.fetchSlotInfos(currentGame.id, jwt));
     }
 
-    async function podSetter(pods, crewmates) {
-        // pod de capacidad 3
-        setPod1(
-            emptyChecker("array", pods) ? "XD" : {
-                data: pods.find(pod => pod.number === 1),
-                html:
-                    <div className="pod3" style={pods.find(pod => pod.number === 1).sector === null ? { left: hangarX[0], top: hangarY[0] } : null}>
-                        <svg height="100%" width="100%">
-                            {!emptyChecker("array", crewmates) &&
-                                GetCrewmatesFromPod(pods.find(pod => pod.number === 1), crewmates).map((crewmate, index) => (
-                                    <>
-                                        <circle key={index} cx={pod3SlotsX[index]} cy={pod3SlotsY[index]} r="18"
-                                            stroke={crewmate.color !== "BLACK" ? "black" : "white"} strokeWidth="1" fill={crewmate.color}>
-                                        </circle>
-                                        {gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).id === crewmate.player.id &&
-                                            <foreignObject x={pod3IconsX[index]} y={pod3IconsY[index]} width="30" height="30">
-                                                {crewmate.role === "ENGINEER" &&
-                                                    <HiMiniWrenchScrewdriver color={crewmate.color !== "BLACK" ? "black" : "white"} />
-                                                }
-                                                {crewmate.role === "SCIENTIST" &&
-                                                    <IoIosFlask color={crewmate.color !== "BLACK" ? "black" : "white"} />
-                                                }
-                                                {crewmate.role === "CAPTAIN" &&
-                                                    <ImShield color={crewmate.color !== "BLACK" ? "black" : "white"} />
-                                                }
-                                            </foreignObject>
-                                        }
-                                    </>
-                                ))
-                            }
-                        </svg>
-                    </div>
-            })
-        // pods de capacidad 2
-        setPod2(
-            emptyChecker("array", pods) ? null : {
-                data: pods.find(pod => pod.number === 2),
-                html:
-                    <div className="pod2" style={pods.find(pod => pod.number === 2).sector === null ? { left: hangarX[1], top: hangarY[1] } : null}>
-                        <svg height="100%" width="100%">
-                            {!emptyChecker("array", crewmates) &&
-                                GetCrewmatesFromPod(pods.find(pod => pod.number === 2), crewmates).map((crewmate, index) => (
-                                    <>
-                                        <circle key={index} cx={pod2SlotsX[index]} cy={pod2SlotsY[index]} r="18"
-                                            stroke={crewmate.color !== "BLACK" ? "black" : "white"} strokeWidth="1" fill={crewmate.color}>
-                                        </circle>
-                                        {gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).id === crewmate.player.id &&
-                                            <foreignObject x={pod2IconsX[index]} y={pod2IconsY[index]} width="30" height="30">
-                                                {crewmate.role === "ENGINEER" &&
-                                                    <HiMiniWrenchScrewdriver color={crewmate.color !== "BLACK" ? "black" : "white"} />
-                                                }
-                                                {crewmate.role === "SCIENTIST" &&
-                                                    <IoIosFlask color={crewmate.color !== "BLACK" ? "black" : "white"} />
-                                                }
-                                                {crewmate.role === "CAPTAIN" &&
-                                                    <ImShield color={crewmate.color !== "BLACK" ? "black" : "white"} />
-                                                }
-                                            </foreignObject>
-                                        }
-                                    </>
-                                ))
-                            }
-                        </svg>
-                    </div>
-            }
-        )
-        setPod3(
-            emptyChecker("array", pods) ? null : {
-                data: pods.find(pod => pod.number === 3),
-                html:
-                    <div className="pod2" style={pods.find(pod => pod.number === 3).sector === null ? { left: hangarX[2], top: hangarY[2] } : null}>
-                        <svg height="100%" width="100%">
-                            {!emptyChecker("array", crewmates) &&
-                                GetCrewmatesFromPod(pods.find(pod => pod.number === 3), crewmates).map((crewmate, index) => (
-                                    <>
-                                        <circle key={index} cx={pod2SlotsX[index]} cy={pod2SlotsY[index]} r="18"
-                                            stroke={crewmate.color !== "BLACK" ? "black" : "white"} strokeWidth="1" fill={crewmate.color}>
-                                        </circle>
-                                        {gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).id === crewmate.player.id &&
-                                            <foreignObject x={pod2IconsX[index]} y={pod2IconsY[index]} width="30" height="30">
-                                                {crewmate.role === "ENGINEER" &&
-                                                    <HiMiniWrenchScrewdriver color={crewmate.color !== "BLACK" ? "black" : "white"} />
-                                                }
-                                                {crewmate.role === "SCIENTIST" &&
-                                                    <IoIosFlask color={crewmate.color !== "BLACK" ? "black" : "white"} />
-                                                }
-                                                {crewmate.role === "CAPTAIN" &&
-                                                    <ImShield color={crewmate.color !== "BLACK" ? "black" : "white"} />
-                                                }
-                                            </foreignObject>
-                                        }
-                                    </>
-                                ))
-                            }
-                        </svg>
-                    </div>
-            }
-        )
-        // pods de capacidad 1
-        setPod4(
-            emptyChecker("array", pods) ? null : {
-                data: pods.find(pod => pod.number === 4),
-                html:
-                    <div className="pod1" style={pods.find(pod => pod.number === 4).sector === null ? { left: hangarX[3], top: hangarY[3] } : null}>
-                        <svg height="100%" width="100%">
-                            {!emptyChecker("array", crewmates) &&
-                                GetCrewmatesFromPod(pods.find(pod => pod.number === 4), crewmates).map((crewmate, index) => (
-                                    <>
-                                        <circle key={index} cx={pod1SlotsX} cy={pod1SlotsY} r="18"
-                                            stroke={crewmate.color !== "BLACK" ? "black" : "white"} strokeWidth="1" fill={crewmate.color}>
-                                        </circle>
-                                        {gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).id === crewmate.player.id &&
-                                            <foreignObject x={pod1IconsX} y={pod1IconsY} width="30" height="30">
-                                                {crewmate.role === "ENGINEER" &&
-                                                    <HiMiniWrenchScrewdriver color={crewmate.color !== "BLACK" ? "black" : "white"} />
-                                                }
-                                                {crewmate.role === "SCIENTIST" &&
-                                                    <IoIosFlask color={crewmate.color !== "BLACK" ? "black" : "white"} />
-                                                }
-                                                {crewmate.role === "CAPTAIN" &&
-                                                    <ImShield color={crewmate.color !== "BLACK" ? "black" : "white"} />
-                                                }
-                                            </foreignObject>
-                                        }
-                                    </>
-                                ))
-                            }
-                        </svg>
-                    </div>
-            }
-        )
-        setPod5(
-            emptyChecker("array", pods) ? null : {
-                data: pods.find(pod => pod.number === 5),
-                html:
-                    <div className="pod1" style={pods.find(pod => pod.number === 5).sector === null ? { left: hangarX[4], top: hangarY[4] } : null}>
-                        <svg height="100%" width="100%">
-                            {!emptyChecker("array", crewmates) &&
-                                GetCrewmatesFromPod(pods.find(pod => pod.number === 5), crewmates).map((crewmate, index) => (
-                                    <>
-                                        <circle key={index} cx={pod1SlotsX} cy={pod1SlotsY} r="18"
-                                            stroke={crewmate.color !== "BLACK" ? "black" : "white"} strokeWidth="1" fill={crewmate.color}>
-                                        </circle>
-                                        {gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).id === crewmate.player.id &&
-                                            <foreignObject x={pod1IconsX} y={pod1IconsY} width="30" height="30">
-                                                {crewmate.role === "ENGINEER" &&
-                                                    <HiMiniWrenchScrewdriver color={crewmate.color !== "BLACK" ? "black" : "white"} />
-                                                }
-                                                {crewmate.role === "SCIENTIST" &&
-                                                    <IoIosFlask color={crewmate.color !== "BLACK" ? "black" : "white"} />
-                                                }
-                                                {crewmate.role === "CAPTAIN" &&
-                                                    <ImShield color={crewmate.color !== "BLACK" ? "black" : "white"} />
-                                                }
-                                            </foreignObject>
-                                        }
-                                    </>
-                                ))
-                            }
-                        </svg>
-                    </div>
-            }
-        )
-        setPod6(
-            emptyChecker("array", pods) ? null : {
-                data: pods.find(pod => pod.number === 6),
-                html:
-                    <div className="pod1" style={pods.find(pod => pod.number === 6).sector === null ? { left: hangarX[5], top: hangarY[5] } : null}>
-                        <svg height="100%" width="100%">
-                            {!emptyChecker("array", crewmates) &&
-                                GetCrewmatesFromPod(pods.find(pod => pod.number === 6), crewmates).map((crewmate, index) => (
-                                    <>
-                                        <circle key={index} cx={pod1SlotsX} cy={pod1SlotsY} r="18"
-                                            stroke={crewmate.color !== "BLACK" ? "black" : "white"} strokeWidth="1" fill={crewmate.color}>
-                                        </circle>
-                                        {gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).id === crewmate.player.id &&
-                                            <foreignObject x={pod1IconsX} y={pod1IconsY} width="30" height="30">
-                                                {crewmate.role === "ENGINEER" &&
-                                                    <HiMiniWrenchScrewdriver color={crewmate.color !== "BLACK" ? "black" : "white"} />
-                                                }
-                                                {crewmate.role === "SCIENTIST" &&
-                                                    <IoIosFlask color={crewmate.color !== "BLACK" ? "black" : "white"} />
-                                                }
-                                                {crewmate.role === "CAPTAIN" &&
-                                                    <ImShield color={crewmate.color !== "BLACK" ? "black" : "white"} />
-                                                }
-                                            </foreignObject>
-                                        }
-                                    </>
-                                ))
-                            }
-                        </svg>
-                    </div>
-            }
-        )
-    }
-
-    function GetCrewmatesFromPod(pod, crewmates) {
+    function GetCrewmatesFromPod(pod) {
         return crewmates.filter(crewmate => crewmate.pod && crewmate.pod.number === pod.number)
     }
 
@@ -349,25 +146,90 @@ export default function Game() {
     }
 
     function Sector(props) {
-        if (props.sector === undefined) {
+        if (props.sector === undefined || emptyChecker("array", pods)) {
             return null
         }
         return (
-            <div style={{ width: 100, height: 100, position: "absolute", left: props.x, top: props.y }}>
-                {pod1.data.sector && pod1.data.sector.number === props.sector.number ? pod1.html : null}
-                {pod2.data.sector && pod2.data.sector.number === props.sector.number ? pod2.html : null}
-                {pod3.data.sector && pod3.data.sector.number === props.sector.number ? pod3.html : null}
-                {pod4.data.sector && pod4.data.sector.number === props.sector.number ? pod4.html : null}
-                {pod5.data.sector && pod5.data.sector.number === props.sector.number ? pod5.html : null}
-                {pod6.data.sector && pod6.data.sector.number === props.sector.number ? pod6.html : null}
+            <div style={{ width: 100, height: 100, position: "absolute", left: props.x, top: props.y }}
+                onClick={() => {
+                    //                    console.log(piloting)
+                    sectorClickHandler(props.sector)
+                }}>
+                {pods.map((pod, index) => (
+                    <div key={index}>
+                        {pod.sector && pod.sector.number === props.sector.number &&
+                            <Pod pod={pod} />
+                        }
+                    </div>
+                ))}
+                {/* 
                 <Button style={{ border: "none", opacity: 0, width: 100, height: 100, borderRadius: 50, boxShadow: "5px 5px 5px #00000020", textShadow: "2px 2px 2px #00000020", transition: "0.15s" }}>
                     {props.sector.number}
                 </Button>
+                */}
             </div>
         )
     }
 
+    function Pod(props) {
+        if (emptyChecker("object", props.pod) || emptyChecker("array", crewmates)) {
+            return null
+        }
+        return (
+            <div className={props.pod.capacity === 3 ? "pod3" : props.pod.capacity === 2 ? "pod2" : "pod1"} style={props.pod.sector === null ? { left: hangarX[props.pod.number - 1], top: hangarY[props.pod.number - 1] } : null}
+                onClick={() => {
+                    piloting ? console.log(piloting) : console.log(piloting)
+                    console.log(props.pod)
+                    //                            podClickHandler(props.pod)
+                }}
+            >
+                <CrewmateSlots capacity={props.pod.capacity} crewmates={GetCrewmatesFromPod(props.pod)} />
+            </div>
+        )
+    }
+
+    function CrewmateSlots(props) {
+        if (emptyChecker("array", props.crewmates) || emptyChecker("array", gamePlayers)) {
+            return null
+        }
+        return (
+            <svg height="100%" width="100%">
+                {props.crewmates.map((crewmate, index) => (
+                    <>
+                        {console.log(props.crewmates)}
+                        {console.log(props.capacity)}
+                        <circle key={index}
+                            cx={props.capacity === 3 ? pod3SlotsX[index] : props.capacity === 2 ? pod2SlotsX[index] : pod1SlotsX}
+                            cy={props.capacity === 3 ? pod3SlotsY[index] : props.capacity === 2 ? pod2SlotsY[index] : pod1SlotsY}
+                            r="18"
+                            stroke={crewmate.color !== "BLACK" ? "black" : "white"} strokeWidth="1" fill={crewmate.color}>
+                        </circle>
+                        {gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).id === crewmate.player.id &&
+                            <foreignObject
+                                x={props.capacity === 3 ? pod3IconsX[index] : props.capacity === 2 ? pod2IconsX[index] : pod1IconsX}
+                                y={props.capacity === 3 ? pod3IconsY[index] : props.capacity === 2 ? pod2IconsY[index] : pod1IconsY}
+                                width="30" height="30"
+                            >
+                                {crewmate.role === "ENGINEER" &&
+                                    <HiMiniWrenchScrewdriver color={crewmate.color !== "BLACK" ? "black" : "white"} />
+                                }
+                                {crewmate.role === "SCIENTIST" &&
+                                    <IoIosFlask color={crewmate.color !== "BLACK" ? "black" : "white"} />
+                                }
+                                {crewmate.role === "CAPTAIN" &&
+                                    <ImShield color={crewmate.color !== "BLACK" ? "black" : "white"} />
+                                }
+                            </foreignObject>
+                        }
+                        <text>hola</text>
+                    </>
+                ))}
+            </svg>
+        )
+    }
+
     async function movePodDemo(pod, sector) {
+        console.log(pod)
         const movedPod = {
             emptySlots: pod.emptySlots,
             capacity: pod.capacity,
@@ -421,36 +283,65 @@ export default function Game() {
         }
     }
 
+    function sectorClickHandler(sector) {
+        setSelectedSector(sector)
+        if (piloting && selectingSector) {
+            movePodDemo(selectedPod.data, sector)
+            setSelectingSector(false)
+            setPiloting(false)
+        }
+    }
+
+    function podClickHandler(pod) {
+        setSelectedPod(pod)
+        if (piloting) {
+            console.log("pod clicked")
+            console.log(selectedPod)
+            console.log(pod)
+            setSelectingSector(true)
+            alert("Click on any adjacent sector to move the pod")
+        }
+    }
+
+
     return (
         <>
-            {!emptyChecker("array", sectors) && !emptyChecker("object", pod1) &&
+            {!emptyChecker("array", sectors) &&
                 <div className="game-page-container">
                     <div className="game-board">
-                        <Sector x={x[1]} y={y[1]} sector={sectors.find(sector => sector.number === 1)} />
-                        <Sector x={x[2]} y={y[2]} sector={sectors.find(sector => sector.number === 2)} />
-                        <Sector x={x[3]} y={y[3]} sector={sectors.find(sector => sector.number === 3)} />
-
-                        <Sector x={x[4]} y={y[4]} sector={sectors.find(sector => sector.number === 4)} />
-                        <Sector x={x[5]} y={y[5]} sector={sectors.find(sector => sector.number === 5)} />
-                        <Sector x={x[6]} y={y[6]} sector={sectors.find(sector => sector.number === 6)} />
-
-                        <Sector x={x[7]} y={y[7]} sector={sectors.find(sector => sector.number === 7)} />
-                        <Sector x={x[8]} y={y[8]} sector={sectors.find(sector => sector.number === 8)} />
-                        <Sector x={x[9]} y={y[9]} sector={sectors.find(sector => sector.number === 9)} />
-
-                        <Sector x={x[10]} y={y[10]} sector={sectors.find(sector => sector.number === 10)} />
-
-                        <Sector x={x[11]} y={y[11]} sector={sectors.find(sector => sector.number === 11)} />
-                        <Sector x={x[12]} y={y[12]} sector={sectors.find(sector => sector.number === 12)} />
-                        <Sector x={x[13]} y={y[13]} sector={sectors.find(sector => sector.number === 13)} />
-                        {pod1.data.sector === null ? pod1.html : null}
-                        {pod2.data.sector === null ? pod2.html : null}
-                        {pod3.data.sector === null ? pod3.html : null}
-                        {pod4.data.sector === null ? pod4.html : null}
-                        {pod5.data.sector === null ? pod5.html : null}
-                        {pod6.data.sector === null ? pod6.html : null}
+                        {sectors.map((sector, index) => (
+                            <div key={index}>
+                                <Sector x={x[sector.number]} y={y[sector.number]} sector={sector} />
+                            </div>
+                        ))}
+                        {pods.map((pod, index) => (
+                            <div key={index}>
+                                {pod.sector === null &&
+                                    <Pod pod={pod} crewmates={GetCrewmatesFromPod(pod)} />
+                                }
+                            </div>
+                        ))}
                     </div>
                     <div style={{ flexDirection: "column", marginLeft: 710, marginTop: 70, height: "100%", alignContent: "center", alignItems: "center" }}>
+                        <Button className="button" style={{
+                            backgroundColor: "#CFFF68",
+                            border: "none",
+                            width: 200,
+                            fontSize: 20,
+                            borderRadius: 20,
+                            height: 60,
+                            boxShadow: "5px 5px 5px #00000020",
+                            textShadow: "2px 2px 2px #00000020",
+                            transition: "0.15s",
+                            alignSelf: "center",
+                            marginBottom: 20
+                        }} onClick={() => {
+                            setPiloting(prevPiloting => !prevPiloting);
+                            alert("Click on any pod to pilot it")
+                            console.log(piloting)
+                        }}>
+                            PILOTAR
+                        </Button>
                         <Button className="button" style={{
                             backgroundColor: "#CFFF68",
                             border: "none",
@@ -534,78 +425,6 @@ export default function Game() {
                             marginBottom: 20
                         }} onClick={() => {
                             moveCrewmateDemo(crewmates.filter(crewmate => crewmate.color === gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).color)
-                                .filter(crewmate => crewmate.role === "SCIENTIST" && !crewmate.pod)[0], pods.find(pod => pod.number === 1))
-                        }}>
-                            SCIENTIST A POD DE 3
-                        </Button>
-                        <Button className="button" style={{
-                            backgroundColor: "#CFFF68",
-                            border: "none",
-                            width: 200,
-                            fontSize: 20,
-                            borderRadius: 20,
-                            height: 60,
-                            boxShadow: "5px 5px 5px #00000020",
-                            textShadow: "2px 2px 2px #00000020",
-                            transition: "0.15s",
-                            alignSelf: "center",
-                            marginBottom: 20
-                        }} onClick={() => {
-                            moveCrewmateDemo(crewmates.filter(crewmate => crewmate.color === gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).color)
-                                .filter(crewmate => crewmate.role === "CAPTAIN" && !crewmate.pod)[0], pods.find(pod => pod.number === 1))
-                        }}>
-                            CAPTAIN A POD DE 3
-                        </Button>
-                        <Button className="button" style={{
-                            backgroundColor: "#CFFF68",
-                            border: "none",
-                            width: 200,
-                            fontSize: 20,
-                            borderRadius: 20,
-                            height: 60,
-                            boxShadow: "5px 5px 5px #00000020",
-                            textShadow: "2px 2px 2px #00000020",
-                            transition: "0.15s",
-                            alignSelf: "center",
-                            marginBottom: 20
-                        }} onClick={() => {
-                            moveCrewmateDemo(crewmates.filter(crewmate => crewmate.color === gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).color)
-                                .filter(crewmate => crewmate.role === "ENGINEER" && !crewmate.pod)[0], pods.find(pod => pod.number === 2))
-                        }}>
-                            ENGINEER A POD DE 2
-                        </Button>
-                        <Button className="button" style={{
-                            backgroundColor: "#CFFF68",
-                            border: "none",
-                            width: 200,
-                            fontSize: 20,
-                            borderRadius: 20,
-                            height: 60,
-                            boxShadow: "5px 5px 5px #00000020",
-                            textShadow: "2px 2px 2px #00000020",
-                            transition: "0.15s",
-                            alignSelf: "center",
-                            marginBottom: 20
-                        }} onClick={() => {
-                            moveCrewmateDemo(crewmates.filter(crewmate => crewmate.color === gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).color)
-                                .filter(crewmate => crewmate.role === "SCIENTIST" && !crewmate.pod)[0], pods.find(pod => pod.number === 2))
-                        }}>
-                            SCIENTIST A POD DE 2
-                        </Button>
-                        <Button className="button" style={{
-                            backgroundColor: "#CFFF68",
-                            border: "none",
-                            width: 200,
-                            fontSize: 20,
-                            borderRadius: 20,
-                            height: 60,
-                            boxShadow: "5px 5px 5px #00000020",
-                            textShadow: "2px 2px 2px #00000020",
-                            transition: "0.15s",
-                            alignSelf: "center",
-                            marginBottom: 20
-                        }} onClick={() => {
-                            moveCrewmateDemo(crewmates.filter(crewmate => crewmate.color === gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).color)
                                 .filter(crewmate => crewmate.role === "CAPTAIN" && !crewmate.pod)[0], pods.find(pod => pod.number === 2))
                         }}>
                             CAPTAIN A POD DE 2
@@ -666,15 +485,13 @@ export default function Game() {
                             console.log(crewmates)
                             console.log(shelterCards)
                             console.log(slotInfos)
-                            console.log(pod1)
-                            console.log(pod2)
-                            console.log(pod3)
-                            console.log(pod4)
-                            console.log(pod5)
-                            console.log(pod6)
                             console.log(GetCrewmatesFromPod(pods.find(pod => pod.number === 1), crewmates))
                             console.log(gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).color)
                             console.log(gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id))
+                            console.log(piloting)
+                            console.log(selectedPod)
+                            console.log(selectedSector)
+                            console.log(selectingSector)
                         }}>
                             pruebita xd
                         </Button>
