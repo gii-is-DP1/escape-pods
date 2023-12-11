@@ -34,6 +34,7 @@ export default function Game() {
     const [selectingSector, setSelectingSector] = useState(false);
     const [selectedSector, setSelectedSector] = useState({});
     const [selectedPod, setSelectedPod] = useState({});
+    const [selectingPod, setSelectingPod] = useState(false);
 
     const jwt = tokenService.getLocalAccessToken();
     const myUsername = jwt_decode(jwt).sub;
@@ -152,8 +153,10 @@ export default function Game() {
         return (
             <div style={{ width: 100, height: 100, position: "absolute", left: props.x, top: props.y }}
                 onClick={() => {
-                    //                    console.log(piloting)
-                    sectorClickHandler(props.sector)
+                    console.log(props.sector)
+                    if (selectingSector) {
+                        sectorClickHandler(props.sector)
+                    }
                 }}>
                 {pods.map((pod, index) => (
                     <div key={index}>
@@ -178,9 +181,10 @@ export default function Game() {
         return (
             <div className={props.pod.capacity === 3 ? "pod3" : props.pod.capacity === 2 ? "pod2" : "pod1"} style={props.pod.sector === null ? { left: hangarX[props.pod.number - 1], top: hangarY[props.pod.number - 1] } : null}
                 onClick={() => {
-                    piloting ? console.log(piloting) : console.log(piloting)
                     console.log(props.pod)
-                    //                            podClickHandler(props.pod)
+                    if (selectingPod) {
+                        podClickHandler(props.pod)
+                    }
                 }}
             >
                 <CrewmateSlots capacity={props.pod.capacity} crewmates={GetCrewmatesFromPod(props.pod)} />
@@ -196,8 +200,6 @@ export default function Game() {
             <svg height="100%" width="100%">
                 {props.crewmates.map((crewmate, index) => (
                     <>
-                        {console.log(props.crewmates)}
-                        {console.log(props.capacity)}
                         <circle key={index}
                             cx={props.capacity === 3 ? pod3SlotsX[index] : props.capacity === 2 ? pod2SlotsX[index] : pod1SlotsX}
                             cy={props.capacity === 3 ? pod3SlotsY[index] : props.capacity === 2 ? pod2SlotsY[index] : pod1SlotsY}
@@ -221,7 +223,6 @@ export default function Game() {
                                 }
                             </foreignObject>
                         }
-                        <text>hola</text>
                     </>
                 ))}
             </svg>
@@ -229,7 +230,8 @@ export default function Game() {
     }
 
     async function movePodDemo(pod, sector) {
-        console.log(pod)
+        console.log("fetch pod" + pod)
+        console.log("fetch sector" + sector)
         const movedPod = {
             emptySlots: pod.emptySlots,
             capacity: pod.capacity,
@@ -286,8 +288,10 @@ export default function Game() {
     function sectorClickHandler(sector) {
         setSelectedSector(sector)
         if (piloting && selectingSector) {
-            movePodDemo(selectedPod.data, sector)
+            console.log(selectedSector)
+            movePodDemo(selectedPod, sector)
             setSelectingSector(false)
+            setSelectingPod(false)
             setPiloting(false)
         }
     }
@@ -295,14 +299,10 @@ export default function Game() {
     function podClickHandler(pod) {
         setSelectedPod(pod)
         if (piloting) {
-            console.log("pod clicked")
-            console.log(selectedPod)
-            console.log(pod)
             setSelectingSector(true)
             alert("Click on any adjacent sector to move the pod")
         }
     }
-
 
     return (
         <>
@@ -337,6 +337,7 @@ export default function Game() {
                             marginBottom: 20
                         }} onClick={() => {
                             setPiloting(prevPiloting => !prevPiloting);
+                            setSelectingPod(prevSelectingPod => !prevSelectingPod);
                             alert("Click on any pod to pilot it")
                             console.log(piloting)
                         }}>
