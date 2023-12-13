@@ -312,12 +312,12 @@ class GameItemsInitializers {
         }
     }
 
-    shuffleColors(colors) {
+    shuffle(colors) {
         return colors.sort(() => Math.random() - 0.5);
     }
 
     createGamePlayers(game, jwt) {
-        const colors = this.shuffleColors(["YELLOW", "PINK", "BLUE", "BLACK", "WHITE"])
+        const colors = this.shuffle(["YELLOW", "PINK", "BLUE", "BLACK", "WHITE"])
 
         for (let i = 0; i < game.players.length; i++) {
             fetch("/api/v1/gamePlayers", {
@@ -391,7 +391,7 @@ class GameItemsInitializers {
 
     async createShelters(game, jwt) {
         var shelters = []
-        const types = this.shuffleColors(["YELLOW", "PINK", "BLUE", "GREEN", "ORANGE"])
+        const types = this.shuffle(["YELLOW", "PINK", "BLUE", "GREEN", "ORANGE"])
         const sectors = await this.getSectors(game, jwt)
         console.log(sectors)
 
@@ -459,7 +459,7 @@ class GameItemsInitializers {
             let shelterI = shelters[i]
             for (let j = 0; j < 5; j++) {
 
-                let randomRole = this.shuffleColors(["CAPTAIN", "ENGINEER", "SCIENTIST"])
+                let randomRole = this.shuffle(["CAPTAIN", "ENGINEER", "SCIENTIST"])
                 let score = 2;
                 if (j < 2) {
                     score = Math.round(Math.random() * (5 - 3) + 3)
