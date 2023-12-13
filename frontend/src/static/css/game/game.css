@@ -64,8 +64,8 @@
     background-size: cover;
     display: flex;
     background-image: url('../../images/pink-shelter.png');
-    max-width: 228px;
-    max-height: 165px;
+    max-width: 179px;
+    max-height: 130px;
     height: 100%;
     width: 100%;
 /*    transform: rotate(90deg)*/
