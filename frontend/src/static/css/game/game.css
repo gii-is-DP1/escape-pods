@@ -58,3 +58,20 @@
     height: 100%;
     width: 100%;
 }
+
+.shelter-horizontal {
+    position: absolute;
+    background-size: cover;
+    display: flex;
+    background-image: url('../../images/pink-shelter.png');
+    max-width: 228px;
+    max-height: 165px;
+    height: 100%;
+    width: 100%;
+/*    transform: rotate(90deg)*/
+
+}
+
+.shelter.pink {
+
+}

@@ -6,6 +6,7 @@ import tokenService from '../services/token.service';
 import '../static/css/home/home.css';
 import "../static/css/lobby/lobby.css";
 import "../static/css/game/game.css";
+import scrap from "../static/images/scrap.png";
 import Board from "../static/images/escape-pods-board-horizontal.jpg"
 import { Link } from 'react-router-dom';
 import { move } from "react-big-calendar";
@@ -31,10 +32,13 @@ export default function Game() {
     const [shelterCards, setShelterCards] = useState([]);
     const [slotInfos, setSlotInfos] = useState([]);
     const [piloting, setPiloting] = useState(false);
+    const [boarding, setBoarding] = useState(false);
     const [selectingSector, setSelectingSector] = useState(false);
     const [selectedSector, setSelectedSector] = useState({});
     const [selectedPod, setSelectedPod] = useState({});
     const [selectingPod, setSelectingPod] = useState(false);
+    const [selectedCrewmate, setSelectedCrewmate] = useState({});
+    const [selectingCrewmate, setSelectingCrewmate] = useState(false);
 
     const jwt = tokenService.getLocalAccessToken();
     const myUsername = jwt_decode(jwt).sub;
@@ -69,23 +73,20 @@ export default function Game() {
         199,
         92, 199, 310]
 
-    const hangarX = [-30, 30, 30, -10, -20, 20] //coordenadas X del hangar para [pod3, pod21, pod22, pod11, pod12, pod13]
+    const hangarX = [-30, 30, 30, -10, -15, 25] //coordenadas X del hangar para [pod3, pod21, pod22, pod11, pod12, pod13]
     const hangarY = [199, 92, 310, -10, 410, 410] // coordenadas Y del hangar para [pod3, pod21, pod22, pod11, pod12, pod13]
 
-    const pod3SlotsX = [65, 31, 31] //coordenadas X de los slots del pod de capacidad 3
-    const pod3SlotsY = [50, 31, 69] //coordenadas Y de los slots del pod de capacidad 3
-    const pod3IconsX = [57.5, 23, 22] //coordenadas X de los iconos de crewmates para pods de capacidad 3
-    const pod3IconsY = [36, 17, 56] //coordenadas Y de los iconos de crewmates para pods de capacidad 3
+    const pod3SlotsX = [46, 12, 12] //coordenadas X de los slots del pod de capacidad 3
+    const pod3SlotsY = [32, 12, 50] //coordenadas Y de los slots del pod de capacidad 3
 
-    const pod2SlotsX = [65, 28] //coordenadas X de los slots del pod de capacidad 3
-    const pod2SlotsY = [50, 50] //coordenadas Y de los slots del pod de capacidad 3
-    const pod2IconsX = [57.5, 20] //coordenadas X de los iconos de crewmates para pods de capacidad 3
-    const pod2IconsY = [36, 36] //coordenadas Y de los iconos de crewmates para pods de capacidad 3
+    const pod2SlotsX = [47, 9] //coordenadas X de los slots del pod de capacidad 2
+    const pod2SlotsY = [32, 32] //coordenadas Y de los slots del pod de capacidad 2
 
-    const pod1SlotsX = 48 //coordenadas X de los slots del pod de capacidad 3
-    const pod1SlotsY = 50 //coordenadas Y de los slots del pod de capacidad 3
-    const pod1IconsX = 40 //coordenadas X de los iconos de crewmates para pods de capacidad 3
-    const pod1IconsY = 36 //coordenadas Y de los iconos de crewmates para pods de capacidad 3
+    const pod1SlotsX = 30 //coordenadas X de los slots del pod de capacidad 1
+    const pod1SlotsY = 32 //coordenadas Y de los slots del pod de capacidad 1
+
+    const shelterScoringSlotsX = [8, 52, 96, 140, 184] //coordenadas X de los slots del shelter
+    const shelterScoringSlotsY = [123, 123, 123, 123, 123] //coordenadas Y de los slots del shelter
 
     useEffect(() => {
         if (jwt) {
@@ -165,6 +166,9 @@ export default function Game() {
                         }
                     </div>
                 ))}
+                {props.sector.scrap &&
+                    <img src={scrap} maxWidth={100} maxHeight={100} />
+                }
                 {/* 
                 <Button style={{ border: "none", opacity: 0, width: 100, height: 100, borderRadius: 50, boxShadow: "5px 5px 5px #00000020", textShadow: "2px 2px 2px #00000020", transition: "0.15s" }}>
                     {props.sector.number}
@@ -187,45 +191,130 @@ export default function Game() {
                     }
                 }}
             >
+                {/*
                 <CrewmateSlots capacity={props.pod.capacity} crewmates={GetCrewmatesFromPod(props.pod)} />
+                */}
+                {GetCrewmatesFromPod(props.pod).map((crewmate, index) => (
+                    <div key={index} style={{
+                        position: "absolute",
+                        left: props.pod.capacity === 3 ? pod3SlotsX[index] : props.pod.capacity === 2 ? pod2SlotsX[index] : pod1SlotsX,
+                        top: props.pod.capacity === 3 ? pod3SlotsY[index] : props.pod.capacity === 2 ? pod2SlotsY[index] : pod1SlotsY
+                    }} >
+                        <Crewmate crewmate={crewmate} />
+                    </div>
+                ))}
             </div>
         )
     }
 
-    function CrewmateSlots(props) {
-        if (emptyChecker("array", props.crewmates) || emptyChecker("array", gamePlayers)) {
+    function Crewmate(props) {
+        if (emptyChecker("array", gamePlayers)) {
             return null
         }
         return (
-            <svg height="100%" width="100%">
-                {props.crewmates.map((crewmate, index) => (
-                    <>
-                        <circle key={index}
-                            cx={props.capacity === 3 ? pod3SlotsX[index] : props.capacity === 2 ? pod2SlotsX[index] : pod1SlotsX}
-                            cy={props.capacity === 3 ? pod3SlotsY[index] : props.capacity === 2 ? pod2SlotsY[index] : pod1SlotsY}
-                            r="18"
-                            stroke={crewmate.color !== "BLACK" ? "black" : "white"} strokeWidth="1" fill={crewmate.color}>
-                        </circle>
-                        {gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).id === crewmate.player.id &&
-                            <foreignObject
-                                x={props.capacity === 3 ? pod3IconsX[index] : props.capacity === 2 ? pod2IconsX[index] : pod1IconsX}
-                                y={props.capacity === 3 ? pod3IconsY[index] : props.capacity === 2 ? pod2IconsY[index] : pod1IconsY}
-                                width="30" height="30"
-                            >
-                                {crewmate.role === "ENGINEER" &&
-                                    <HiMiniWrenchScrewdriver color={crewmate.color !== "BLACK" ? "black" : "white"} />
-                                }
-                                {crewmate.role === "SCIENTIST" &&
-                                    <IoIosFlask color={crewmate.color !== "BLACK" ? "black" : "white"} />
-                                }
-                                {crewmate.role === "CAPTAIN" &&
-                                    <ImShield color={crewmate.color !== "BLACK" ? "black" : "white"} />
-                                }
-                            </foreignObject>
+            <svg height="37" width="37" onClick={() => {
+                if (selectingCrewmate) {
+                    crewmateClickHandler(props.crewmate)
+                }
+            }}>
+                <circle
+                    cx="18.5"
+                    cy="18.5"
+                    r="18"
+                    stroke={props.crewmate.color !== "BLACK" ? "black" : "white"} strokeWidth="1" fill={props.crewmate.color}>
+                </circle>
+                {gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).id === props.crewmate.player.id &&
+                    <foreignObject
+                        x="10"
+                        y="5"
+                        width="20" height="30"
+                    >
+                        {props.crewmate.role === "ENGINEER" &&
+                            <HiMiniWrenchScrewdriver color={props.crewmate.color !== "BLACK" ? "black" : "white"} />
                         }
-                    </>
-                ))}
+                        {props.crewmate.role === "SCIENTIST" &&
+                            <IoIosFlask color={props.crewmate.color !== "BLACK" ? "black" : "white"} />
+                        }
+                        {props.crewmate.role === "CAPTAIN" &&
+                            <ImShield color={props.crewmate.color !== "BLACK" ? "black" : "white"} />
+                        }
+                    </foreignObject>
+                }
             </svg>
+        )
+    }
+
+    function UnusedCrewmates() {
+        if (emptyChecker("array", crewmates) || emptyChecker("array", gamePlayers)) {
+            return null
+        }
+        return (
+            <div>
+                <div style={{ display: 'flex', flexDirection: 'row', marginBottom: 3 }}>
+                    {crewmates.filter(crewmate => crewmate.player.id === gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).id && crewmate.role === "ENGINEER" && !crewmate.pod)
+                        .map((crewmate, index) => (
+                            <div key={index} style={{ marginRight: 3 }}>
+                                <Crewmate crewmate={crewmate} />
+                            </div>
+                        ))}
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'row', marginBottom: 3 }}>
+                    {crewmates.filter(crewmate => crewmate.player.id === gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).id && crewmate.role === "SCIENTIST" && !crewmate.pod)
+                        .map((crewmate, index) => (
+                            <div key={index} style={{ marginRight: 3 }}>
+                                <Crewmate crewmate={crewmate} />
+                            </div>
+                        ))}
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'row', marginBottom: 3 }}>
+                    {crewmates.filter(crewmate => crewmate.player.id === gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).id && crewmate.role === "CAPTAIN" && !crewmate.pod)
+                        .map((crewmate, index) => (
+                            <div key={index} style={{ marginRight: 3 }}>
+                                <Crewmate crewmate={crewmate} />
+                            </div>
+                        ))}
+                </div>
+            </div>
+        )
+    }
+
+    function ShelterCard(props) {
+        if (emptyChecker("array", shelterCards)) {
+            return null
+        }
+        return (
+            <div className={"shelter-horizontal"}>
+                <div style={{ position: "absolute", left: shelterScoringSlotsX[0], top: shelterScoringSlotsY[0] }}>
+                    <Crewmate crewmate={crewmates[0]} />
+                </div>
+                <div style={{ position: "absolute", left: shelterScoringSlotsX[1], top: shelterScoringSlotsY[0] }}>
+                    <Crewmate crewmate={crewmates[0]} />
+                </div>
+                <div style={{ position: "absolute", left: shelterScoringSlotsX[2], top: shelterScoringSlotsY[0] }}>
+                    <Crewmate crewmate={crewmates[0]} />
+                </div>
+                <div style={{ position: "absolute", left: shelterScoringSlotsX[3], top: shelterScoringSlotsY[0] }}>
+                    <Crewmate crewmate={crewmates[0]} />
+                </div>
+                <div style={{ position: "absolute", left: shelterScoringSlotsX[4], top: shelterScoringSlotsY[0] }}>
+                    <Crewmate crewmate={crewmates[0]} />
+                </div>
+                <div style={{ position: "absolute", left: shelterScoringSlotsX[0], top: -18 }}>
+                    <Crewmate crewmate={crewmates[0]} />
+                </div>
+                <div style={{ position: "absolute", left: shelterScoringSlotsX[1], top: -18 }}>
+                    <Crewmate crewmate={crewmates[0]} />
+                </div>
+                <div style={{ position: "absolute", left: shelterScoringSlotsX[2], top: -18 }}>
+                    <Crewmate crewmate={crewmates[0]} />
+                </div>
+                <div style={{ position: "absolute", left: shelterScoringSlotsX[3], top: -18 }}>
+                    <Crewmate crewmate={crewmates[0]} />
+                </div>
+                <div style={{ position: "absolute", left: shelterScoringSlotsX[4], top: -18 }}>
+                    <Crewmate crewmate={crewmates[0]} />
+                </div>
+            </div>
         )
     }
 
@@ -252,28 +341,25 @@ export default function Game() {
     }
 
     async function moveCrewmateDemo(crewmate, pod) {
-        if (!crewmate) {
-            alert("No hay crewmates disponibles para mover")
-        } else {
-            const movedCrewmate = {
-                color: crewmate.color,
-                role: crewmate.role,
-                player: crewmate.player,
-                shelterCard: crewmate.shelterCard,
-                pod: pod,
-                game: game
-            }
-            await fetch(`/api/v1/crewmates/${crewmate.id}`, {
-                headers: {
-                    "Authorization": ' Bearer ${ jwt }',
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                method: 'PUT',
-                body: JSON.stringify(movedCrewmate)
-            })
+        const movedCrewmate = {
+            color: crewmate.color,
+            role: crewmate.role,
+            player: crewmate.player,
+            shelterCard: crewmate.shelterCard,
+            pod: pod,
+            game: game
         }
+        await fetch(`/api/v1/crewmates/${crewmate.id}`, {
+            headers: {
+                "Authorization": ' Bearer ${ jwt }',
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            method: 'PUT',
+            body: JSON.stringify(movedCrewmate)
+        })
     }
+
 
     function emptyChecker(type, a) { //comprueba si el elemento a de tipo type está vacío
         if (type === "array") {
@@ -301,13 +387,28 @@ export default function Game() {
         if (piloting) {
             setSelectingSector(true)
             alert("Click on any adjacent sector to move the pod")
+        } else if (boarding) {
+            moveCrewmateDemo(selectedCrewmate, pod)
+            setSelectingPod(false)
+            setSelectingCrewmate(false)
+            setBoarding(false)
+        }
+    }
+
+    function crewmateClickHandler(crewmate) {
+        setSelectedCrewmate(crewmate)
+        if (boarding) {
+            setSelectingPod(true)
+            alert("Click on any pod or shelter to move the crewmate")
         }
     }
 
     return (
         <>
+
             {!emptyChecker("array", sectors) &&
                 <div className="game-page-container">
+
                     <div className="game-board">
                         {sectors.map((sector, index) => (
                             <div key={index}>
@@ -322,7 +423,17 @@ export default function Game() {
                             </div>
                         ))}
                     </div>
-                    <div style={{ flexDirection: "column", marginLeft: 710, marginTop: 70, height: "100%", alignContent: "center", alignItems: "center" }}>
+                    <div style={{ height: "100%", width: "500px", position: "absolute", left: 650 }}>
+                        {/* 
+                        <div style={{ position: "absolute", top: 90, height: 165, width: 228 }}>
+                            <ShelterCard shelterCard={shelterCards[0]} />
+                        </div>
+                        <div style={{ position: "absolute", top: 250, height: 165, width: 228 }}>
+                            <ShelterCard shelterCard={shelterCards[1]} />
+                        </div>
+                        */}
+                    </div>
+                    <div style={{ display: "flex", flexDirection: "column", marginLeft: 710, marginTop: 70, height: "100%", alignContent: "center", alignItems: "center" }}>
                         <Button className="button" style={{
                             backgroundColor: "#CFFF68",
                             border: "none",
@@ -356,97 +467,12 @@ export default function Game() {
                             alignSelf: "center",
                             marginBottom: 20
                         }} onClick={() => {
-                            movePodDemo(pods.find(pod => pod.number === 2), sectors.find(sector => sector.number === 2))
+                            setBoarding(prevBoarding => !prevBoarding);
+                            setSelectingCrewmate(prevSelectingCrewmate => !prevSelectingCrewmate);
+                            alert("Click on any of your crewmates")
+                            console.log(boarding)
                         }}>
-                            POD DE 2 SECTOR 2
-                        </Button>
-                        <Button className="button" style={{
-                            backgroundColor: "#CFFF68",
-                            border: "none",
-                            width: 200,
-                            fontSize: 20,
-                            borderRadius: 20,
-                            height: 60,
-                            boxShadow: "5px 5px 5px #00000020",
-                            textShadow: "2px 2px 2px #00000020",
-                            transition: "0.15s",
-                            alignSelf: "center",
-                            marginBottom: 20
-                        }} onClick={() => {
-                            movePodDemo(pods.find(pod => pod.number === 1), sectors.find(sector => sector.number === 10))
-                        }}>
-                            POD DE 3 SECTOR 10
-                        </Button>
-                        <Button className="button" style={{
-                            backgroundColor: "#CFFF68",
-                            border: "none",
-                            width: 200,
-                            fontSize: 20,
-                            borderRadius: 20,
-                            height: 60,
-                            boxShadow: "5px 5px 5px #00000020",
-                            textShadow: "2px 2px 2px #00000020",
-                            transition: "0.15s",
-                            alignSelf: "center",
-                            marginBottom: 20
-                        }} onClick={() => {
-                            movePodDemo(pods.find(pod => pod.number === 4), sectors.find(sector => sector.number === 6))
-                        }}>
-                            POD DE 1 SECTOR 6
-                        </Button>
-                        <Button className="button" style={{
-                            backgroundColor: "#CFFF68",
-                            border: "none",
-                            width: 200,
-                            fontSize: 20,
-                            borderRadius: 20,
-                            height: 60,
-                            boxShadow: "5px 5px 5px #00000020",
-                            textShadow: "2px 2px 2px #00000020",
-                            transition: "0.15s",
-                            alignSelf: "center",
-                            marginBottom: 20
-                        }} onClick={() => {
-                            moveCrewmateDemo(crewmates.filter(crewmate => crewmate.color === gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).color)
-                                .filter(crewmate => crewmate.role === "ENGINEER" && !crewmate.pod)[0], pods.find(pod => pod.number === 1))
-                        }}>
-                            ENGINEER A POD DE 3
-                        </Button>
-                        <Button className="button" style={{
-                            backgroundColor: "#CFFF68",
-                            border: "none",
-                            width: 200,
-                            fontSize: 20,
-                            borderRadius: 20,
-                            height: 60,
-                            boxShadow: "5px 5px 5px #00000020",
-                            textShadow: "2px 2px 2px #00000020",
-                            transition: "0.15s",
-                            alignSelf: "center",
-                            marginBottom: 20
-                        }} onClick={() => {
-                            moveCrewmateDemo(crewmates.filter(crewmate => crewmate.color === gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).color)
-                                .filter(crewmate => crewmate.role === "CAPTAIN" && !crewmate.pod)[0], pods.find(pod => pod.number === 2))
-                        }}>
-                            CAPTAIN A POD DE 2
-                        </Button>
-                        <Button className="button" style={{
-                            backgroundColor: "#CFFF68",
-                            border: "none",
-                            width: 200,
-                            fontSize: 20,
-                            borderRadius: 20,
-                            height: 60,
-                            boxShadow: "5px 5px 5px #00000020",
-                            textShadow: "2px 2px 2px #00000020",
-                            transition: "0.15s",
-                            alignSelf: "center",
-                            marginBottom: 20
-                        }} onClick={() => {
-                            moveCrewmateDemo(crewmates.filter(crewmate => crewmate.color === gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).color)
-                                .filter(crewmate => crewmate.role === "ENGINEER" && !crewmate.pod)[0], pods.find(pod => pod.number === 4))
-                        }}>
-                            ENGINEER A POD DE 1
+                            EMBARCAR/DESEMBARCAR
                         </Button>
                         <Button className="button" style={{
                             backgroundColor: "#CFFF68",
@@ -494,8 +520,11 @@ export default function Game() {
                             console.log(selectedSector)
                             console.log(selectingSector)
                         }}>
-                            pruebita xd
+                            troncos
                         </Button>
+                        {!emptyChecker("array", crewmates) &&
+                            <UnusedCrewmates />
+                        }
                     </div>
                 </div >
             }
