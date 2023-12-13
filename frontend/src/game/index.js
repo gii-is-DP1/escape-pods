@@ -32,13 +32,15 @@ export default function Game() {
     const [shelterCards, setShelterCards] = useState([]);
     const [slotInfos, setSlotInfos] = useState([]);
     const [piloting, setPiloting] = useState(false);
-    const [boarding, setBoarding] = useState(false);
+    const [embarking, setEmbarking] = useState(false);
     const [selectingSector, setSelectingSector] = useState(false);
     const [selectedSector, setSelectedSector] = useState({});
     const [selectedPod, setSelectedPod] = useState({});
     const [selectingPod, setSelectingPod] = useState(false);
     const [selectedCrewmate, setSelectedCrewmate] = useState({});
     const [selectingCrewmate, setSelectingCrewmate] = useState(false);
+    const [selectingShelterCard, setSelectingShelterCard] = useState(false);
+    const [selectedShelterCard, setSelectedShelterCard] = useState({});
 
     const jwt = tokenService.getLocalAccessToken();
     const myUsername = jwt_decode(jwt).sub;
@@ -85,8 +87,11 @@ export default function Game() {
     const pod1SlotsX = 30 //coordenadas X de los slots del pod de capacidad 1
     const pod1SlotsY = 32 //coordenadas Y de los slots del pod de capacidad 1
 
-    const shelterScoringSlotsX = [8, 52, 96, 140, 184] //coordenadas X de los slots del shelter
-    const shelterScoringSlotsY = [123, 123, 123, 123, 123] //coordenadas Y de los slots del shelter
+    const shelterScoringSlotsX = [7, 41, 75.5, 110, 144] //coordenadas X de los slots del shelter
+    const shelterScoringSlotsY = [97, 97, 97, 97, 97] //coordenadas Y de los slots del shelter
+
+    const shelterEmbarkingSlotsX = [8, 42, 76.5, 111, 145] //coordenadas X de los slots del shelter
+    const shelterEmbarkingSlotsY = [-14.5, -14.5, -14.5, -14.5, -14.5] //coordenadas Y de los slots del shelter
 
     useEffect(() => {
         if (jwt) {
@@ -133,6 +138,10 @@ export default function Game() {
 
     function GetCrewmatesFromPod(pod) {
         return crewmates.filter(crewmate => crewmate.pod && crewmate.pod.number === pod.number)
+    }
+
+    function GetCrewmatesFromShelter(shelterCard) {
+        return crewmates.filter(crewmate => crewmate.shelterCard && crewmate.shelterCard.id === shelterCard.id)
     }
 
     async function fetchCurrentGame() {
@@ -213,20 +222,20 @@ export default function Game() {
         }
         return (
             <svg height="37" width="37" onClick={() => {
-                if (selectingCrewmate) {
+                if (selectingCrewmate && !props.crewmate.shelter) {
                     crewmateClickHandler(props.crewmate)
                 }
             }}>
                 <circle
-                    cx="18.5"
-                    cy="18.5"
-                    r="18"
+                    cx={props.size === "s" ? "14.5" : "18.5"}
+                    cy={props.size === "s" ? "14.5" : "18.5"}
+                    r={props.size === "s" ? "14" : "18"}
                     stroke={props.crewmate.color !== "BLACK" ? "black" : "white"} strokeWidth="1" fill={props.crewmate.color}>
                 </circle>
                 {gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).id === props.crewmate.player.id &&
                     <foreignObject
-                        x="10"
-                        y="5"
+                        x={props.size === "s" ? "6.5" : "10"}
+                        y={props.size === "s" ? "1.5" : "5"}
                         width="20" height="30"
                     >
                         {props.crewmate.role === "ENGINEER" &&
@@ -251,7 +260,7 @@ export default function Game() {
         return (
             <div>
                 <div style={{ display: 'flex', flexDirection: 'row', marginBottom: 3 }}>
-                    {crewmates.filter(crewmate => crewmate.player.id === gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).id && crewmate.role === "ENGINEER" && !crewmate.pod)
+                    {crewmates.filter(crewmate => crewmate.player.id === gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).id && crewmate.role === "ENGINEER" && !crewmate.pod && !crewmate.shelterCard)
                         .map((crewmate, index) => (
                             <div key={index} style={{ marginRight: 3 }}>
                                 <Crewmate crewmate={crewmate} />
@@ -259,7 +268,7 @@ export default function Game() {
                         ))}
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'row', marginBottom: 3 }}>
-                    {crewmates.filter(crewmate => crewmate.player.id === gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).id && crewmate.role === "SCIENTIST" && !crewmate.pod)
+                    {crewmates.filter(crewmate => crewmate.player.id === gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).id && crewmate.role === "SCIENTIST" && !crewmate.pod && !crewmate.shelterCard)
                         .map((crewmate, index) => (
                             <div key={index} style={{ marginRight: 3 }}>
                                 <Crewmate crewmate={crewmate} />
@@ -267,7 +276,7 @@ export default function Game() {
                         ))}
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'row', marginBottom: 3 }}>
-                    {crewmates.filter(crewmate => crewmate.player.id === gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).id && crewmate.role === "CAPTAIN" && !crewmate.pod)
+                    {crewmates.filter(crewmate => crewmate.player.id === gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).id && crewmate.role === "CAPTAIN" && !crewmate.pod && !crewmate.shelterCard)
                         .map((crewmate, index) => (
                             <div key={index} style={{ marginRight: 3 }}>
                                 <Crewmate crewmate={crewmate} />
@@ -283,37 +292,50 @@ export default function Game() {
             return null
         }
         return (
-            <div className={"shelter-horizontal"}>
+            <div className={"shelter-horizontal"} onClick={() => {
+                if (selectingShelterCard) {
+                    shelterClickHandler(props.shelterCard)
+                }
+            }}>
+                {console.log(props.shelterCard)}
+                {console.log(GetCrewmatesFromShelter(props.shelterCard))}
+                {GetCrewmatesFromShelter(props.shelterCard).map((crewmate, index) => (
+                    <div style={{ position: "absolute", left: shelterEmbarkingSlotsX[index], top: shelterEmbarkingSlotsY[index] }}>
+                        <Crewmate crewmate={crewmate} size="s" />
+                    </div>
+                ))}
+                {/* 
                 <div style={{ position: "absolute", left: shelterScoringSlotsX[0], top: shelterScoringSlotsY[0] }}>
-                    <Crewmate crewmate={crewmates[0]} />
+                    <Crewmate crewmate={crewmates[0]} size="s" />
                 </div>
                 <div style={{ position: "absolute", left: shelterScoringSlotsX[1], top: shelterScoringSlotsY[0] }}>
-                    <Crewmate crewmate={crewmates[0]} />
+                    <Crewmate crewmate={crewmates[0]} size="s" />
                 </div>
                 <div style={{ position: "absolute", left: shelterScoringSlotsX[2], top: shelterScoringSlotsY[0] }}>
-                    <Crewmate crewmate={crewmates[0]} />
+                    <Crewmate crewmate={crewmates[0]} size="s" />
                 </div>
                 <div style={{ position: "absolute", left: shelterScoringSlotsX[3], top: shelterScoringSlotsY[0] }}>
-                    <Crewmate crewmate={crewmates[0]} />
+                    <Crewmate crewmate={crewmates[0]} size="s" />
                 </div>
                 <div style={{ position: "absolute", left: shelterScoringSlotsX[4], top: shelterScoringSlotsY[0] }}>
-                    <Crewmate crewmate={crewmates[0]} />
+                    <Crewmate crewmate={crewmates[0]} size="s" />
                 </div>
-                <div style={{ position: "absolute", left: shelterScoringSlotsX[0], top: -18 }}>
-                    <Crewmate crewmate={crewmates[0]} />
+                <div style={{ position: "absolute", left: shelterEmbarkingSlotsX[0], top: shelterEmbarkingSlotsY[0] }}>
+                    <Crewmate crewmate={crewmates[0]} size="s" />
                 </div>
-                <div style={{ position: "absolute", left: shelterScoringSlotsX[1], top: -18 }}>
-                    <Crewmate crewmate={crewmates[0]} />
+                <div style={{ position: "absolute", left: shelterEmbarkingSlotsX[1], top: shelterEmbarkingSlotsY[1] }}>
+                    <Crewmate crewmate={crewmates[0]} size="s" />
                 </div>
-                <div style={{ position: "absolute", left: shelterScoringSlotsX[2], top: -18 }}>
-                    <Crewmate crewmate={crewmates[0]} />
+                <div style={{ position: "absolute", left: shelterEmbarkingSlotsX[2], top: shelterEmbarkingSlotsY[2] }}>
+                    <Crewmate crewmate={crewmates[0]} size="s" />
                 </div>
-                <div style={{ position: "absolute", left: shelterScoringSlotsX[3], top: -18 }}>
-                    <Crewmate crewmate={crewmates[0]} />
+                <div style={{ position: "absolute", left: shelterEmbarkingSlotsX[3], top: shelterEmbarkingSlotsY[3] }}>
+                    <Crewmate crewmate={crewmates[0]} size="s" />
                 </div>
-                <div style={{ position: "absolute", left: shelterScoringSlotsX[4], top: -18 }}>
-                    <Crewmate crewmate={crewmates[0]} />
+                <div style={{ position: "absolute", left: shelterEmbarkingSlotsX[4], top: shelterEmbarkingSlotsY[4] }}>
+                    <Crewmate crewmate={crewmates[0]} size="s" />
                 </div>
+                */}
             </div>
         )
     }
@@ -340,13 +362,13 @@ export default function Game() {
         })
     }
 
-    async function moveCrewmateDemo(crewmate, pod) {
+    async function moveCrewmateDemo(crewmate, pod, shelterCard) {
         const movedCrewmate = {
             color: crewmate.color,
             role: crewmate.role,
             player: crewmate.player,
-            shelterCard: crewmate.shelterCard,
-            pod: pod,
+            shelterCard: shelterCard ? shelterCard : crewmate.shelterCard,
+            pod: pod ? pod : null,  // si se pasa un pod se mueve al pod, el unico caso en el que se mueve un crewmate sin pasar un pod es para subir a un refugio, asi que se baja del pod
             game: game
         }
         await fetch(`/api/v1/crewmates/${crewmate.id}`, {
@@ -387,19 +409,31 @@ export default function Game() {
         if (piloting) {
             setSelectingSector(true)
             alert("Click on any adjacent sector to move the pod")
-        } else if (boarding) {
-            moveCrewmateDemo(selectedCrewmate, pod)
+        } else if (embarking) {
+            moveCrewmateDemo(selectedCrewmate, pod, null)
             setSelectingPod(false)
             setSelectingCrewmate(false)
-            setBoarding(false)
+            setEmbarking(false)
         }
     }
 
     function crewmateClickHandler(crewmate) {
         setSelectedCrewmate(crewmate)
-        if (boarding) {
+        if (embarking) {
             setSelectingPod(true)
+            setSelectingShelterCard(true)
             alert("Click on any pod or shelter to move the crewmate")
+        }
+    }
+
+    function shelterClickHandler(shelterCard) {
+        setSelectedShelterCard(shelterCard)
+        if (embarking) {
+            moveCrewmateDemo(selectedCrewmate, null, shelterCard)
+            setSelectingPod(false)
+            setSelectingCrewmate(false)
+            setSelectingShelterCard(false)
+            setEmbarking(false)
         }
     }
 
@@ -423,15 +457,19 @@ export default function Game() {
                             </div>
                         ))}
                     </div>
-                    <div style={{ height: "100%", width: "500px", position: "absolute", left: 650 }}>
-                        {/* 
+                    <div style={{ height: "100%", width: "300px", position: "absolute", left: 650 }}>
                         <div style={{ position: "absolute", top: 90, height: 165, width: 228 }}>
                             <ShelterCard shelterCard={shelterCards[0]} />
                         </div>
-                        <div style={{ position: "absolute", top: 250, height: 165, width: 228 }}>
+                        <div style={{ position: "absolute", top: 255, left: 60, height: 165, width: 228 }}>
                             <ShelterCard shelterCard={shelterCards[1]} />
                         </div>
-                        */}
+                        <div style={{ position: "absolute", top: 415, left: 60, height: 165, width: 228 }}>
+                            <ShelterCard shelterCard={shelterCards[2]} />
+                        </div>
+                        <div style={{ position: "absolute", top: 580, height: 165, width: 228 }}>
+                            <ShelterCard shelterCard={shelterCards[3]} />
+                        </div>
                     </div>
                     <div style={{ display: "flex", flexDirection: "column", marginLeft: 710, marginTop: 70, height: "100%", alignContent: "center", alignItems: "center" }}>
                         <Button className="button" style={{
@@ -467,10 +505,10 @@ export default function Game() {
                             alignSelf: "center",
                             marginBottom: 20
                         }} onClick={() => {
-                            setBoarding(prevBoarding => !prevBoarding);
+                            setEmbarking(prevEmbarking => !prevEmbarking);
                             setSelectingCrewmate(prevSelectingCrewmate => !prevSelectingCrewmate);
                             alert("Click on any of your crewmates")
-                            console.log(boarding)
+                            console.log(embarking)
                         }}>
                             EMBARCAR/DESEMBARCAR
                         </Button>
