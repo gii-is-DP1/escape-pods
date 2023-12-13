@@ -458,16 +458,16 @@ export default function Game() {
                         ))}
                     </div>
                     <div style={{ height: "100%", width: "300px", position: "absolute", left: 650 }}>
-                        <div style={{ position: "absolute", top: 90, height: 165, width: 228 }}>
+                        <div style={{ position: "absolute", top: 90, height: 130, width: 179 }}>
                             <ShelterCard shelterCard={shelterCards[0]} />
                         </div>
-                        <div style={{ position: "absolute", top: 255, left: 60, height: 165, width: 228 }}>
+                        <div style={{ position: "absolute", top: 245, left: 60, height: 130, width: 179 }}>
                             <ShelterCard shelterCard={shelterCards[1]} />
                         </div>
-                        <div style={{ position: "absolute", top: 415, left: 60, height: 165, width: 228 }}>
+                        <div style={{ position: "absolute", top: 405, left: 60, height: 130, width: 179 }}>
                             <ShelterCard shelterCard={shelterCards[2]} />
                         </div>
-                        <div style={{ position: "absolute", top: 580, height: 165, width: 228 }}>
+                        <div style={{ position: "absolute", top: 565, height: 130, width: 179 }}>
                             <ShelterCard shelterCard={shelterCards[3]} />
                         </div>
                     </div>
