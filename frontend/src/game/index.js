@@ -288,7 +288,7 @@ export default function Game() {
     }
 
     function ShelterCard(props) {
-        if (emptyChecker("array", shelterCards)) {
+        if (emptyChecker("array", shelterCards) || emptyChecker("array", slotInfos)) {
             return null
         }
         return (
@@ -297,45 +297,27 @@ export default function Game() {
                     shelterClickHandler(props.shelterCard)
                 }
             }}>
-                {console.log(props.shelterCard)}
-                {console.log(GetCrewmatesFromShelter(props.shelterCard))}
                 {GetCrewmatesFromShelter(props.shelterCard).map((crewmate, index) => (
                     <div style={{ position: "absolute", left: shelterEmbarkingSlotsX[index], top: shelterEmbarkingSlotsY[index] }}>
                         <Crewmate crewmate={crewmate} size="s" />
                     </div>
                 ))}
-                {/* 
-                <div style={{ position: "absolute", left: shelterScoringSlotsX[0], top: shelterScoringSlotsY[0] }}>
-                    <Crewmate crewmate={crewmates[0]} size="s" />
-                </div>
-                <div style={{ position: "absolute", left: shelterScoringSlotsX[1], top: shelterScoringSlotsY[0] }}>
-                    <Crewmate crewmate={crewmates[0]} size="s" />
-                </div>
-                <div style={{ position: "absolute", left: shelterScoringSlotsX[2], top: shelterScoringSlotsY[0] }}>
-                    <Crewmate crewmate={crewmates[0]} size="s" />
-                </div>
-                <div style={{ position: "absolute", left: shelterScoringSlotsX[3], top: shelterScoringSlotsY[0] }}>
-                    <Crewmate crewmate={crewmates[0]} size="s" />
-                </div>
-                <div style={{ position: "absolute", left: shelterScoringSlotsX[4], top: shelterScoringSlotsY[0] }}>
-                    <Crewmate crewmate={crewmates[0]} size="s" />
-                </div>
-                <div style={{ position: "absolute", left: shelterEmbarkingSlotsX[0], top: shelterEmbarkingSlotsY[0] }}>
-                    <Crewmate crewmate={crewmates[0]} size="s" />
-                </div>
-                <div style={{ position: "absolute", left: shelterEmbarkingSlotsX[1], top: shelterEmbarkingSlotsY[1] }}>
-                    <Crewmate crewmate={crewmates[0]} size="s" />
-                </div>
-                <div style={{ position: "absolute", left: shelterEmbarkingSlotsX[2], top: shelterEmbarkingSlotsY[2] }}>
-                    <Crewmate crewmate={crewmates[0]} size="s" />
-                </div>
-                <div style={{ position: "absolute", left: shelterEmbarkingSlotsX[3], top: shelterEmbarkingSlotsY[3] }}>
-                    <Crewmate crewmate={crewmates[0]} size="s" />
-                </div>
-                <div style={{ position: "absolute", left: shelterEmbarkingSlotsX[4], top: shelterEmbarkingSlotsY[4] }}>
-                    <Crewmate crewmate={crewmates[0]} size="s" />
-                </div>
-                */}
+                {slotInfos.filter(slotInfo => slotInfo.shelter.id === props.shelterCard.id).map((slotInfo, index) => (
+                    <div key={index} style={{ position: "absolute", left: shelterEmbarkingSlotsX[index], top: shelterEmbarkingSlotsY[index] + 107 }}>
+                        <p style={{color:"black", fontSize:9,position:"absolute", left:22}}>
+                            {slotInfo.slotScore}
+                        </p>
+                        {slotInfo.role === "ENGINEER" &&
+                            <HiMiniWrenchScrewdriver color="white" style={{position:"absolute", top:11, left: 5}}/>
+                        }
+                        {slotInfo.role === "SCIENTIST" &&
+                            <IoIosFlask color="white" style={{position:"absolute", top:11, left: 5}}/>
+                        }
+                        {slotInfo.role === "CAPTAIN" &&
+                            <ImShield color="white" style={{position:"absolute", top:11, left: 5}}/>
+                        }
+                    </div>
+                ))}
             </div>
         )
     }
