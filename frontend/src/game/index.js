@@ -41,6 +41,7 @@ export default function Game() {
     const [selectingCrewmate, setSelectingCrewmate] = useState(false);
     const [selectingShelterCard, setSelectingShelterCard] = useState(false);
     const [selectedShelterCard, setSelectedShelterCard] = useState({});
+    const [spying, setSpying] = useState(false);
 
     const jwt = tokenService.getLocalAccessToken();
     const myUsername = jwt_decode(jwt).sub;
@@ -232,7 +233,7 @@ export default function Game() {
                     r={props.size === "s" ? "14" : "18"}
                     stroke={props.crewmate.color !== "BLACK" ? "black" : "white"} strokeWidth="1" fill={props.crewmate.color}>
                 </circle>
-                {gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).id === props.crewmate.player.id &&
+                {(gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).id === props.crewmate.player.id || spying) && // condicion incompleta, solo debe enseñar los crewmate de un pod o refugio conreto
                     <foreignObject
                         x={props.size === "s" ? "6.5" : "10"}
                         y={props.size === "s" ? "1.5" : "5"}
@@ -493,6 +494,27 @@ export default function Game() {
                             console.log(embarking)
                         }}>
                             EMBARCAR/DESEMBARCAR
+                        </Button>
+                        <Button className="button" style={{
+                            backgroundColor: "#CFFF68",
+                            border: "none",
+                            width: 200,
+                            fontSize: 20,
+                            borderRadius: 20,
+                            height: 60,
+                            boxShadow: "5px 5px 5px #00000020",
+                            textShadow: "2px 2px 2px #00000020",
+                            transition: "0.15s",
+                            alignSelf: "center",
+                            marginBottom: 20
+                        }} onClick={() => {
+                            setSpying(true);
+                            setTimeout(() => {
+                                setSpying(false);
+                            }, 5000); 
+                            
+                        }}>
+                            ESPIAR
                         </Button>
                         <Button className="button" style={{
                             backgroundColor: "#CFFF68",
