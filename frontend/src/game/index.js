@@ -41,6 +41,7 @@ export default function Game() {
     const [selectingCrewmate, setSelectingCrewmate] = useState(false);
     const [selectingShelterCard, setSelectingShelterCard] = useState(false);
     const [selectedShelterCard, setSelectedShelterCard] = useState({});
+    const [spying, setSpying] = useState(false);
 
     const jwt = tokenService.getLocalAccessToken();
     const myUsername = jwt_decode(jwt).sub;
@@ -232,7 +233,7 @@ export default function Game() {
                     r={props.size === "s" ? "14" : "18"}
                     stroke={props.crewmate.color !== "BLACK" ? "black" : "white"} strokeWidth="1" fill={props.crewmate.color}>
                 </circle>
-                {gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).id === props.crewmate.player.id &&
+                {(gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).id === props.crewmate.player.id || spying) && // condicion incompleta, solo debe enseñar los crewmate de un pod o refugio conreto
                     <foreignObject
                         x={props.size === "s" ? "6.5" : "10"}
                         y={props.size === "s" ? "1.5" : "5"}
@@ -288,7 +289,7 @@ export default function Game() {
     }
 
     function ShelterCard(props) {
-        if (emptyChecker("array", shelterCards)) {
+        if (emptyChecker("array", shelterCards) || emptyChecker("array", slotInfos)) {
             return null
         }
         return (
@@ -297,45 +298,27 @@ export default function Game() {
                     shelterClickHandler(props.shelterCard)
                 }
             }}>
-                {console.log(props.shelterCard)}
-                {console.log(GetCrewmatesFromShelter(props.shelterCard))}
                 {GetCrewmatesFromShelter(props.shelterCard).map((crewmate, index) => (
                     <div style={{ position: "absolute", left: shelterEmbarkingSlotsX[index], top: shelterEmbarkingSlotsY[index] }}>
                         <Crewmate crewmate={crewmate} size="s" />
                     </div>
                 ))}
-                {/* 
-                <div style={{ position: "absolute", left: shelterScoringSlotsX[0], top: shelterScoringSlotsY[0] }}>
-                    <Crewmate crewmate={crewmates[0]} size="s" />
-                </div>
-                <div style={{ position: "absolute", left: shelterScoringSlotsX[1], top: shelterScoringSlotsY[0] }}>
-                    <Crewmate crewmate={crewmates[0]} size="s" />
-                </div>
-                <div style={{ position: "absolute", left: shelterScoringSlotsX[2], top: shelterScoringSlotsY[0] }}>
-                    <Crewmate crewmate={crewmates[0]} size="s" />
-                </div>
-                <div style={{ position: "absolute", left: shelterScoringSlotsX[3], top: shelterScoringSlotsY[0] }}>
-                    <Crewmate crewmate={crewmates[0]} size="s" />
-                </div>
-                <div style={{ position: "absolute", left: shelterScoringSlotsX[4], top: shelterScoringSlotsY[0] }}>
-                    <Crewmate crewmate={crewmates[0]} size="s" />
-                </div>
-                <div style={{ position: "absolute", left: shelterEmbarkingSlotsX[0], top: shelterEmbarkingSlotsY[0] }}>
-                    <Crewmate crewmate={crewmates[0]} size="s" />
-                </div>
-                <div style={{ position: "absolute", left: shelterEmbarkingSlotsX[1], top: shelterEmbarkingSlotsY[1] }}>
-                    <Crewmate crewmate={crewmates[0]} size="s" />
-                </div>
-                <div style={{ position: "absolute", left: shelterEmbarkingSlotsX[2], top: shelterEmbarkingSlotsY[2] }}>
-                    <Crewmate crewmate={crewmates[0]} size="s" />
-                </div>
-                <div style={{ position: "absolute", left: shelterEmbarkingSlotsX[3], top: shelterEmbarkingSlotsY[3] }}>
-                    <Crewmate crewmate={crewmates[0]} size="s" />
-                </div>
-                <div style={{ position: "absolute", left: shelterEmbarkingSlotsX[4], top: shelterEmbarkingSlotsY[4] }}>
-                    <Crewmate crewmate={crewmates[0]} size="s" />
-                </div>
-                */}
+                {slotInfos.filter(slotInfo => slotInfo.shelter.id === props.shelterCard.id).map((slotInfo, index) => (
+                    <div key={index} style={{ position: "absolute", left: shelterEmbarkingSlotsX[index], top: shelterEmbarkingSlotsY[index] + 107 }}>
+                        <p style={{color:"black", fontSize:9,position:"absolute", left:22}}>
+                            {slotInfo.slotScore}
+                        </p>
+                        {slotInfo.role === "ENGINEER" &&
+                            <HiMiniWrenchScrewdriver color="white" style={{position:"absolute", top:11, left: 5}}/>
+                        }
+                        {slotInfo.role === "SCIENTIST" &&
+                            <IoIosFlask color="white" style={{position:"absolute", top:11, left: 5}}/>
+                        }
+                        {slotInfo.role === "CAPTAIN" &&
+                            <ImShield color="white" style={{position:"absolute", top:11, left: 5}}/>
+                        }
+                    </div>
+                ))}
             </div>
         )
     }
@@ -511,6 +494,27 @@ export default function Game() {
                             console.log(embarking)
                         }}>
                             EMBARCAR/DESEMBARCAR
+                        </Button>
+                        <Button className="button" style={{
+                            backgroundColor: "#CFFF68",
+                            border: "none",
+                            width: 200,
+                            fontSize: 20,
+                            borderRadius: 20,
+                            height: 60,
+                            boxShadow: "5px 5px 5px #00000020",
+                            textShadow: "2px 2px 2px #00000020",
+                            transition: "0.15s",
+                            alignSelf: "center",
+                            marginBottom: 20
+                        }} onClick={() => {
+                            setSpying(true);
+                            setTimeout(() => {
+                                setSpying(false);
+                            }, 5000); 
+                            
+                        }}>
+                            ESPIAR
                         </Button>
                         <Button className="button" style={{
                             backgroundColor: "#CFFF68",
