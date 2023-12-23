@@ -29,7 +29,7 @@ function HowToPlayButton() {
 }
 
 export default function Home() {
-    const [visible, setVisible] = useState(false);
+    const [joinLobbyvisible, setJoinLobbyVisible] = useState(false);
     const [numPlayersVisible, setNumPlayersVisible] = useState(false)
     const [roles, setRoles] = useState([]);
     const [waitingGames, setWaitingGames] = useState([])
@@ -163,7 +163,7 @@ export default function Home() {
                 transition: "0.15s",
             }}
                 onClick={() => {
-                    setVisible(false)
+                    setJoinLobbyVisible(false)
                     addPlayerToGame(game.id)
                 }}>
                 JOIN
@@ -206,7 +206,7 @@ export default function Home() {
                 textShadow: "2px 2px 2px #00000020"
             }}
                 onClick={() => {
-                    setVisible(true)
+                    setJoinLobbyVisible(true)
                     getGames()
                 }}
             >
@@ -278,8 +278,8 @@ export default function Home() {
                         <Button className="done-button" style={{
                             backgroundColor: "#CFFF68", border: "none", boxShadow: "5px 5px 5px #00000020", textShadow: "2px 2px 2px #00000020", transition: "0.15s",
                         }} onClick={() => {
+                            setNumPlayersVisible(false);
                             createGameAndGoLobby()
-                            setVisible(false);
                         }}>
                             Done
                         </Button>
@@ -287,7 +287,7 @@ export default function Home() {
                 </Modal>
             </div>
             <div>
-                <Modal isOpen={visible} className="modal-join-lobby" >
+                <Modal isOpen={joinLobbyvisible} className="modal-join-lobby" >
                     <ModalHeader style={{ color: "white", textShadow: "2px 2px 2px #00000020" }}>
                         Select the game
                     </ModalHeader>
@@ -301,7 +301,7 @@ export default function Home() {
                             backgroundColor: "#ffa952", border: "none", boxShadow: "5px 5px 5px #00000020", textShadow: "2px 2px 2px #00000020", transition: "0.15s",
                         }}
                             onClick={() => {
-                                setVisible(false)
+                                setJoinLobbyVisible(false)
                                 console.log(waitingGames);
                             }}>
                             Close
