@@ -5,6 +5,7 @@ import FormGenerator from "../../components/formGenerator/formGenerator";
 import { registerFormOwnerInputs } from "./form/registerFormOwnerInputs";
 import { registerFormVetInputs } from "./form/registerFormVetInputs";
 import { registerFormClinicOwnerInputs } from "./form/registerFormClinicOwnerInputs";
+import { registerFormPlayerInputs } from "./form/registerFormPlayerInputs";
 import { useEffect, useRef, useState } from "react";
 
 export default function Register() {
@@ -62,7 +63,7 @@ export default function Register() {
               else {
                 tokenService.setUser(data);
                 tokenService.updateLocalAccessToken(data.token);
-                window.location.href = "/dashboard";
+                window.location.href = "/";
               }
             })
             .catch((message) => {
@@ -113,6 +114,7 @@ export default function Register() {
             inputs={
               type === "Owner" ? registerFormOwnerInputs 
               : type === "Vet" ? registerFormVetInputs
+              : type === "Player"? registerFormPlayerInputs
               : registerFormClinicOwnerInputs
             }
             onSubmit={handleSubmit}
@@ -133,6 +135,14 @@ export default function Register() {
             What type of user will you be?
           </h2>
           <div className="options-row">
+          <button
+              className="auth-button"
+              value="Player"
+              onClick={handleButtonClick}
+            >
+              Player
+            </button>
+            {/*
             <button
               className="auth-button"
               value="Owner"
@@ -154,6 +164,7 @@ export default function Register() {
             >
               Clinic Owner
             </button>
+            */}
           </div>
         </div>
       </div>

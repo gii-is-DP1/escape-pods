@@ -145,7 +145,7 @@ export default function Lobby() {
     const playerList = JSON.stringify(game) === "{}" ? null : game.players.map(player =>   //se está comprobando si game es un objeto vacío para que no de problemas al leer undefined de game.players antes de que el estado adquiera valor
         <li key={player.id}>
             <div className="list-item-container" style={{ marginBottom: "20" }}>
-                <img className="profile-picture" src={player.profilePicture} />
+                <img className="profile-picture" src={player.profilePicture.startsWith("http") ? player.profilePicture : `data:image/png;base64,${player.profilePicture}` } />
                 <div className="list-player-name">
                     {player.user.username} {player === game.players[0] ? "(owner)" : ""}
                 </div>
@@ -192,13 +192,7 @@ export default function Lobby() {
                         }} onClick={() => {
                             if (myPlayer.id === game.players[0].id) {
                                 startGame()
-
-
-
                             } else {
-                                console.log(myPlayer.id)
-                                console.log(GetCurrentGame().status)
-                                console.log(game.players[0].id)
                                 alert("Only the lobby owner can start the game")
                             }
                         }}>
