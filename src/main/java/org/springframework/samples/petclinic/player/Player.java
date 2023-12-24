@@ -9,6 +9,7 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Max;
@@ -29,7 +30,8 @@ public class Player extends BaseEntity {
 	@Size(max = 80)
 	private String profileDescription;
 
-    @Column(name = "profile_picture")
+	@Lob
+    @Column(name = "profile_picture", columnDefinition = "TEXT")
 	@NotEmpty
 	private String profilePicture;
 

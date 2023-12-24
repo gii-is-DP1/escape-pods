@@ -64,9 +64,12 @@ const FormGenerator = forwardRef((props, ref) => {
     for (let i = 0; i < props.inputs.length; i++) {
       let input = props.inputs[i];
       if (input.type === "files") {
+        /*
         formValuesCopy[input.name] = formInputs.current[i].files.map((file) =>
           file.getFileEncodeBase64String()
         );
+        */
+        formValuesCopy[input.name] = formInputs.current[i].files.length > 0 ? formInputs.current[i].files[0].getFileEncodeBase64String() : "";
       } else if (input.type === "interval") {
         formValuesCopy[`min_${input.name}`] = formInputs.current[i].min;
         formValuesCopy[`max_${input.name}`] = formInputs.current[i].max;
@@ -124,10 +127,10 @@ const FormGenerator = forwardRef((props, ref) => {
         style={
           props.numberOfColumns > 1
             ? {
-                flexDirection: "row",
-                flexWrap: "wrap",
-                justifyContent: "center",
-              }
+              flexDirection: "row",
+              flexWrap: "wrap",
+              justifyContent: "center",
+            }
             : {}
         }
       >
@@ -181,12 +184,12 @@ FormGenerator.propTypes = {
 
 FormGenerator.defaultProps = {
   inputs: [],
-  onSubmit: () => {},
+  onSubmit: () => { },
   buttonText: "Enviar",
   buttonClassName: "",
   numberOfColumns: 1,
   childrenPosition: 0,
-listenEnterKey: false,
+  listenEnterKey: false,
 };
 
 export default FormGenerator;
