@@ -43,6 +43,7 @@ export default function Game() {
     const [selectedShelterCard, setSelectedShelterCard] = useState({});
     const [spying, setSpying] = useState(false);
 
+
     const jwt = tokenService.getLocalAccessToken();
     const myUsername = jwt_decode(jwt).sub;
     const gameId = parseInt(window.location.href.split("/")[4]) // extrae la id de la partida desde la ruta spliteandola por las / en un array, cuidado que el indice del array que devuelve el split no empieza en [0] sino en [1] por algu motivo ([-1] tampoco funciona)
@@ -93,6 +94,8 @@ export default function Game() {
 
     const shelterEmbarkingSlotsX = [8, 42, 76.5, 111, 145] //coordenadas X de los slots del shelter
     const shelterEmbarkingSlotsY = [-14.5, -14.5, -14.5, -14.5, -14.5] //coordenadas Y de los slots del shelter
+
+    const embarkSectorsNumbers = [1, 2, 3]
 
     useEffect(() => {
         if (jwt) {
@@ -305,17 +308,17 @@ export default function Game() {
                 ))}
                 {slotInfos.filter(slotInfo => slotInfo.shelter.id === props.shelterCard.id).map((slotInfo, index) => (
                     <div key={index} style={{ position: "absolute", left: shelterEmbarkingSlotsX[index], top: shelterEmbarkingSlotsY[index] + 107 }}>
-                        <p style={{color:"black", fontSize:9,position:"absolute", left:22}}>
+                        <p style={{ color: "black", fontSize: 9, position: "absolute", left: 22 }}>
                             {slotInfo.slotScore}
                         </p>
                         {slotInfo.role === "ENGINEER" &&
-                            <HiMiniWrenchScrewdriver color="white" style={{position:"absolute", top:11, left: 5}}/>
+                            <HiMiniWrenchScrewdriver color="white" style={{ position: "absolute", top: 11, left: 5 }} />
                         }
                         {slotInfo.role === "SCIENTIST" &&
-                            <IoIosFlask color="white" style={{position:"absolute", top:11, left: 5}}/>
+                            <IoIosFlask color="white" style={{ position: "absolute", top: 11, left: 5 }} />
                         }
                         {slotInfo.role === "CAPTAIN" &&
-                            <ImShield color="white" style={{position:"absolute", top:11, left: 5}}/>
+                            <ImShield color="white" style={{ position: "absolute", top: 11, left: 5 }} />
                         }
                     </div>
                 ))}
@@ -345,7 +348,7 @@ export default function Game() {
         })
     }
 
-    async function moveCrewmateDemo(crewmate, pod, shelterCard) {
+    async function moveCrewmate(crewmate, pod, shelterCard) {
         const movedCrewmate = {
             color: crewmate.color,
             role: crewmate.role,
@@ -376,27 +379,91 @@ export default function Game() {
         }
     }
 
+    function adjacentSector(linesA, linesB) {
+        let res=false
+        for (let i = 0; i < linesA.lenght; i++) {
+            for (let j = 0; j < linesB.lenght; j++) {
+                console.log(linesA[i].number)
+                if (linesA[i].number === linesB[j].number) {
+                    res = true;
+                }
+            }
+        }
+        return res;
+    }
+
     function sectorClickHandler(sector) {
         setSelectedSector(sector)
         if (piloting && selectingSector) {
-            console.log(selectedSector)
-            movePodDemo(selectedPod, sector)
-            setSelectingSector(false)
-            setSelectingPod(false)
-            setPiloting(false)
+            console.log(sector.lines)
+            console.log(selectedPod.sector.lines)
+            let res = adjacentSector(selectedPod.sector.lines, sector.lines);
+            console.log(res)
+            if (res!==true) {
+                alert('NO PUEDES MOVER UN POD A UN SECTOR NO ADYACENTE A SU UBICACION INICIAL')
+                
+            } else {
+                movePodDemo(selectedPod, sector)
+                setSelectingSector(false)
+                setSelectingPod(false)
+                setPiloting(false)
+            }
+
+        } else if (embarking) {
+            if (sector.number === 1 || sector.number === 2 || sector.number === 3) {
+                movePodDemo(selectedPod, sector)
+                setSelectingPod(false)
+                setSelectingCrewmate(false)
+                setEmbarking(false)
+                setSelectingSector(false)
+            } else {
+                alert('NO PUEDES MOVER UN POD D 1 A OTRA MOVIDA NO ADYACENTE')
+            }
+
         }
     }
 
     function podClickHandler(pod) {
         setSelectedPod(pod)
+
         if (piloting) {
-            setSelectingSector(true)
-            alert("Click on any adjacent sector to move the pod")
+
+            if (GetCrewmatesFromPod(pod).find(crewmate => crewmate.player.id === gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).id)) {
+                setSelectingSector(true)
+                alert("Click on any adjacent sector to move the pod")
+            } else {
+                alert('NO')
+
+            }
         } else if (embarking) {
-            moveCrewmateDemo(selectedCrewmate, pod, null)
-            setSelectingPod(false)
-            setSelectingCrewmate(false)
-            setEmbarking(false)
+            if (!pod.sector || embarkSectorsNumbers.includes(pod.sector ? pod.sector.number : '')) {
+                moveCrewmate(selectedCrewmate, pod, null)
+                if (!pod.sector) {
+                    if (pod.number === 1) {
+                        movePodDemo(pod, sectors.find(sector => sector.number === 2));
+                        setSelectingPod(false)
+                        setSelectingCrewmate(false)
+                        setEmbarking(false)
+                    } else if (pod.number === 2) {
+                        movePodDemo(pod, sectors.find(sector => sector.number === 1));
+                        setSelectingPod(false)
+                        setSelectingCrewmate(false)
+                        setEmbarking(false)
+                    } else if (pod.number === 3) {
+                        movePodDemo(pod, sectors.find(sector => sector.number === 3));
+                        setSelectingPod(false)
+                        setSelectingCrewmate(false)
+                        setEmbarking(false)
+                    } else {
+                        alert('Select one of the adjacent sectors to the hangar')
+                        setSelectingSector(true);
+                    }
+                }
+
+
+            } else {
+                alert(`You cannot move your ${selectedCrewmate.role} to a pod that is not in the hangar/adjacent sector to it`)
+            }
         }
     }
 
@@ -412,7 +479,7 @@ export default function Game() {
     function shelterClickHandler(shelterCard) {
         setSelectedShelterCard(shelterCard)
         if (embarking) {
-            moveCrewmateDemo(selectedCrewmate, null, shelterCard)
+            moveCrewmate(selectedCrewmate, null, shelterCard)
             setSelectingPod(false)
             setSelectingCrewmate(false)
             setSelectingShelterCard(false)
@@ -511,8 +578,8 @@ export default function Game() {
                             setSpying(true);
                             setTimeout(() => {
                                 setSpying(false);
-                            }, 5000); 
-                            
+                            }, 5000);
+
                         }}>
                             ESPIAR
                         </Button>
