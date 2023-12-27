@@ -1,0 +1,198 @@
+.lobby-page-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url('../../images/escape-pods-background.png');
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+}
+
+.lobby-loading {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin-top: 30px;
+}
+
+.bar {
+    margin-top: 20px;
+    border: 3px solid #ffffff;
+    border-radius: 10px;
+    height: 20px;
+    width: 40%;
+
+    
+    .in {
+      animation: fill 7s linear 1;
+      height: 100%;
+      background-color: #CFFF68;
+      border-radius: inherit;
+    }
+  }
+  
+  @keyframes fill {
+    0% {
+      width: 0%;
+    }
+    100% {
+      width: 100%;
+    }
+  }
+
+.profile-picture {
+    border-radius: 50%;
+    width: 200px;
+    height: 200px;
+}
+
+.modal .modal-content {
+    align-items: center;
+    flex-direction: column;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    background-color: #2f324f;
+    border: none;
+}
+
+.modal-dialog.modal-join-lobby {
+    align-items: center;
+    flex-direction: column;
+    margin-top: 20px;
+    margin-bottom: 40px;
+    background-color: #2f324f;
+    border: none;
+    border-radius: 20px;
+    margin-top: 7.5%;
+    align-self: center;
+}
+
+.modal-dialog {
+    margin: 0px;
+}
+
+
+
+.modal-button {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    height: 50px;
+    width: 50px;
+}
+
+.modal-button:hover {
+    transform: scale(1.05);
+}
+
+.modal-button:active {
+    transform: scale(0.95);
+    background-image: linear-gradient(rgb(0 0 0/15%) 0 0);
+}
+
+
+.done-button:hover {
+    transform: scale(1.05);
+}
+
+.done-button:active {
+    transform: scale(0.95);
+    background-image: linear-gradient(rgb(0 0 0/15%) 0 0);
+}
+
+.button {
+    border: none;
+    align-self: center;
+    align-content: center;
+    align-items: center;
+}
+
+.button-container {
+    padding-left: 20px;
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+    align-items: center;
+    margin-top: 70px;
+    margin-right: 5%;
+}
+
+.player-list {
+    backdrop-filter: blur(50px);
+}
+
+.list-item-container {
+    display: flex;
+    flex-direction: row;
+    align-self: center;
+    align-items: center;
+    margin-bottom: 20px;
+
+}
+
+.list-player-name {
+    margin-left: 20px;
+    color: white;
+    font-size: 22px;
+    align-self: center;
+}
+
+.list-games-name {
+    margin-left: 50px;
+    color: white;
+    font-size: 22px;
+}
+
+.ul-players {
+    list-style-type: none;
+}
+
+.ul-games {
+    list-style-type: none;
+    width: 350px;
+    height: 350px;
+    overflow: hidden;
+    overflow-y: scroll;
+}
+
+.button-separed {
+    flex-direction: column;
+    margin-left: 2000;
+    border: none;
+    align-self: 'center';
+    display: flex;
+    align-items: center;
+}
+
+.hero-div {
+    background-color: rgba(0, 0, 0, 0);
+    padding: 2rem;
+    backdrop-filter: blur(0px);
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+    align-items: left;
+}
+
+.hero-div2 {
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 2rem;
+    backdrop-filter: blur(10px);
+    display: flex;
+    flex-direction: column;
+    justify-content: right;
+    align-items: center;
+}
+
