@@ -10,6 +10,8 @@ function AppNavbar() {
     const [username, setUsername] = useState("");
     const jwt = tokenService.getLocalAccessToken();
     const [collapsed, setCollapsed] = useState(true);
+    const [myPlayer, setMyPlayer] = useState({})
+
 
     const toggleNavbar = () => setCollapsed(!collapsed);
 
@@ -157,6 +159,7 @@ function AppNavbar() {
             <NavbarBrand href="/">
                 <img alt="logo" src="/escape-pods-logo.png" style={{ height: 40, width: 60 }} />
             </NavbarBrand>
+            
             <NavbarToggler onClick={toggleNavbar} className="ms-2" />
             <Collapse isOpen={!collapsed} navbar>
                 <Nav className="me-auto mb-2 mb-lg-0" navbar>
@@ -168,6 +171,9 @@ function AppNavbar() {
                     {publicLinks}
                     {userLogout}
                 </Nav>
+                <NavbarBrand href="/profile">
+                <img alt="logo" src="/foto-perfil-generica.png" style={{ height: 60, width: 60, marginLeft: 10 }} />
+                </NavbarBrand>
             </Collapse>
         </Navbar>
         </div >
