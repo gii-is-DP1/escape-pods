@@ -43,6 +43,20 @@ export default function Game() {
     const [selectedShelterCard, setSelectedShelterCard] = useState({});
     const [spying, setSpying] = useState(false);
 
+    const [actionSlots, setActionSlots] = useState({
+        embark: null,
+        accelerate: null,
+        spy: null,
+        minipod: null,
+    })
+
+    const [specialActionSlots, setSpecialActionSlots] = useState({
+        board: null,
+        pilot: null,
+        program: null,
+        refresh: null,
+    })
+
     const jwt = tokenService.getLocalAccessToken();
     const myUsername = jwt_decode(jwt).sub;
     const gameId = parseInt(window.location.href.split("/")[4]) // extrae la id de la partida desde la ruta spliteandola por las / en un array, cuidado que el indice del array que devuelve el split no empieza en [0] sino en [1] por algu motivo ([-1] tampoco funciona)
@@ -94,12 +108,7 @@ export default function Game() {
     const shelterEmbarkingSlotsX = [8, 42, 76.5, 111, 145] //coordenadas X de los slots del shelter
     const shelterEmbarkingSlotsY = [-14.5, -14.5, -14.5, -14.5, -14.5] //coordenadas Y de los slots del shelter
 
-    const [actionSlots, setActionSlots] = useState({
-        embark: null,
-        accelerate: null,
-        spy: null,
-        minipod: null,
-    })
+
 
     useEffect(() => {
         if (jwt) {
@@ -341,35 +350,79 @@ export default function Game() {
         return (
             <div style={{ display: "flex", flexDirection: "row", width: 480, height: 230, position: "relative" }}>
                 <div className={gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).color.toLowerCase() + "-action-card"}>
-                    <div style={{ position: "absolute", left: 92, top: 20 }}>
+                    <div style={{ position: "absolute", left: 92, top: 20, width: 40, height: 40 }}
+                        onClick={() => {
+                            if (!actionSlots.embark) {
+                                setActionSlots({ ...actionSlots, embark: [crewmates[0]] })
+                            } else {
+                                setActionSlots({ ...actionSlots, embark: [...actionSlots.embark, crewmates[0]] })
+                            }
+                        }}
+                    >
                         <Crewmate crewmate={actionSlots.embark ? actionSlots.embark[0] : null}></Crewmate>
                     </div>
-                    <div style={{ position: "absolute", left: 138, top: 20 }}>
+                    <div style={{ position: "absolute", left: 138, top: 20, width: 40, height: 40 }}
+                        onClick={() => {
+                            if (!actionSlots.embark) {
+                                setActionSlots({ ...actionSlots, embark: [crewmates[0]] })
+                            } else {
+                                setActionSlots({ ...actionSlots, embark: [...actionSlots.embark, crewmates[0]] })
+                            }
+                        }}
+                    >
                         <Crewmate crewmate={actionSlots.embark ? actionSlots.embark[1] : null}></Crewmate>
                     </div>
-                    <div style={{ position: "absolute", left: 33, top: 95.5 }}>
+                    <div style={{ position: "absolute", left: 33, top: 95.5, width: 40, height: 40 }}
+                        onClick={() => {
+                            setActionSlots({ ...actionSlots, accelerate: crewmates[0] })
+                        }}
+                    >
                         <Crewmate crewmate={actionSlots.accelerate}></Crewmate>
                     </div>
-                    <div style={{ position: "absolute", left: 96, top: 95.5 }}>
+                    <div style={{ position: "absolute", left: 96, top: 95.5, width: 40, height: 40 }}
+                        onClick={() => {
+                            setActionSlots({ ...actionSlots, spy: crewmates[0] })
+                        }}
+                    >
                         <Crewmate crewmate={actionSlots.spy}></Crewmate>
                     </div>
-                    <div style={{ position: "absolute", left: 159, top: 95.5 }}>
+                    <div style={{ position: "absolute", left: 159, top: 95.5, width: 40, height: 40 }}
+                        onClick={() => {
+                            setActionSlots({ ...actionSlots, minipod: crewmates[0] })
+                        }}
+                    >
                         <Crewmate crewmate={actionSlots.minipod}></Crewmate>
                     </div>
 
                 </div>
                 <div className={gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).color.toLowerCase() + "-special-action-card"} style={{ position: "absolute", left: 250 }}>
-                    <div style={{ position: "absolute", left: 65.5, top: 26 }}>
-                        <Crewmate crewmate={crewmates[0]}></Crewmate>
+                    <div style={{ position: "absolute", left: 65.5, top: 26, width: 40, height: 40 }}
+                        onClick={() => {
+                            setSpecialActionSlots({ ...specialActionSlots, board: crewmates[0] })
+                        }}
+                    >
+                        <Crewmate crewmate={specialActionSlots.board}></Crewmate>
                     </div>
-                    <div style={{ position: "absolute", left: 160.5, top: 26 }}>
-                        <Crewmate crewmate={crewmates[0]}></Crewmate>
+                    <div style={{ position: "absolute", left: 160.5, top: 26, width: 40, height: 40 }}
+                        onClick={() => {
+                            setSpecialActionSlots({ ...specialActionSlots, pilot: crewmates[0] })
+                        }}
+                    >
+                        <Crewmate crewmate={specialActionSlots.pilot}></Crewmate>
                     </div>
-                    <div style={{ position: "absolute", left: 65, top: 89.5 }}>
-                        <Crewmate crewmate={crewmates[0]}></Crewmate>
+                    <div style={{ position: "absolute", left: 65, top: 89.5, width: 40, height: 40 }}
+                        onClick={() => {
+                            setSpecialActionSlots({ ...specialActionSlots, program: crewmates[0] })
+                        }}
+                    >
+                        <Crewmate crewmate={specialActionSlots.program}></Crewmate>
                     </div>
-                    <div style={{ position: "absolute", left: 160.5, top: 89.5 }}>
-                        <Crewmate crewmate={crewmates[0]}></Crewmate>
+                    <div style={{ position: "absolute", left: 160.5, top: 89.5, width: 40, height: 40 }}
+                        onClick={() => {
+                            setSpecialActionSlots({ ...specialActionSlots, refresh: crewmates[0] })
+                        }}
+                    >
+                        <Crewmate crewmate={specialActionSlots.refresh}></Crewmate>
                     </div>
                 </div>
 
