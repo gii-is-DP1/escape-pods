@@ -61,7 +61,7 @@ export default function Game() {
         [6, 8, 10, 13], //sector 9
         [7, 8, 9, 11, 12, 13], //sector 10
         [7, 10, 12], //sector 11
-        [11, 10, 12], //sector 12
+        [11, 10, 13], //sector 12
         [9, 10, 12], //sector 13
     ]
 
@@ -379,34 +379,19 @@ export default function Game() {
         }
     }
 
-    function adjacentSector(linesA, linesB) {
-        let res=false
-        for (let i = 0; i < linesA.lenght; i++) {
-            for (let j = 0; j < linesB.lenght; j++) {
-                console.log(linesA[i].number)
-                if (linesA[i].number === linesB[j].number) {
-                    res = true;
-                }
-            }
-        }
-        return res;
-    }
 
     function sectorClickHandler(sector) {
         setSelectedSector(sector)
         if (piloting && selectingSector) {
-            console.log(sector.lines)
-            console.log(selectedPod.sector.lines)
-            let res = adjacentSector(selectedPod.sector.lines, sector.lines);
-            console.log(res)
-            if (res!==true) {
-                alert('NO PUEDES MOVER UN POD A UN SECTOR NO ADYACENTE A SU UBICACION INICIAL')
-                
-            } else {
+            if (adjacencyList[selectedPod.sector.number].includes(sector.number)) {
+
+                alert('se movera el pod al sector indicado')
                 movePodDemo(selectedPod, sector)
                 setSelectingSector(false)
                 setSelectingPod(false)
                 setPiloting(false)
+            } else {
+                alert('NO PUEDES MOVER UN POD A UN SECTOR NO ADYACENTE A SU UBICACION INICIAL')
             }
 
         } else if (embarking) {
@@ -479,12 +464,29 @@ export default function Game() {
     function shelterClickHandler(shelterCard) {
         setSelectedShelterCard(shelterCard)
         if (embarking) {
-            moveCrewmate(selectedCrewmate, null, shelterCard)
-            setSelectingPod(false)
-            setSelectingCrewmate(false)
-            setSelectingShelterCard(false)
-            setEmbarking(false)
+            if (selectedCrewmate.pod.sector.number === 11 && shelterCard.sector.number === 11) {
+                moveCrewmate(selectedCrewmate, null, shelterCard)
+                setSelectingPod(false)
+                setSelectingCrewmate(false)
+                setSelectingShelterCard(false)
+                setEmbarking(false)
+            } else if (selectedCrewmate.pod.sector.number === 12 && shelterCard.sector.number === 12) {
+                moveCrewmate(selectedCrewmate, null, shelterCard)
+                setSelectingPod(false)
+                setSelectingCrewmate(false)
+                setSelectingShelterCard(false)
+                setEmbarking(false)
+            } else if (selectedCrewmate.pod.sector.number === 13 && shelterCard.sector.number === 13) {
+                moveCrewmate(selectedCrewmate, null, shelterCard)
+                setSelectingPod(false)
+                setSelectingCrewmate(false)
+                setSelectingShelterCard(false)
+                setEmbarking(false)
+            } else {
+                alert('NO PUEDES DESEMBARCAR A UN TRIPULATE SI NO ESTAS NE UN SECTOR COLINDATE AL REFUGIO SELECCIONADO')
+            }
         }
+
     }
 
     return (
@@ -509,16 +511,16 @@ export default function Game() {
                     </div>
                     <div style={{ height: "100%", width: "300px", position: "absolute", left: 650 }}>
                         <div style={{ position: "absolute", top: 90, height: 130, width: 179 }}>
-                            <ShelterCard shelterCard={shelterCards[0]} />
+                            <ShelterCard shelterCard={shelterCards.find(res=>res.sector.number===11)} />
                         </div>
                         <div style={{ position: "absolute", top: 245, left: 60, height: 130, width: 179 }}>
-                            <ShelterCard shelterCard={shelterCards[1]} />
+                            <ShelterCard shelterCard={shelterCards.filter(res=>res.sector.number===12)[0]} />
                         </div>
                         <div style={{ position: "absolute", top: 405, left: 60, height: 130, width: 179 }}>
-                            <ShelterCard shelterCard={shelterCards[2]} />
+                            <ShelterCard shelterCard={shelterCards.filter(res=>res.sector.number===12)[1]} />
                         </div>
                         <div style={{ position: "absolute", top: 565, height: 130, width: 179 }}>
-                            <ShelterCard shelterCard={shelterCards[3]} />
+                            <ShelterCard shelterCard={shelterCards.find(res=>res.sector.number===13)} />
                         </div>
                     </div>
                     <div style={{ display: "flex", flexDirection: "column", marginLeft: 710, marginTop: 70, height: "100%", alignContent: "center", alignItems: "center" }}>
