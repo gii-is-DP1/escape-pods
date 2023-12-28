@@ -56,7 +56,7 @@ export default function Profile() {
                     <div style={{ position: 'absolute', marginTop: 104.5, marginLeft: 100 }}>
                         <img className="profile-picture" src={myPlayer.profilePicture}
                             style={{ height: 100, width: 100 }} />
-                        <p style={{ marginTop: 60, alignSelf: 'center', fontSize: 30, textTransform: 'uppercase' }}>{myUsername}</p>
+                        <p style={{ marginTop: 60, alignSelf: 'center', fontSize: 30 }}>{myUsername}</p>
                     </div>
 
                     <Link to="/logout">
