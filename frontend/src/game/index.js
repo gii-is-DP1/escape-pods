@@ -49,7 +49,7 @@ export default function Game() {
     const gameId = parseInt(window.location.href.split("/")[4]) // extrae la id de la partida desde la ruta spliteandola por las / en un array, cuidado que el indice del array que devuelve el split no empieza en [0] sino en [1] por algu motivo ([-1] tampoco funciona)
 
     const adjacencyList = [
-        [1,2,3], //para el valor de 'sector' null
+        [1, 2, 3], //para el valor de 'sector' null
         [2, 4, 5], //sector 1
         [1, 3, 5], //sector 2
         [2, 5, 6], //sector 3
@@ -385,12 +385,12 @@ export default function Game() {
         setSelectedSector(sector)
         if (piloting && selectingSector) {
             if ((!selectedPod.sector && adjacencyList[0].includes(sector.number)) || (selectedPod.sector && adjacencyList[selectedPod.sector.number].includes(sector.number))) {
-                
+
                 if (sector.scrap) {
 
                     alert('HAY CHATARRA NE EL SECTOR AL QUE QUIERES ACCEDER, ELIGE OTRO')
 
-                
+
 
                 } else if (pods.find(pod => pod.sector && (pod.sector.id === sector.id)) && (pods.find(pod => pod.sector && (pod.sector.id === sector.id)).capacity >= selectedPod.capacity)) {
 
@@ -407,18 +407,18 @@ export default function Game() {
                 } else {
                     //se administra primero el movimiento del pod 'original' 
                     alert('has chocado un pod, elige a donde se dirigira el pod chocado')
-                    console.log(pods.find(pod => pod.sector &&( pod.sector.id === sector.id)))
+                    console.log(pods.find(pod => pod.sector && (pod.sector.id === sector.id)))
 
-                    let crashedPod = pods.find(pod => pod.sector &&( pod.sector.id === sector.id))
+                    let crashedPod = pods.find(pod => pod.sector && (pod.sector.id === sector.id))
                     //let originalSector = sector
 
-                    movePod(crashedPod,null)
-                    movePod(selectedPod,sector)
+                    movePod(crashedPod, null)
+                    movePod(selectedPod, sector)
 
                     setSelectedPod(crashedPod)
                     setSelectingPod(false)
-                    
-                    
+
+
                 }
             } else {
                 alert('NO PUEDES MOVER UN POD A UN SECTOR NO ADYACENTE A SU UBICACION INICIAL')
@@ -452,23 +452,21 @@ export default function Game() {
 
             }
         } else if (embarking) {
-            if (!pod.sector || embarkSectorsNumbers.includes(pod.sector ? pod.sector.number : '')) {
+            if ((embarkSectorsNumbers.includes(pod.sector ? pod.sector.number : '') || !pod.sector) && (pod && GetCrewmatesFromPod(pod).length < pod.capacity)) {
                 moveCrewmate(selectedCrewmate, pod, null)
+                setSelectingCrewmate(false)
+                setSelectingPod(false)
+                alert(' se ha movido el crewmate al pod selecionado')
+
                 if (!pod.sector) {
-                    if (pod.number === 1) {
+                    if (pod.number === 1 &&(pods.find(pod => pod.sector && pod.sector.number === 2).length===0)) {
                         movePod(pod, sectors.find(sector => sector.number === 2));
-                        setSelectingPod(false)
-                        setSelectingCrewmate(false)
                         setEmbarking(false)
-                    } else if (pod.number === 2) {
+                    } else if (pod.number === 2 &&(pods.find(pod => pod.sector && pod.sector.number === 1).length===0)) {
                         movePod(pod, sectors.find(sector => sector.number === 1));
-                        setSelectingPod(false)
-                        setSelectingCrewmate(false)
                         setEmbarking(false)
-                    } else if (pod.number === 3) {
+                    } else if (pod.number === 3 &&(pods.find(pod => pod.sector && pod.sector.number === 3).length===0)) {
                         movePod(pod, sectors.find(sector => sector.number === 3));
-                        setSelectingPod(false)
-                        setSelectingCrewmate(false)
                         setEmbarking(false)
                     } else {
                         alert('Select one of the adjacent sectors to the hangar')
@@ -477,8 +475,18 @@ export default function Game() {
                 }
 
 
+            } else if ((selectedCrewmate.pod && adjacencyList[selectedCrewmate.pod.sector.number].includes(pod.sector.number)) && (pod && GetCrewmatesFromPod(pod).length < pod.capacity)) {
+                alert('el crewmate ha sido cambiado al nuevo pod')
+                moveCrewmate(selectedCrewmate, pod, null)
+                setSelectingPod(false)
+                setSelectingCrewmate(false)
+                setEmbarking(false)
             } else {
-                alert(`You cannot move your ${selectedCrewmate.role} to a pod that is not in the hangar/adjacent sector to it,select another pod`)
+                setSelectingCrewmate(false)
+                setSelectingPod(false)
+                setEmbarking(false)
+                
+                alert(`You cannot move your ${selectedCrewmate.role} to a not valid pod, select another pod`)
             }
         }
     }
@@ -487,8 +495,11 @@ export default function Game() {
         setSelectedCrewmate(crewmate)
         if (embarking) {
             setSelectingPod(true)
+            //permite ue solo se active el selectinghelterCard cuando es posible usarlo 
+            //if([11,12,13].includes(crewmate.pod ? (crewmate.pod.sector? crewmate.pod.sector.number :'' ): '')){}
             setSelectingShelterCard(true)
             alert("Click on any pod or shelter to move the crewmate")
+
         }
     }
 
@@ -497,29 +508,22 @@ export default function Game() {
         if (embarking) {
             if (selectedCrewmate.pod.sector.number === 11 && shelterCard.sector.number === 11) {
                 moveCrewmate(selectedCrewmate, null, shelterCard)
-                setSelectingPod(false)
-                setSelectingCrewmate(false)
-                setSelectingShelterCard(false)
-                setEmbarking(false)
+
             } else if (selectedCrewmate.pod.sector.number === 12 && shelterCard.sector.number === 12) {
                 moveCrewmate(selectedCrewmate, null, shelterCard)
-                setSelectingPod(false)
-                setSelectingCrewmate(false)
-                setSelectingShelterCard(false)
-                setEmbarking(false)
+
             } else if (selectedCrewmate.pod.sector.number === 13 && shelterCard.sector.number === 13) {
                 moveCrewmate(selectedCrewmate, null, shelterCard)
-                setSelectingPod(false)
-                setSelectingCrewmate(false)
-                setSelectingShelterCard(false)
-                setEmbarking(false)
+
             } else {
                 alert('NO PUEDES DESEMBARCAR A UN TRIPULATE SI NO ESTAS EN UN SECTOR COLINDATE AL REFUGIO SELECCIONADO')
-                setSelectingPod(false)
-                setSelectingCrewmate(false)
-                setSelectingShelterCard(false)
-                setEmbarking(false)
+
             }
+            setSelectingPod(false)
+            setSelectingCrewmate(false)
+            setSelectingShelterCard(false)
+            setEmbarking(false)
+
         }
 
     }
