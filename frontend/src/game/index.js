@@ -457,15 +457,15 @@ export default function Game() {
                 setSelectingCrewmate(false)
                 setSelectingPod(false)
                 alert(' se ha movido el crewmate al pod selecionado')
-
+                console.log(pods)
                 if (!pod.sector) {
-                    if (pod.number === 1 &&(pods.find(pod => pod.sector && pod.sector.number === 2).length===0)) {
+                    if (pod.number === 1 && (pods.filter(pod => pod.sector && pod.sector.number === 2).length === 0)) {
                         movePod(pod, sectors.find(sector => sector.number === 2));
                         setEmbarking(false)
-                    } else if (pod.number === 2 &&(pods.find(pod => pod.sector && pod.sector.number === 1).length===0)) {
+                    } else if (pod.number === 2 && (pods.filter(pod => pod.sector && pod.sector.number === 1).length === 0)) {
                         movePod(pod, sectors.find(sector => sector.number === 1));
                         setEmbarking(false)
-                    } else if (pod.number === 3 &&(pods.find(pod => pod.sector && pod.sector.number === 3).length===0)) {
+                    } else if (pod.number === 3 && (pods.filter(pod => pod.sector && pod.sector.number === 3).length === 0)) {
                         movePod(pod, sectors.find(sector => sector.number === 3));
                         setEmbarking(false)
                     } else {
@@ -485,7 +485,7 @@ export default function Game() {
                 setSelectingCrewmate(false)
                 setSelectingPod(false)
                 setEmbarking(false)
-                
+
                 alert(`You cannot move your ${selectedCrewmate.role} to a not valid pod, select another pod`)
             }
         }
@@ -494,12 +494,15 @@ export default function Game() {
     function crewmateClickHandler(crewmate) {
         setSelectedCrewmate(crewmate)
         if (embarking) {
-            setSelectingPod(true)
-            //permite ue solo se active el selectinghelterCard cuando es posible usarlo 
-            //if([11,12,13].includes(crewmate.pod ? (crewmate.pod.sector? crewmate.pod.sector.number :'' ): '')){}
-            setSelectingShelterCard(true)
-            alert("Click on any pod or shelter to move the crewmate")
-
+            if (crewmate.player.id === gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).id) {
+                setSelectingPod(true)
+                //permite ue solo se active el selectinghelterCard cuando es posible usarlo 
+                //if([11,12,13].includes(crewmate.pod ? (crewmate.pod.sector? crewmate.pod.sector.number :'' ): '')){}
+                setSelectingShelterCard(true)
+                alert("Click on any pod or shelter to move the crewmate")
+            } else {
+                alert('clica en un crewmate de tu color')
+            }
         }
     }
 
