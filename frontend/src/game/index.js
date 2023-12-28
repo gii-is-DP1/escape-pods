@@ -49,7 +49,7 @@ export default function Game() {
     const gameId = parseInt(window.location.href.split("/")[4]) // extrae la id de la partida desde la ruta spliteandola por las / en un array, cuidado que el indice del array que devuelve el split no empieza en [0] sino en [1] por algu motivo ([-1] tampoco funciona)
 
     const adjacencyList = [
-        null, //no hay sector 0
+        [1,2,3], //para el valor de 'sector' null
         [2, 4, 5], //sector 1
         [1, 3, 5], //sector 2
         [2, 5, 6], //sector 3
@@ -326,7 +326,7 @@ export default function Game() {
         )
     }
 
-    async function movePodDemo(pod, sector) {
+    async function movePod(pod, sector) {
         console.log("fetch pod" + pod)
         console.log("fetch sector" + sector)
         const movedPod = {
@@ -381,22 +381,52 @@ export default function Game() {
 
 
     function sectorClickHandler(sector) {
+        refresher()
         setSelectedSector(sector)
         if (piloting && selectingSector) {
-            if (adjacencyList[selectedPod.sector.number].includes(sector.number)) {
+            if ((!selectedPod.sector && adjacencyList[0].includes(sector.number)) || (selectedPod.sector && adjacencyList[selectedPod.sector.number].includes(sector.number))) {
+                
+                if (sector.scrap) {
 
-                alert('se movera el pod al sector indicado')
-                movePodDemo(selectedPod, sector)
-                setSelectingSector(false)
-                setSelectingPod(false)
-                setPiloting(false)
+                    alert('HAY CHATARRA NE EL SECTOR AL QUE QUIERES ACCEDER, ELIGE OTRO')
+
+                
+
+                } else if (pods.find(pod => pod.sector && (pod.sector.id === sector.id)) && (pods.find(pod => pod.sector && (pod.sector.id === sector.id)).capacity >= selectedPod.capacity)) {
+
+                    alert('NO PUEDES MOVER EL POD, HAY UNO MAS GRANDE EN EL SECTOR AL QUE ESTA LLENDO,selecciona otro')
+
+                } else if (!pods.find(pod => pod.sector && (pod.sector.id === sector.id))) {
+
+                    alert('al no haber obstaculos en el cmanino se movera el pod al sector indicado')
+                    movePod(selectedPod, sector)
+                    setSelectingSector(false)
+                    setSelectingPod(false)
+                    setPiloting(false)
+
+                } else {
+                    //se administra primero el movimiento del pod 'original' 
+                    alert('has chocado un pod, elige a donde se dirigira el pod chocado')
+                    console.log(pods.find(pod => pod.sector &&( pod.sector.id === sector.id)))
+
+                    let crashedPod = pods.find(pod => pod.sector &&( pod.sector.id === sector.id))
+                    //let originalSector = sector
+
+                    movePod(crashedPod,null)
+                    movePod(selectedPod,sector)
+
+                    setSelectedPod(crashedPod)
+                    setSelectingPod(false)
+                    
+                    
+                }
             } else {
                 alert('NO PUEDES MOVER UN POD A UN SECTOR NO ADYACENTE A SU UBICACION INICIAL')
             }
 
         } else if (embarking) {
             if (sector.number === 1 || sector.number === 2 || sector.number === 3) {
-                movePodDemo(selectedPod, sector)
+                movePod(selectedPod, sector)
                 setSelectingPod(false)
                 setSelectingCrewmate(false)
                 setEmbarking(false)
@@ -414,10 +444,11 @@ export default function Game() {
         if (piloting) {
 
             if (GetCrewmatesFromPod(pod).find(crewmate => crewmate.player.id === gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).id)) {
+                setSelectingPod(false)
                 setSelectingSector(true)
-                alert("Click on any adjacent sector to move the pod")
+                alert(`HAS SELECCIONADO UN POD, ELIGE DONDE SE DIRIGIRA ESTE`)
             } else {
-                alert('NO')
+                alert('NO PUEDES SELECCIONAR UN POD QUE NO CONTENGA CREWMATES TUYOS PARA PILOTAR, SELECCIONA OTRA')
 
             }
         } else if (embarking) {
@@ -425,17 +456,17 @@ export default function Game() {
                 moveCrewmate(selectedCrewmate, pod, null)
                 if (!pod.sector) {
                     if (pod.number === 1) {
-                        movePodDemo(pod, sectors.find(sector => sector.number === 2));
+                        movePod(pod, sectors.find(sector => sector.number === 2));
                         setSelectingPod(false)
                         setSelectingCrewmate(false)
                         setEmbarking(false)
                     } else if (pod.number === 2) {
-                        movePodDemo(pod, sectors.find(sector => sector.number === 1));
+                        movePod(pod, sectors.find(sector => sector.number === 1));
                         setSelectingPod(false)
                         setSelectingCrewmate(false)
                         setEmbarking(false)
                     } else if (pod.number === 3) {
-                        movePodDemo(pod, sectors.find(sector => sector.number === 3));
+                        movePod(pod, sectors.find(sector => sector.number === 3));
                         setSelectingPod(false)
                         setSelectingCrewmate(false)
                         setEmbarking(false)
@@ -447,7 +478,7 @@ export default function Game() {
 
 
             } else {
-                alert(`You cannot move your ${selectedCrewmate.role} to a pod that is not in the hangar/adjacent sector to it`)
+                alert(`You cannot move your ${selectedCrewmate.role} to a pod that is not in the hangar/adjacent sector to it,select another pod`)
             }
         }
     }
@@ -483,7 +514,11 @@ export default function Game() {
                 setSelectingShelterCard(false)
                 setEmbarking(false)
             } else {
-                alert('NO PUEDES DESEMBARCAR A UN TRIPULATE SI NO ESTAS NE UN SECTOR COLINDATE AL REFUGIO SELECCIONADO')
+                alert('NO PUEDES DESEMBARCAR A UN TRIPULATE SI NO ESTAS EN UN SECTOR COLINDATE AL REFUGIO SELECCIONADO')
+                setSelectingPod(false)
+                setSelectingCrewmate(false)
+                setSelectingShelterCard(false)
+                setEmbarking(false)
             }
         }
 
@@ -511,16 +546,16 @@ export default function Game() {
                     </div>
                     <div style={{ height: "100%", width: "300px", position: "absolute", left: 650 }}>
                         <div style={{ position: "absolute", top: 90, height: 130, width: 179 }}>
-                            <ShelterCard shelterCard={shelterCards.find(res=>res.sector.number===11)} />
+                            <ShelterCard shelterCard={shelterCards.find(res => res.sector.number === 11)} />
                         </div>
                         <div style={{ position: "absolute", top: 245, left: 60, height: 130, width: 179 }}>
-                            <ShelterCard shelterCard={shelterCards.filter(res=>res.sector.number===12)[0]} />
+                            <ShelterCard shelterCard={shelterCards.filter(res => res.sector.number === 12)[0]} />
                         </div>
                         <div style={{ position: "absolute", top: 405, left: 60, height: 130, width: 179 }}>
-                            <ShelterCard shelterCard={shelterCards.filter(res=>res.sector.number===12)[1]} />
+                            <ShelterCard shelterCard={shelterCards.filter(res => res.sector.number === 12)[1]} />
                         </div>
                         <div style={{ position: "absolute", top: 565, height: 130, width: 179 }}>
-                            <ShelterCard shelterCard={shelterCards.find(res=>res.sector.number===13)} />
+                            <ShelterCard shelterCard={shelterCards.find(res => res.sector.number === 13)} />
                         </div>
                     </div>
                     <div style={{ display: "flex", flexDirection: "column", marginLeft: 710, marginTop: 70, height: "100%", alignContent: "center", alignItems: "center" }}>
