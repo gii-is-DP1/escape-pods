@@ -32,7 +32,7 @@ function AppNavbar() {
         if (role === "ADMIN") {
             adminLinks = (
                 <>
-                    <NavItem>
+                    {/*<NavItem>
                         <NavLink style={{ color: "white" }} tag={Link} to="/owners">Owners</NavLink>
                     </NavItem>
                     <NavItem>
@@ -52,7 +52,7 @@ function AppNavbar() {
                     </NavItem>
                     <NavItem>
                         <NavLink style={{ color: "white" }} tag={Link} to="/users">Users</NavLink>
-                    </NavItem>
+                    </NavItem*/}
                 </>
             )
         }
