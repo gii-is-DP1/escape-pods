@@ -53,6 +53,7 @@ import AchievementList from "./achievements/achievementList";
 import Lobby from "./lobby";
 import Game from "./game"
 import Profile from "./profile"
+import EditProfile from "./profile/editProfile"
 function ErrorFallback({ error, resetErrorBoundary }) {
   return (
     <div role="alert">
@@ -152,6 +153,7 @@ function App() {
           <Route path="/lobby/:gameId" element={<PrivateRoute><Lobby /></PrivateRoute>} />
           <Route path="game/:gameId" element={<PrivateRoute><Game /></PrivateRoute>} />
           <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
+          <Route path="/editProfile" element={<PrivateRoute><EditProfile/></PrivateRoute>} />
         </>)
     }
   })

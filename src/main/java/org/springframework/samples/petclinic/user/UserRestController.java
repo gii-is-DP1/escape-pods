@@ -73,6 +73,12 @@ class UserRestController {
 		return new ResponseEntity<>(userService.findUser(id), HttpStatus.OK);
 	}
 
+	@GetMapping(value = "{username}")
+	public ResponseEntity<User> findByUsername(@PathVariable("username") String username) {
+		return new ResponseEntity<>(userService.findUser(username), HttpStatus.OK);
+	}
+
+
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public ResponseEntity<User> create(@RequestBody @Valid User user) {
