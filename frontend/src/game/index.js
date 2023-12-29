@@ -43,6 +43,8 @@ export default function Game() {
     const [selectedShelterCard, setSelectedShelterCard] = useState({});
     const [spying, setSpying] = useState(false);
 
+    const [remotePiloting, setRemotePiloting] = useState(false)
+    const [podjacking, setPodJacking] = useState(false)
 
     const jwt = tokenService.getLocalAccessToken();
     const myUsername = jwt_decode(jwt).sub;
@@ -383,7 +385,7 @@ export default function Game() {
     function sectorClickHandler(sector) {
         refresher()
         setSelectedSector(sector)
-        if (piloting && selectingSector) {
+        if ((piloting || remotePiloting) && selectingSector) {
             if ((!selectedPod.sector && adjacencyList[0].includes(sector.number)) || (selectedPod.sector && adjacencyList[selectedPod.sector.number].includes(sector.number))) {
 
                 if (sector.scrap) {
@@ -403,6 +405,7 @@ export default function Game() {
                     setSelectingSector(false)
                     setSelectingPod(false)
                     setPiloting(false)
+                    setRemotePiloting(false)
 
                 } else {
                     //se administra primero el movimiento del pod 'original' 
@@ -457,6 +460,7 @@ export default function Game() {
                 setSelectingCrewmate(false)
                 setSelectingPod(false)
                 alert(' se ha movido el crewmate al pod selecionado')
+                setSelectedCrewmate(null)
                 console.log(pods)
                 if (!pod.sector) {
                     if (pod.number === 1 && (pods.filter(pod => pod.sector && pod.sector.number === 2).length === 0)) {
@@ -481,19 +485,29 @@ export default function Game() {
                 setSelectingPod(false)
                 setSelectingCrewmate(false)
                 setEmbarking(false)
+                setSelectedCrewmate(null)
             } else {
                 setSelectingCrewmate(false)
                 setSelectingPod(false)
                 setEmbarking(false)
 
-                alert(`You cannot move your ${selectedCrewmate.role} to a not valid pod, select another pod`)
+                alert(`You cannot move your ${selectedCrewmate.role} to a not valid pod`)
+            }
+
+        } else if (remotePiloting) {
+            if (GetCrewmatesFromPod(pod).length !== 0) {
+                setSelectingPod(false)
+                setSelectingSector(true)
+                alert(`HAS SELECCIONADO UN POD, ELIGE DONDE SE DIRIGIRA ESTE`)
             }
         }
     }
 
     function crewmateClickHandler(crewmate) {
-        setSelectedCrewmate(crewmate)
+        refresher()
+        console.log(selectedCrewmate)
         if (embarking) {
+            setSelectedCrewmate(crewmate)
             if (crewmate.player.id === gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).id) {
                 setSelectingPod(true)
                 //permite ue solo se active el selectinghelterCard cuando es posible usarlo 
@@ -502,6 +516,48 @@ export default function Game() {
                 alert("Click on any pod or shelter to move the crewmate")
             } else {
                 alert('clica en un crewmate de tu color')
+            }
+        } else if (podjacking) {
+            console.log(!selectedCrewmate.id)
+            if (!selectedCrewmate.id) {
+                //con la imosicion de un orden estamos obligando a que siempre se use para el intercambio un crewmate del jugador que realiza la accion
+                if (crewmate.player.id === gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).id) {
+                    setSelectedCrewmate(crewmate)
+
+                    alert('selecciona el crewmate que quieres intercambiar')
+                } else {
+                    alert('TIENES QUE ELEGIR PRIMERO A TU TRIPULANTE')
+                }
+            } else if (selectedCrewmate.id) {
+                console.log((!selectedCrewmate.pod && crewmate.pod) && embarkSectorsNumbers.includes(crewmate.pod.sector.number))
+
+
+
+                //que el crewmate nuevo no sea tuyo y que el estado contenga ya un crewmate del jugador q realiza la acion
+                if ((crewmate.player.id !== gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).id) && (selectedCrewmate && selectedCrewmate.player.id === gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).id)) {
+                    let changedCrewmate = crewmate
+
+                    //intercambio entre 2 pods
+                    if (selectedCrewmate.pod && (crewmate.pod && adjacencyList[selectedCrewmate.pod.sector.number].includes(crewmate.pod.sector.number))) {
+
+                        alert(' se intercambiaran los crewmates de lugar')
+                        moveCrewmate(selectedCrewmate, null, null)
+                        moveCrewmate(changedCrewmate, selectedCrewmate.pod, null)
+                        moveCrewmate(selectedCrewmate, crewmate.pod)
+
+                        //intercambio pod a hangar
+                    } else if ((!selectedCrewmate.pod && crewmate.pod) && embarkSectorsNumbers.includes(crewmate.pod.sector.number)) {
+                        moveCrewmate(changedCrewmate, null, null)
+                        moveCrewmate(selectedCrewmate, crewmate.pod)
+                        alert(' se ha puesto el crewmate en su lugar y el otro ha sido devuelto a la reserva')
+
+                    } else {
+                        alert('NO SE QUE ESTAS INTETANDO HACER, PERO NO SE PUEDE')
+                    }
+                } else {
+                    alert('PARA CAMBIAR 2 DE TUS TRIPULANTES SELECCIONA EMBARCAR/DESEMBARCAR')
+                }
+
             }
         }
     }
@@ -526,6 +582,7 @@ export default function Game() {
             setSelectingCrewmate(false)
             setSelectingShelterCard(false)
             setEmbarking(false)
+            setSelectedCrewmate(null)
 
         }
 
@@ -586,6 +643,28 @@ export default function Game() {
                         }}>
                             PILOTAR
                         </Button>
+
+                        <Button className="button" style={{
+                            backgroundColor: "#CFFF68",
+                            border: "none",
+                            width: 200,
+                            fontSize: 20,
+                            borderRadius: 20,
+                            height: 60,
+                            boxShadow: "5px 5px 5px #00000020",
+                            textShadow: "2px 2px 2px #00000020",
+                            transition: "0.15s",
+                            alignSelf: "center",
+                            marginBottom: 20
+                        }} onClick={() => {
+                            setRemotePiloting(prevRemotePiloting => !prevRemotePiloting);
+                            setSelectingPod(prevSelectingPod => !prevSelectingPod);
+                            alert("Click on any pod to pilot it")
+                            console.log(remotePiloting)
+                        }}>
+                            PILOTAR REMOTAMENTE
+                        </Button>
+
                         <Button className="button" style={{
                             backgroundColor: "#CFFF68",
                             border: "none",
@@ -606,6 +685,28 @@ export default function Game() {
                         }}>
                             EMBARCAR/DESEMBARCAR
                         </Button>
+
+                        <Button className="button" style={{
+                            backgroundColor: "#CFFF68",
+                            border: "none",
+                            width: 200,
+                            fontSize: 20,
+                            borderRadius: 20,
+                            height: 60,
+                            boxShadow: "5px 5px 5px #00000020",
+                            textShadow: "2px 2px 2px #00000020",
+                            transition: "0.15s",
+                            alignSelf: "center",
+                            marginBottom: 20
+                        }} onClick={() => {
+                            setPodJacking(prevPodJacking => !prevPodJacking);
+                            setSelectingCrewmate(prevSelectingCrewmate => !prevSelectingCrewmate);
+                            alert("Click on any of your crewmates")
+                            console.log(podjacking)
+                        }}>
+                            ABORDAR
+                        </Button>
+
                         <Button className="button" style={{
                             backgroundColor: "#CFFF68",
                             border: "none",
