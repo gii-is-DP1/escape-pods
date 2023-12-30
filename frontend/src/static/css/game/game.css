@@ -26,146 +26,101 @@
     margin-top: 66px;
 }
 
-.pod3 {
+.pod3, .pod2, .pod1 {
     position: absolute;
-    background-image: url('../../images/pod3.png');
     background-size: cover;
     display: flex;
     max-width: 100px;
     max-height: 100px;
     height: 100%;
     width: 100%;
+}
+
+.pod3 {
+    background-image: url('../../images/pod3.png');
 }
 
 .pod2 {
-    position: absolute;
     background-image: url('../../images/pod2.png');
-    background-size: cover;
-    display: flex;
-    max-width: 100px;
-    max-height: 100px;
-    height: 100%;
-    width: 100%;
 }
 
 .pod1 {
-    position: absolute;
     background-image: url('../../images/pod1.png');
-    background-size: cover;
-    display: flex;
-    max-width: 100px;
-    max-height: 100px;
-    height: 100%;
-    width: 100%;
 }
 
-.shelter-horizontal {
+.shelter-pink, .shelter-blue, .shelter-yellow, .shelter-green, .shelter-orange {
     position: absolute;
     background-size: cover;
     display: flex;
-    background-image: url('../../images/pink-shelter.png');
     max-width: 179px;
     max-height: 130px;
     height: 100%;
     width: 100%;
 }
 
-.pod1 {
+.shelter-pink {
+    background-image: url('../../images/pink-shelter.png');
+}
+.shelter-blue {
+    background-image: url('../../images/blue-shelter.png');
+}
+.shelter-yellow {
+    background-image: url('../../images/yellow-shelter.png');
+}
+.shelter-green {
+    background-image: url('../../images/green-shelter.png');
+}
+.shelter-orange {
+    background-image: url('../../images/orange-shelter.png');
+}
+
+.black-action-card, .black-special-action-card, .blue-action-card, .blue-special-action-card, .yellow-action-card, 
+.yellow-special-action-card, .pink-action-card, .pink-special-action-card, .white-action-card, .white-special-action-card {
     position: absolute;
-    background-image: url('../../images/pod1.png');
     background-size: cover;
     display: flex;
-    max-width: 100px;
-    max-height: 100px;
+    max-width: 230px;
+    max-height: 165px;
     height: 100%;
     width: 100%;
 }
 
 .black-action-card {
-    position: absolute;
-    background-size: cover;
-    display: flex;
     background-image: url('../../images/blackActionCard.png');
-    max-width: 230px;
-    max-height: 165px;
-    height: 100%;
-    width: 100%;
 }
 
 .black-special-action-card {
-    position: absolute;
-    background-size: cover;
-    display: flex;
     background-image: url('../../images/blackSpecialActionCard.png');
-    max-width: 230px;
-    max-height: 165px;
-    height: 100%;
-    width: 100%;
 }
 
 .blue-action-card {
-    position: absolute;
-    background-size: cover;
-    display: flex;
     background-image: url('../../images/blueActionCard.png');
-    max-width: 230px;
-    max-height: 165px;
-    height: 100%;
-    width: 100%;
 }
 
 .blue-special-action-card {
-    position: absolute;
-    background-size: cover;
-    display: flex;
     background-image: url('../../images/blueSpecialActionCard.png');
-    max-width: 230px;
-    max-height: 165px;
-    height: 100%;
-    width: 100%;
 }
 
 .yellow-action-card {
-    position: absolute;
-    background-size: cover;
-    display: flex;
     background-image: url('../../images/yellowActionCard.png');
-    max-width: 230px;
-    max-height: 165px;
-    height: 100%;
-    width: 100%;
 }
 
 .yellow-special-action-card {
-    position: absolute;
-    background-size: cover;
-    display: flex;
     background-image: url('../../images/yellowSpecialActionCard.png');
-    max-width: 230px;
-    max-height: 165px;
-    height: 100%;
-    width: 100%;
 }
 
 .pink-action-card {
-    position: absolute;
-    background-size: cover;
-    display: flex;
     background-image: url('../../images/pinkActionCard.png');
-    max-width: 230px;
-    max-height: 165px;
-    height: 100%;
-    width: 100%;
 }
 
 .pink-special-action-card {
-    position: absolute;
-    background-size: cover;
-    display: flex;
     background-image: url('../../images/pinkSpecialActionCard.png');
-    max-width: 230px;
-    max-height: 165px;
-    height: 100%;
-    width: 100%;
 }
 
+.white-action-card {
+    background-image: url('../../images/whiteActionCard.png');
+}
+
+.white-special-action-card {
+    background-image: url('../../images/whiteSpecialActionCard.png');
+}

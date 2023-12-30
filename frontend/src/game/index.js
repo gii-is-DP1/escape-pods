@@ -106,7 +106,7 @@ export default function Game() {
     const shelterScoringSlotsY = [97, 97, 97, 97, 97] //coordenadas Y de los slots del shelter
 
     const shelterEmbarkingSlotsX = [8, 42, 76.5, 111, 145] //coordenadas X de los slots del shelter
-    const shelterEmbarkingSlotsY = [-14.5, -14.5, -14.5, -14.5, -14.5] //coordenadas Y de los slots del shelter
+    const shelterEmbarkingSlotsY = [1, 1, 1, 1, 1, 1] //coordenadas Y de los slots del shelter
 
 
 
@@ -275,10 +275,10 @@ export default function Game() {
             return null
         }
         return (
-            <div>
+            <div style={{height:150}}>
                 <div style={{ display: 'flex', flexDirection: 'row', marginBottom: 3 }}>
                     {crewmates.filter(crewmate => crewmate.player.id === gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).id
-                        && crewmate.role === "ENGINEER" && !crewmate.pod && !crewmate.shelterCard && !Object.values(actionSlots).includes(crewmate) && (actionSlots.embark ? !actionSlots.embark.includes(crewmate) : true))
+                        && crewmate.role === "ENGINEER" && !crewmate.pod && !crewmate.shelterCard && !Object.values(actionSlots).includes(crewmate) && (actionSlots.embark ? !actionSlots.embark.includes(crewmate) : true) && !Object.values(specialActionSlots).includes(crewmate))
                         .map((crewmate, index) => (
                             <div key={index} style={{ marginRight: 3 }}>
                                 <Crewmate crewmate={crewmate} />
@@ -287,7 +287,8 @@ export default function Game() {
                     }
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'row', marginBottom: 3 }}>
-                    {crewmates.filter(crewmate => crewmate.player.id === gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).id && crewmate.role === "SCIENTIST" && !crewmate.pod && !crewmate.shelterCard)
+                    {crewmates.filter(crewmate => crewmate.player.id === gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).id
+                        && crewmate.role === "SCIENTIST" && !crewmate.pod && !crewmate.shelterCard && !Object.values(actionSlots).includes(crewmate) && (actionSlots.embark ? !actionSlots.embark.includes(crewmate) : true) && !Object.values(specialActionSlots).includes(crewmate))
                         .map((crewmate, index) => (
                             <div key={index} style={{ marginRight: 3 }}>
                                 <Crewmate crewmate={crewmate} />
@@ -296,7 +297,8 @@ export default function Game() {
                     }
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'row', marginBottom: 3 }}>
-                    {crewmates.filter(crewmate => crewmate.player.id === gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).id && crewmate.role === "CAPTAIN" && !crewmate.pod && !crewmate.shelterCard)
+                    {crewmates.filter(crewmate => crewmate.player.id === gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).id
+                        && crewmate.role === "CAPTAIN" && !crewmate.pod && !crewmate.shelterCard && !Object.values(actionSlots).includes(crewmate) && (actionSlots.embark ? !actionSlots.embark.includes(crewmate) : true) && !Object.values(specialActionSlots).includes(crewmate))
                         .map((crewmate, index) => (
                             <div key={index} style={{ marginRight: 3 }}>
                                 <Crewmate crewmate={crewmate} />
@@ -313,7 +315,7 @@ export default function Game() {
             return null
         }
         return (
-            <div className={"shelter-horizontal"} onClick={() => {
+            <div className={"shelter-" + props.shelterCard.type.toLowerCase()} onClick={() => {
                 if (selectingShelterCard) {
                     shelterClickHandler(props.shelterCard)
                 }
@@ -324,18 +326,18 @@ export default function Game() {
                     </div>
                 ))}
                 {slotInfos.filter(slotInfo => slotInfo.shelter.id === props.shelterCard.id).map((slotInfo, index) => (
-                    <div key={index} style={{ position: "absolute", left: shelterEmbarkingSlotsX[index], top: shelterEmbarkingSlotsY[index] + 107 }}>
-                        <p style={{ color: "black", fontSize: 9, position: "absolute", left: 22 }}>
+                    <div key={index} style={{ position: "absolute", left: shelterEmbarkingSlotsX[index], top: shelterEmbarkingSlotsY[index] + 91.5 }}>
+                        <p style={{ color: "black", fontSize: 9, position: "absolute", left: 23, top: -1 }}>
                             {slotInfo.slotScore}
                         </p>
                         {slotInfo.role === "ENGINEER" &&
-                            <HiMiniWrenchScrewdriver color="white" style={{ position: "absolute", top: 11, left: 5 }} />
+                            <HiMiniWrenchScrewdriver color="white" style={{ position: "absolute", top: 10, left: 7 }} />
                         }
                         {slotInfo.role === "SCIENTIST" &&
-                            <IoIosFlask color="white" style={{ position: "absolute", top: 11, left: 5 }} />
+                            <IoIosFlask color="white" style={{ position: "absolute", top: 10, left: 7 }} />
                         }
                         {slotInfo.role === "CAPTAIN" &&
-                            <ImShield color="white" style={{ position: "absolute", top: 11, left: 5 }} />
+                            <ImShield color="white" style={{ position: "absolute", top: 10, left: 7 }} />
                         }
                     </div>
                 ))}
