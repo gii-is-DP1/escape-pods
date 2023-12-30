@@ -45,6 +45,7 @@ export default function Game() {
 
     const [remotePiloting, setRemotePiloting] = useState(false)
     const [podjacking, setPodJacking] = useState(false)
+    const [minipodSpawning, setMinipodSpawning] = useState(false)
 
     const jwt = tokenService.getLocalAccessToken();
     const myUsername = jwt_decode(jwt).sub;
@@ -404,8 +405,10 @@ export default function Game() {
                     movePod(selectedPod, sector)
                     setSelectingSector(false)
                     setSelectingPod(false)
+
                     setPiloting(false)
                     setRemotePiloting(false)
+
 
                 } else {
                     //se administra primero el movimiento del pod 'original' 
@@ -438,6 +441,20 @@ export default function Game() {
                 alert('NO PUEDES MOVER UN POD D 1 A OTRA MOVIDA NO ADYACENTE')
             }
 
+        } else if (minipodSpawning ) {
+            if ((!selectedCrewmate.pod.sector && adjacencyList[0].includes(sector.number)) || (selectedCrewmate.pod.sector && adjacencyList[selectedCrewmate.pod.sector.number].includes(sector.number))) {
+                if (sector.scrap || (pods.find(pod => pod.sector && (pod.sector.id === sector.id)) && (pods.find(pod => pod.sector && (pod.sector.id === sector.id)).capacity >= selectedPod.capacity))) {
+                    alert('NO SE PUEDE MOVERL EL MINIPOD AL SECTOR DEBIDO A QUE ETA OBSTACULIZADO,SELECCIONA OTRO')
+                } else if (!pods.find(pod => pod.sector && (pod.sector.id === sector.id))) {
+
+                    alert('al no haber obstaculos en el sector indicado se ponda el minipod alli')
+                    movePod(selectedPod, sector)
+                    moveCrewmate(selectedCrewmate, selectedPod)
+                    setSelectingSector(false)
+                    setSelectingPod(false)
+                    setMinipodSpawning(false)
+                }
+            }
         }
     }
 
@@ -456,28 +473,32 @@ export default function Game() {
             }
         } else if (embarking) {
             if ((embarkSectorsNumbers.includes(pod.sector ? pod.sector.number : '') || !pod.sector) && (pod && GetCrewmatesFromPod(pod).length < pod.capacity)) {
-                moveCrewmate(selectedCrewmate, pod, null)
-                setSelectingCrewmate(false)
-                setSelectingPod(false)
-                alert(' se ha movido el crewmate al pod selecionado')
-                setSelectedCrewmate(null)
-                console.log(pods)
-                if (!pod.sector) {
-                    if (pod.number === 1 && (pods.filter(pod => pod.sector && pod.sector.number === 2).length === 0)) {
-                        movePod(pod, sectors.find(sector => sector.number === 2));
-                        setEmbarking(false)
-                    } else if (pod.number === 2 && (pods.filter(pod => pod.sector && pod.sector.number === 1).length === 0)) {
-                        movePod(pod, sectors.find(sector => sector.number === 1));
-                        setEmbarking(false)
-                    } else if (pod.number === 3 && (pods.filter(pod => pod.sector && pod.sector.number === 3).length === 0)) {
-                        movePod(pod, sectors.find(sector => sector.number === 3));
-                        setEmbarking(false)
-                    } else {
-                        alert('Select one of the adjacent sectors to the hangar')
-                        setSelectingSector(true);
+
+                if (pod.number > 3 && pods.filter(pod => pod.number <= 3 && (!pod.sector || embarkSectorsNumbers.includes(pod.sector.number)) && GetCrewmatesFromPod(pod).length < pod.capacity).length >= 1) {
+                    alert('NO PIUEDES EMBARCAR EN UN POD DE 1 SI TU TRIPULANTE PUEDE EMBARCAR EN UNO DE LOS PODS PREDETERMINADOS, SELECCIONA OTRO')
+                } else {
+                    moveCrewmate(selectedCrewmate, pod, null)
+                    setSelectingCrewmate(false)
+                    setSelectingPod(false)
+                    alert(' se ha movido el crewmate al pod selecionado')
+                    setSelectedCrewmate(null)
+                    console.log(pods)
+                    if (!pod.sector) {
+                        if (pod.number === 1 && (pods.filter(pod => pod.sector && pod.sector.number === 2).length === 0)) {
+                            movePod(pod, sectors.find(sector => sector.number === 2));
+                            setEmbarking(false)
+                        } else if (pod.number === 2 && (pods.filter(pod => pod.sector && pod.sector.number === 1).length === 0)) {
+                            movePod(pod, sectors.find(sector => sector.number === 1));
+                            setEmbarking(false)
+                        } else if (pod.number === 3 && (pods.filter(pod => pod.sector && pod.sector.number === 3).length === 0)) {
+                            movePod(pod, sectors.find(sector => sector.number === 3));
+                            setEmbarking(false)
+                        } else {
+                            alert('Select one of the adjacent sectors to the hangar')
+                            setSelectingSector(true);
+                        }
                     }
                 }
-
 
             } else if ((selectedCrewmate.pod && adjacencyList[selectedCrewmate.pod.sector.number].includes(pod.sector.number)) && (pod && GetCrewmatesFromPod(pod).length < pod.capacity)) {
                 alert('el crewmate ha sido cambiado al nuevo pod')
@@ -558,6 +579,24 @@ export default function Game() {
                     alert('PARA CAMBIAR 2 DE TUS TRIPULANTES SELECCIONA EMBARCAR/DESEMBARCAR')
                 }
 
+            }
+        } else if (minipodSpawning) {
+            setSelectedCrewmate(crewmate)
+            if (crewmate.player.id === gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).id && crewmate.pod) {
+                //no hay pods de 1 disponibles
+                if (pods.filter(pod => pod.number > 3 && pod.sector && GetCrewmatesFromPod(pod).length!==0).length >= 3 ) {
+                    alert('NO HAY MINIPODS DISPONIBLES PARA INVOCARLOS')
+                    setSelectingCrewmate(false)
+                    setMinipodSpawning(false)
+                } else {
+                    alert('SELECCIONA DONDE QUIERES QUE SE ESTABLEZCA EL MINIPOD')
+                    let minipod = pods.filter(pod => pod.number > 3 && (!pod.sector && pods.filter(pod => pod.number > 3 && GetCrewmatesFromPod(pod).length === 0)))[0]
+                    setSelectedPod(minipod)
+                    setSelectingSector(true)
+
+                }
+            } else {
+                alert('SELECCIONA UNO DE TUS CREWMATES QUE ESTEN EN ALGUNA NAVE')
             }
         }
     }
@@ -720,6 +759,27 @@ export default function Game() {
                             alignSelf: "center",
                             marginBottom: 20
                         }} onClick={() => {
+                            setMinipodSpawning(prevMiniPodSpawning => !prevMiniPodSpawning);
+                            setSelectingCrewmate(prevSelectingCrewmate => !prevSelectingCrewmate);
+                            alert("Click on any of your crewmates")
+                            console.log(minipodSpawning)
+                        }}>
+                            INVOCAR MINIPOD
+                        </Button>
+
+                        <Button className="button" style={{
+                            backgroundColor: "#CFFF68",
+                            border: "none",
+                            width: 200,
+                            fontSize: 20,
+                            borderRadius: 20,
+                            height: 60,
+                            boxShadow: "5px 5px 5px #00000020",
+                            textShadow: "2px 2px 2px #00000020",
+                            transition: "0.15s",
+                            alignSelf: "center",
+                            marginBottom: 20
+                        }} onClick={() => {
                             setSpying(true);
                             setTimeout(() => {
                                 setSpying(false);
@@ -785,5 +845,4 @@ export default function Game() {
         </>
 
     );
-
 }
