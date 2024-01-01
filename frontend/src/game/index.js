@@ -743,7 +743,7 @@ export default function Game() {
                 alert('NO PUEDES MOVER UN POD D 1 A OTRA MOVIDA NO ADYACENTE')
             }
 
-        } else if (minipodSpawning ) {
+        } else if (minipodSpawning) {
             if ((!selectedCrewmate.pod.sector && adjacencyList[0].includes(sector.number)) || (selectedCrewmate.pod.sector && adjacencyList[selectedCrewmate.pod.sector.number].includes(sector.number))) {
                 if (sector.scrap || (pods.find(pod => pod.sector && (pod.sector.id === sector.id)) && (pods.find(pod => pod.sector && (pod.sector.id === sector.id)).capacity >= selectedPod.capacity))) {
                     alert('NO SE PUEDE MOVERL EL MINIPOD AL SECTOR DEBIDO A QUE ETA OBSTACULIZADO,SELECCIONA OTRO')
@@ -886,7 +886,7 @@ export default function Game() {
             setSelectedCrewmate(crewmate)
             if (crewmate.player.id === gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).id && crewmate.pod) {
                 //no hay pods de 1 disponibles
-                if (pods.filter(pod => pod.number > 3 && pod.sector && GetCrewmatesFromPod(pod).length!==0).length >= 3 ) {
+                if (pods.filter(pod => pod.number > 3 && pod.sector && GetCrewmatesFromPod(pod).length !== 0).length >= 3) {
                     alert('NO HAY MINIPODS DISPONIBLES PARA INVOCARLOS')
                     setSelectingCrewmate(false)
                     setMinipodSpawning(false)
@@ -1088,6 +1088,66 @@ export default function Game() {
                             }}>
                                 bacon
                             </Button>
+                            <Button className="button" style={{
+                                backgroundColor: "#CFFF68",
+                                border: "none",
+                                width: 200,
+                                fontSize: 20,
+                                borderRadius: 20,
+                                height: 60,
+                                boxShadow: "5px 5px 5px #00000020",
+                                textShadow: "2px 2px 2px #00000020",
+                                transition: "0.15s",
+                                alignSelf: "center",
+                                marginBottom: 20
+                            }} onClick={() => {
+                                setRemotePiloting(prevRemotePiloting => !prevRemotePiloting);
+                                setSelectingPod(prevSelectingPod => !prevSelectingPod);
+                                alert("Click on any pod to pilot it")
+                                console.log(remotePiloting)
+                            }}>
+                                PILOTAR REMOTAMENTE
+                            </Button>
+                            <Button className="button" style={{
+                            backgroundColor: "#CFFF68",
+                            border: "none",
+                            width: 200,
+                            fontSize: 20,
+                            borderRadius: 20,
+                            height: 60,
+                            boxShadow: "5px 5px 5px #00000020",
+                            textShadow: "2px 2px 2px #00000020",
+                            transition: "0.15s",
+                            alignSelf: "center",
+                            marginBottom: 20
+                        }} onClick={() => {
+                            setPodJacking(prevPodJacking => !prevPodJacking);
+                            setSelectingCrewmate(prevSelectingCrewmate => !prevSelectingCrewmate);
+                            alert("Click on any of your crewmates")
+                            console.log(podjacking)
+                        }}>
+                            ABORDAR
+                        </Button>
+                        <Button className="button" style={{
+                            backgroundColor: "#CFFF68",
+                            border: "none",
+                            width: 200,
+                            fontSize: 20,
+                            borderRadius: 20,
+                            height: 60,
+                            boxShadow: "5px 5px 5px #00000020",
+                            textShadow: "2px 2px 2px #00000020",
+                            transition: "0.15s",
+                            alignSelf: "center",
+                            marginBottom: 20
+                        }} onClick={() => {
+                            setMinipodSpawning(prevMiniPodSpawning => !prevMiniPodSpawning);
+                            setSelectingCrewmate(prevSelectingCrewmate => !prevSelectingCrewmate);
+                            alert("Click on any of your crewmates")
+                            console.log(minipodSpawning)
+                        }}>
+                            INVOCAR MINIPOD
+                        </Button>
                         </div>
                         <div style={{ display: "flex", flexDirection: "row" }}>
                             <Button className="button" style={{
