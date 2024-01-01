@@ -46,6 +46,24 @@ export default function Game() {
     const [remotePiloting, setRemotePiloting] = useState(false)
     const [podjacking, setPodJacking] = useState(false)
     const [minipodSpawning, setMinipodSpawning] = useState(false)
+    const [selectingBeacon, setSelectingBeacon] = useState(false);
+    const [selectedBeacon, setSelectedBeacon] = useState({});
+    const [selectingLine, setSelectingLine] = useState(false);
+    const [selectedLine, setSelectedLine] = useState({});
+
+    const [actionSlots, setActionSlots] = useState({
+        embark: null,
+        accelerate: null,
+        spy: null,
+        minipod: null,
+    })
+
+    const [specialActionSlots, setSpecialActionSlots] = useState({
+        board: null,
+        pilot: null,
+        program: null,
+        refresh: null,
+    })
 
     const jwt = tokenService.getLocalAccessToken();
     const myUsername = jwt_decode(jwt).sub;
@@ -96,10 +114,15 @@ export default function Game() {
     const shelterScoringSlotsY = [97, 97, 97, 97, 97] //coordenadas Y de los slots del shelter
 
     const shelterEmbarkingSlotsX = [8, 42, 76.5, 111, 145] //coordenadas X de los slots del shelter
-    const shelterEmbarkingSlotsY = [-14.5, -14.5, -14.5, -14.5, -14.5] //coordenadas Y de los slots del shelter
+    const shelterEmbarkingSlotsY = [1, 1, 1, 1, 1, 1] //coordenadas Y de los slots del shelter
 
     const embarkSectorsNumbers = [1, 2, 3]
-
+    //    1    2    3    4    5    6    7    8    9   10   11   12   13
+    const lineX = [null, 143, 174, 143, 238, 205, 205, 238, 270, 270, 364, 330, 301, 330,
+        364, 397, 427, 397, 492, 458, 458, 492, 524, 555, 524, 586, 586]
+    const lineY = [null, 189, 242, 297, 133, 189, 297, 352, 189, 297, 133, 189, 242, 297,
+        352, 189, 242, 297, 133, 189, 297, 352, 189, 242, 297, 189, 297]
+    //  14   15   16   17   18   19   20   21   22   23   24    25   26
     useEffect(() => {
         if (jwt) {
             setRoles(jwt_decode(jwt).authorities);
@@ -151,6 +174,16 @@ export default function Game() {
         return crewmates.filter(crewmate => crewmate.shelterCard && crewmate.shelterCard.id === shelterCard.id)
     }
 
+    function GetUnusedBeacons() {
+        let usedBeacons = []
+        for (let i = 0; i < lines.length; i++) {
+            if (lines[i].beacon) {
+                usedBeacons.push(lines[i].beacon.id)
+            }
+        }
+        return beacons.filter(beacon => !usedBeacons.includes(beacon.id))
+    }
+
     async function fetchCurrentGame() {
         const response = await fetch(`/api/v1/games/${gameId}`, {
             headers: {
@@ -170,7 +203,7 @@ export default function Game() {
         return (
             <div style={{ width: 100, height: 100, position: "absolute", left: props.x, top: props.y }}
                 onClick={() => {
-                    console.log(props.sector)
+                    console.log("sector")
                     if (selectingSector) {
                         sectorClickHandler(props.sector)
                     }
@@ -194,6 +227,41 @@ export default function Game() {
         )
     }
 
+    function rotation(line) {
+        const plus30deg = [1, 8, 15, 22, 6, 13, 20, 26]
+        const minus30deg = [5, 11, 19, 25, 3, 9, 17, 24]
+        if (plus30deg.includes(line.number)) {
+            return "30deg"
+        } else if (minus30deg.includes(line.number)) {
+            return "-30deg"
+        } else {
+            return "90deg"
+        }
+    }
+
+    function Line(props) {
+        if (props.line === undefined || emptyChecker("array", beacons)) {
+            return null
+        }
+        return (
+            <div style={{ width: 54, height: 14, position: "absolute", left: props.x, top: props.y, rotate: rotation(props.line), backgroundColor: `rgba(255, 128, 0, ${selectingLine && !props.line.beacon ? "0.3" : "0"})` }}
+                onClick={() => {
+                    if (selectingLine) {
+                        lineClickHandler(props.line)
+                    }
+                }}
+            >
+                {beacons.map((beacon, index) => (
+                    <div key={index}>
+                        {props.line.beacon && props.line.beacon.id === beacon.id &&
+                            <Beacon beacon={beacon} />
+                        }
+                    </div>
+                ))}
+            </div>
+        )
+    }
+
     function Pod(props) {
         if (emptyChecker("object", props.pod) || emptyChecker("array", crewmates)) {
             return null
@@ -207,9 +275,6 @@ export default function Game() {
                     }
                 }}
             >
-                {/*
-                <CrewmateSlots capacity={props.pod.capacity} crewmates={GetCrewmatesFromPod(props.pod)} />
-                */}
                 {GetCrewmatesFromPod(props.pod).map((crewmate, index) => (
                     <div key={index} style={{
                         position: "absolute",
@@ -224,7 +289,7 @@ export default function Game() {
     }
 
     function Crewmate(props) {
-        if (emptyChecker("array", gamePlayers)) {
+        if (emptyChecker("array", gamePlayers) || !props.crewmate) {
             return null
         }
         return (
@@ -265,30 +330,76 @@ export default function Game() {
             return null
         }
         return (
-            <div>
+            <div style={{ height: 135 }}>
                 <div style={{ display: 'flex', flexDirection: 'row', marginBottom: 3 }}>
-                    {crewmates.filter(crewmate => crewmate.player.id === gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).id && crewmate.role === "ENGINEER" && !crewmate.pod && !crewmate.shelterCard)
+                    {crewmates.filter(crewmate => crewmate.player.id === gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).id
+                        && crewmate.role === "ENGINEER" && !crewmate.pod && !crewmate.shelterCard && !Object.values(actionSlots).includes(crewmate) && (actionSlots.embark ? !actionSlots.embark.includes(crewmate) : true) && !Object.values(specialActionSlots).includes(crewmate))
                         .map((crewmate, index) => (
                             <div key={index} style={{ marginRight: 3 }}>
                                 <Crewmate crewmate={crewmate} />
                             </div>
-                        ))}
+                        ))
+                    }
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'row', marginBottom: 3 }}>
-                    {crewmates.filter(crewmate => crewmate.player.id === gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).id && crewmate.role === "SCIENTIST" && !crewmate.pod && !crewmate.shelterCard)
+                    {crewmates.filter(crewmate => crewmate.player.id === gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).id
+                        && crewmate.role === "SCIENTIST" && !crewmate.pod && !crewmate.shelterCard && !Object.values(actionSlots).includes(crewmate) && (actionSlots.embark ? !actionSlots.embark.includes(crewmate) : true) && !Object.values(specialActionSlots).includes(crewmate))
                         .map((crewmate, index) => (
                             <div key={index} style={{ marginRight: 3 }}>
                                 <Crewmate crewmate={crewmate} />
                             </div>
-                        ))}
+                        ))
+                    }
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'row', marginBottom: 3 }}>
-                    {crewmates.filter(crewmate => crewmate.player.id === gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).id && crewmate.role === "CAPTAIN" && !crewmate.pod && !crewmate.shelterCard)
+                    {crewmates.filter(crewmate => crewmate.player.id === gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).id
+                        && crewmate.role === "CAPTAIN" && !crewmate.pod && !crewmate.shelterCard && !Object.values(actionSlots).includes(crewmate) && (actionSlots.embark ? !actionSlots.embark.includes(crewmate) : true) && !Object.values(specialActionSlots).includes(crewmate))
                         .map((crewmate, index) => (
                             <div key={index} style={{ marginRight: 3 }}>
                                 <Crewmate crewmate={crewmate} />
                             </div>
-                        ))}
+                        ))
+                    }
+                </div>
+            </div>
+        )
+    }
+
+    function Beacon(props) {
+        if (emptyChecker("array", beacons)) {
+            return null
+        }
+        return (
+            <div className={props.beacon.color1.toLowerCase() + "-" + props.beacon.color2.toLowerCase() + "-beacon"}
+                onClick={() => {
+                    if (selectingBeacon) {
+                        beaconClickHandler(props.beacon)
+                    }
+                }}
+            >
+            </div>
+        )
+    }
+
+    function UnusedBeacons() {
+        if (emptyChecker("array", beacons)) {
+            return null
+        }
+        return (
+            <div style={{ height: 45, width: 295 }}>
+                <div style={{ display: 'flex', flexDirection: 'row', marginBottom: 20 }}>
+                    {beacons.filter(beacon => GetUnusedBeacons().includes(beacon)).slice(0, 5).map((beacon, index) => (
+                        <div key={index} style={{ marginRight: 60 }}>
+                            <Beacon beacon={beacon} />
+                        </div>
+                    ))}
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'row' }}>
+                    {beacons.filter(beacon => GetUnusedBeacons().includes(beacon)).slice(5).map((beacon, index) => (
+                        <div key={index} style={{ marginRight: 60 }}>
+                            <Beacon beacon={beacon} />
+                        </div>
+                    ))}
                 </div>
             </div>
         )
@@ -299,7 +410,7 @@ export default function Game() {
             return null
         }
         return (
-            <div className={"shelter-horizontal"} onClick={() => {
+            <div className={"shelter-" + props.shelterCard.type.toLowerCase()} onClick={() => {
                 if (selectingShelterCard) {
                     shelterClickHandler(props.shelterCard)
                 }
@@ -310,21 +421,195 @@ export default function Game() {
                     </div>
                 ))}
                 {slotInfos.filter(slotInfo => slotInfo.shelter.id === props.shelterCard.id).map((slotInfo, index) => (
-                    <div key={index} style={{ position: "absolute", left: shelterEmbarkingSlotsX[index], top: shelterEmbarkingSlotsY[index] + 107 }}>
-                        <p style={{ color: "black", fontSize: 9, position: "absolute", left: 22 }}>
+                    <div key={index} style={{ position: "absolute", left: shelterEmbarkingSlotsX[index], top: shelterEmbarkingSlotsY[index] + 91.5 }}>
+                        <p style={{ color: "black", fontSize: 9, position: "absolute", left: 23, top: -1 }}>
                             {slotInfo.slotScore}
                         </p>
                         {slotInfo.role === "ENGINEER" &&
-                            <HiMiniWrenchScrewdriver color="white" style={{ position: "absolute", top: 11, left: 5 }} />
+                            <HiMiniWrenchScrewdriver color="white" style={{ position: "absolute", top: 10, left: 7 }} />
                         }
                         {slotInfo.role === "SCIENTIST" &&
-                            <IoIosFlask color="white" style={{ position: "absolute", top: 11, left: 5 }} />
+                            <IoIosFlask color="white" style={{ position: "absolute", top: 10, left: 7 }} />
                         }
                         {slotInfo.role === "CAPTAIN" &&
-                            <ImShield color="white" style={{ position: "absolute", top: 11, left: 5 }} />
+                            <ImShield color="white" style={{ position: "absolute", top: 10, left: 7 }} />
                         }
                     </div>
                 ))}
+            </div>
+        )
+    }
+
+    function ActionCards() {
+        if (emptyChecker("array", gamePlayers)) {
+            return null
+        }
+        return (
+            <div style={{ display: "flex", flexDirection: "row", width: 480, height: 230, position: "relative" }}>
+                <div className={gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).color.toLowerCase() + "-action-card"}>
+                    <div style={{ position: "absolute", left: 92, top: 20, width: 40, height: 40 }}
+                        onClick={() => {
+                            if (!actionSlots.embark) {
+                                setActionSlots({ ...actionSlots, embark: [crewmates[0]] })
+                            } else {
+                                setActionSlots({ ...actionSlots, embark: [...actionSlots.embark, crewmates[0]] })
+                            }
+                        }}
+                    >
+                        <Crewmate crewmate={actionSlots.embark ? actionSlots.embark[0] : null}></Crewmate>
+                    </div>
+                    <div style={{ position: "absolute", left: 138, top: 20, width: 40, height: 40 }}
+                        onClick={() => {
+                            if (!actionSlots.embark) {
+                                setActionSlots({ ...actionSlots, embark: [crewmates[0]] })
+                            } else {
+                                setActionSlots({ ...actionSlots, embark: [...actionSlots.embark, crewmates[0]] })
+                            }
+                        }}
+                    >
+                        <Crewmate crewmate={actionSlots.embark ? actionSlots.embark[1] : null}></Crewmate>
+                    </div>
+                    <div style={{ position: "absolute", left: 33, top: 95.5, width: 40, height: 40 }}
+                        onClick={() => {
+                            setActionSlots({ ...actionSlots, accelerate: crewmates[0] })
+                        }}
+                    >
+                        <Crewmate crewmate={actionSlots.accelerate}></Crewmate>
+                    </div>
+                    <div style={{ position: "absolute", left: 96, top: 95.5, width: 40, height: 40 }}
+                        onClick={() => {
+                            setActionSlots({ ...actionSlots, spy: crewmates[0] })
+                        }}
+                    >
+                        <Crewmate crewmate={actionSlots.spy}></Crewmate>
+                    </div>
+                    <div style={{ position: "absolute", left: 159, top: 95.5, width: 40, height: 40 }}
+                        onClick={() => {
+                            setActionSlots({ ...actionSlots, minipod: crewmates[0] })
+                        }}
+                    >
+                        <Crewmate crewmate={actionSlots.minipod}></Crewmate>
+                    </div>
+
+                </div>
+                <div className={gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).color.toLowerCase() + "-special-action-card"} style={{ position: "absolute", left: 250 }}>
+                    <div style={{ position: "absolute", left: 65.5, top: 26, width: 40, height: 40 }}
+                        onClick={() => {
+                            setSpecialActionSlots({ ...specialActionSlots, board: crewmates[0] })
+                        }}
+                    >
+                        <Crewmate crewmate={specialActionSlots.board}></Crewmate>
+                    </div>
+                    <div style={{ position: "absolute", left: 160.5, top: 26, width: 40, height: 40 }}
+                        onClick={() => {
+                            setSpecialActionSlots({ ...specialActionSlots, pilot: crewmates[0] })
+                        }}
+                    >
+                        <Crewmate crewmate={specialActionSlots.pilot}></Crewmate>
+                    </div>
+                    <div style={{ position: "absolute", left: 65, top: 89.5, width: 40, height: 40 }}
+                        onClick={() => {
+                            setSpecialActionSlots({ ...specialActionSlots, program: crewmates[0] })
+                        }}
+                    >
+                        <Crewmate crewmate={specialActionSlots.program}></Crewmate>
+                    </div>
+                    <div style={{ position: "absolute", left: 160.5, top: 89.5, width: 40, height: 40 }}
+                        onClick={() => {
+                            setSpecialActionSlots({ ...specialActionSlots, refresh: crewmates[0] })
+                        }}
+                    >
+                        <Crewmate crewmate={specialActionSlots.refresh}></Crewmate>
+                    </div>
+                </div>
+
+            </div>
+        )
+    }
+
+    function ActionCards() {
+        if (emptyChecker("array", gamePlayers)) {
+            return null
+        }
+        return (
+            <div style={{ display: "flex", flexDirection: "row", width: 480, height: 230, position: "relative" }}>
+                <div className={gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).color.toLowerCase() + "-action-card"}>
+                    <div style={{ position: "absolute", left: 92, top: 20, width: 40, height: 40 }}
+                        onClick={() => {
+                            if (!actionSlots.embark) {
+                                setActionSlots({ ...actionSlots, embark: [crewmates[0]] })
+                            } else {
+                                setActionSlots({ ...actionSlots, embark: [...actionSlots.embark, crewmates[0]] })
+                            }
+                        }}
+                    >
+                        <Crewmate crewmate={actionSlots.embark ? actionSlots.embark[0] : null}></Crewmate>
+                    </div>
+                    <div style={{ position: "absolute", left: 138, top: 20, width: 40, height: 40 }}
+                        onClick={() => {
+                            if (!actionSlots.embark) {
+                                setActionSlots({ ...actionSlots, embark: [crewmates[0]] })
+                            } else {
+                                setActionSlots({ ...actionSlots, embark: [...actionSlots.embark, crewmates[0]] })
+                            }
+                        }}
+                    >
+                        <Crewmate crewmate={actionSlots.embark ? actionSlots.embark[1] : null}></Crewmate>
+                    </div>
+                    <div style={{ position: "absolute", left: 33, top: 95.5, width: 40, height: 40 }}
+                        onClick={() => {
+                            setActionSlots({ ...actionSlots, accelerate: crewmates[0] })
+                        }}
+                    >
+                        <Crewmate crewmate={actionSlots.accelerate}></Crewmate>
+                    </div>
+                    <div style={{ position: "absolute", left: 96, top: 95.5, width: 40, height: 40 }}
+                        onClick={() => {
+                            setActionSlots({ ...actionSlots, spy: crewmates[0] })
+                        }}
+                    >
+                        <Crewmate crewmate={actionSlots.spy}></Crewmate>
+                    </div>
+                    <div style={{ position: "absolute", left: 159, top: 95.5, width: 40, height: 40 }}
+                        onClick={() => {
+                            setActionSlots({ ...actionSlots, minipod: crewmates[0] })
+                        }}
+                    >
+                        <Crewmate crewmate={actionSlots.minipod}></Crewmate>
+                    </div>
+
+                </div>
+                <div className={gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).color.toLowerCase() + "-special-action-card"} style={{ position: "absolute", left: 250 }}>
+                    <div style={{ position: "absolute", left: 65.5, top: 26, width: 40, height: 40 }}
+                        onClick={() => {
+                            setSpecialActionSlots({ ...specialActionSlots, board: crewmates[0] })
+                        }}
+                    >
+                        <Crewmate crewmate={specialActionSlots.board}></Crewmate>
+                    </div>
+                    <div style={{ position: "absolute", left: 160.5, top: 26, width: 40, height: 40 }}
+                        onClick={() => {
+                            setSpecialActionSlots({ ...specialActionSlots, pilot: crewmates[0] })
+                        }}
+                    >
+                        <Crewmate crewmate={specialActionSlots.pilot}></Crewmate>
+                    </div>
+                    <div style={{ position: "absolute", left: 65, top: 89.5, width: 40, height: 40 }}
+                        onClick={() => {
+                            setSpecialActionSlots({ ...specialActionSlots, program: crewmates[0] })
+                        }}
+                    >
+                        <Crewmate crewmate={specialActionSlots.program}></Crewmate>
+                    </div>
+                    <div style={{ position: "absolute", left: 160.5, top: 89.5, width: 40, height: 40 }}
+                        onClick={() => {
+                            setSpecialActionSlots({ ...specialActionSlots, refresh: crewmates[0] })
+                        }}
+                    >
+                        <Crewmate crewmate={specialActionSlots.refresh}></Crewmate>
+                    </div>
+                </div>
+
             </div>
         )
     }
@@ -368,6 +653,23 @@ export default function Game() {
             },
             method: 'PUT',
             body: JSON.stringify(movedCrewmate)
+        })
+    }
+
+    async function moveBeacon(beacon, line) {
+        const modifiedLine = {
+            beacon: beacon,
+            number: line.number,
+            game: game
+        }
+        await fetch(`/api/v1/lines/${line.id}`, {
+            headers: {
+                "Authorization": ' Bearer ${ jwt }',
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            method: 'PUT',
+            body: JSON.stringify(modifiedLine)
         })
     }
 
@@ -441,7 +743,7 @@ export default function Game() {
                 alert('NO PUEDES MOVER UN POD D 1 A OTRA MOVIDA NO ADYACENTE')
             }
 
-        } else if (minipodSpawning ) {
+        } else if (minipodSpawning) {
             if ((!selectedCrewmate.pod.sector && adjacencyList[0].includes(sector.number)) || (selectedCrewmate.pod.sector && adjacencyList[selectedCrewmate.pod.sector.number].includes(sector.number))) {
                 if (sector.scrap || (pods.find(pod => pod.sector && (pod.sector.id === sector.id)) && (pods.find(pod => pod.sector && (pod.sector.id === sector.id)).capacity >= selectedPod.capacity))) {
                     alert('NO SE PUEDE MOVERL EL MINIPOD AL SECTOR DEBIDO A QUE ETA OBSTACULIZADO,SELECCIONA OTRO')
@@ -584,7 +886,7 @@ export default function Game() {
             setSelectedCrewmate(crewmate)
             if (crewmate.player.id === gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).id && crewmate.pod) {
                 //no hay pods de 1 disponibles
-                if (pods.filter(pod => pod.number > 3 && pod.sector && GetCrewmatesFromPod(pod).length!==0).length >= 3 ) {
+                if (pods.filter(pod => pod.number > 3 && pod.sector && GetCrewmatesFromPod(pod).length !== 0).length >= 3) {
                     alert('NO HAY MINIPODS DISPONIBLES PARA INVOCARLOS')
                     setSelectingCrewmate(false)
                     setMinipodSpawning(false)
@@ -627,10 +929,45 @@ export default function Game() {
 
     }
 
+    function beaconClickHandler(beacon) {
+        setSelectedBeacon(beacon)
+        if (selectingBeacon) {
+            alert("Click on any line to place the beacon")
+            setSelectingLine(true)
+        }
+    }
+
+    function lineClickHandler(line) {
+        setSelectedLine(line)
+        if (selectingLine) {
+            moveBeacon(selectedBeacon, line)
+            setSelectingBeacon(false)
+            setSelectingLine(false)
+        }
+
+    }
+
+    function beaconClickHandler(beacon) {
+        setSelectedBeacon(beacon)
+        if (selectingBeacon) {
+            alert("Click on any line to place the beacon")
+            setSelectingLine(true)
+        }
+    }
+
+    function lineClickHandler(line) {
+        setSelectedLine(line)
+        if (selectingLine) {
+            moveBeacon(selectedBeacon, line)
+            setSelectingBeacon(false)
+            setSelectingLine(false)
+        }
+    }
+
     return (
         <>
 
-            {!emptyChecker("array", sectors) &&
+            {!emptyChecker("array", sectors) && !emptyChecker("array", lines) &&
                 <div className="game-page-container">
 
                     <div className="game-board">
@@ -646,86 +983,132 @@ export default function Game() {
                                 }
                             </div>
                         ))}
+                        {lines.map((line, index) => (
+                            <div key={index}>
+                                {console.log(line)}
+                                <Line x={lineX[line.number]} y={lineY[line.number]} line={line} />
+                            </div>
+                        ))}
                     </div>
-                    <div style={{ height: "100%", width: "300px", position: "absolute", left: 650 }}>
-                        <div style={{ position: "absolute", top: 90, height: 130, width: 179 }}>
+                    <div style={{ height: "100%", width: "180px", position: "absolute", left: 710 }}>
+                        <div style={{ position: "absolute", top: 90, left: "-60px", height: 130, width: 179 }}>
                             <ShelterCard shelterCard={shelterCards.find(res => res.sector.number === 11)} />
                         </div>
-                        <div style={{ position: "absolute", top: 245, left: 60, height: 130, width: 179 }}>
+                        <div style={{ position: "absolute", top: 245, height: 130, width: 179 }}>
                             <ShelterCard shelterCard={shelterCards.filter(res => res.sector.number === 12)[0]} />
                         </div>
-                        <div style={{ position: "absolute", top: 405, left: 60, height: 130, width: 179 }}>
+                        <div style={{ position: "absolute", top: 405, height: 130, width: 179 }}>
                             <ShelterCard shelterCard={shelterCards.filter(res => res.sector.number === 12)[1]} />
                         </div>
-                        <div style={{ position: "absolute", top: 565, height: 130, width: 179 }}>
+                        <div style={{ position: "absolute", top: 565, left: "-60px", height: 130, width: 179 }}>
                             <ShelterCard shelterCard={shelterCards.find(res => res.sector.number === 13)} />
                         </div>
                     </div>
-                    <div style={{ display: "flex", flexDirection: "column", marginLeft: 710, marginTop: 70, height: "100%", alignContent: "center", alignItems: "center" }}>
-                        <Button className="button" style={{
-                            backgroundColor: "#CFFF68",
-                            border: "none",
-                            width: 200,
-                            fontSize: 20,
-                            borderRadius: 20,
-                            height: 60,
-                            boxShadow: "5px 5px 5px #00000020",
-                            textShadow: "2px 2px 2px #00000020",
-                            transition: "0.15s",
-                            alignSelf: "center",
-                            marginBottom: 20
-                        }} onClick={() => {
-                            setPiloting(prevPiloting => !prevPiloting);
-                            setSelectingPod(prevSelectingPod => !prevSelectingPod);
-                            alert("Click on any pod to pilot it")
-                            console.log(piloting)
-                        }}>
-                            PILOTAR
-                        </Button>
+                    <div style={{ display: "flex", flexDirection: "column", marginLeft: 900, marginTop: 70, height: "100%", alignContent: "center", alignItems: "center" }}>
+                        <div style={{ display: "flex", flexDirection: "row" }}>
+                            <Button className="button" style={{
+                                backgroundColor: "#CFFF68",
+                                border: "none",
+                                width: 200,
+                                fontSize: 20,
+                                borderRadius: 20,
+                                height: 60,
+                                boxShadow: "5px 5px 5px #00000020",
+                                textShadow: "2px 2px 2px #00000020",
+                                transition: "0.15s",
+                                alignSelf: "center",
+                                marginBottom: 20
+                            }} onClick={() => {
+                                setPiloting(prevPiloting => !prevPiloting);
+                                setSelectingPod(prevSelectingPod => !prevSelectingPod);
+                                alert("Click on any pod to pilot it")
+                                console.log(piloting)
+                            }}>
+                                PILOTAR
+                            </Button>
+                            <Button className="button" style={{
+                                backgroundColor: "#CFFF68",
+                                border: "none",
+                                width: 200,
+                                fontSize: 20,
+                                borderRadius: 20,
+                                height: 60,
+                                boxShadow: "5px 5px 5px #00000020",
+                                textShadow: "2px 2px 2px #00000020",
+                                transition: "0.15s",
+                                alignSelf: "center",
+                                marginBottom: 20
+                            }} onClick={() => {
+                                setEmbarking(prevEmbarking => !prevEmbarking);
+                                setSelectingCrewmate(prevSelectingCrewmate => !prevSelectingCrewmate);
+                                alert("Click on any of your crewmates")
+                                console.log(embarking)
+                            }}>
+                                EMBARCAR/DESEMBARCAR
+                            </Button>
+                            <Button className="button" style={{
+                                backgroundColor: "#CFFF68",
+                                border: "none",
+                                width: 200,
+                                fontSize: 20,
+                                borderRadius: 20,
+                                height: 60,
+                                boxShadow: "5px 5px 5px #00000020",
+                                textShadow: "2px 2px 2px #00000020",
+                                transition: "0.15s",
+                                alignSelf: "center",
+                                marginBottom: 20
+                            }} onClick={() => {
+                                setSpying(true);
+                                setActionSlots({ ...actionSlots, accelerate: crewmates[0] })
+                                setTimeout(() => {
+                                    setSpying(false);
+                                }, 5000);
 
-                        <Button className="button" style={{
-                            backgroundColor: "#CFFF68",
-                            border: "none",
-                            width: 200,
-                            fontSize: 20,
-                            borderRadius: 20,
-                            height: 60,
-                            boxShadow: "5px 5px 5px #00000020",
-                            textShadow: "2px 2px 2px #00000020",
-                            transition: "0.15s",
-                            alignSelf: "center",
-                            marginBottom: 20
-                        }} onClick={() => {
-                            setRemotePiloting(prevRemotePiloting => !prevRemotePiloting);
-                            setSelectingPod(prevSelectingPod => !prevSelectingPod);
-                            alert("Click on any pod to pilot it")
-                            console.log(remotePiloting)
-                        }}>
-                            PILOTAR REMOTAMENTE
-                        </Button>
-
-                        <Button className="button" style={{
-                            backgroundColor: "#CFFF68",
-                            border: "none",
-                            width: 200,
-                            fontSize: 20,
-                            borderRadius: 20,
-                            height: 60,
-                            boxShadow: "5px 5px 5px #00000020",
-                            textShadow: "2px 2px 2px #00000020",
-                            transition: "0.15s",
-                            alignSelf: "center",
-                            marginBottom: 20
-                        }} onClick={() => {
-                            setEmbarking(prevEmbarking => !prevEmbarking);
-                            setSelectingCrewmate(prevSelectingCrewmate => !prevSelectingCrewmate);
-                            alert("Click on any of your crewmates")
-                            console.log(embarking)
-                        }}>
-                            EMBARCAR/DESEMBARCAR
-                        </Button>
-
-                        <Button className="button" style={{
+                            }}>
+                                ESPIAR
+                            </Button>
+                        </div>
+                        <div style={{ display: "flex", flexDirection: "row" }}>
+                            <Button className="button" style={{
+                                backgroundColor: "#CFFF68",
+                                border: "none",
+                                width: 200,
+                                fontSize: 20,
+                                borderRadius: 20,
+                                height: 60,
+                                boxShadow: "5px 5px 5px #00000020",
+                                textShadow: "2px 2px 2px #00000020",
+                                transition: "0.15s",
+                                alignSelf: "center",
+                                marginBottom: 20
+                            }} onClick={() => {
+                                setSelectingBeacon(true);
+                                alert("click on any beacon")
+                            }}>
+                                bacon
+                            </Button>
+                            <Button className="button" style={{
+                                backgroundColor: "#CFFF68",
+                                border: "none",
+                                width: 200,
+                                fontSize: 20,
+                                borderRadius: 20,
+                                height: 60,
+                                boxShadow: "5px 5px 5px #00000020",
+                                textShadow: "2px 2px 2px #00000020",
+                                transition: "0.15s",
+                                alignSelf: "center",
+                                marginBottom: 20
+                            }} onClick={() => {
+                                setRemotePiloting(prevRemotePiloting => !prevRemotePiloting);
+                                setSelectingPod(prevSelectingPod => !prevSelectingPod);
+                                alert("Click on any pod to pilot it")
+                                console.log(remotePiloting)
+                            }}>
+                                PILOTAR REMOTAMENTE
+                            </Button>
+                            <Button className="button" style={{
                             backgroundColor: "#CFFF68",
                             border: "none",
                             width: 200,
@@ -745,7 +1128,6 @@ export default function Game() {
                         }}>
                             ABORDAR
                         </Button>
-
                         <Button className="button" style={{
                             backgroundColor: "#CFFF68",
                             border: "none",
@@ -766,79 +1148,57 @@ export default function Game() {
                         }}>
                             INVOCAR MINIPOD
                         </Button>
-
-                        <Button className="button" style={{
-                            backgroundColor: "#CFFF68",
-                            border: "none",
-                            width: 200,
-                            fontSize: 20,
-                            borderRadius: 20,
-                            height: 60,
-                            boxShadow: "5px 5px 5px #00000020",
-                            textShadow: "2px 2px 2px #00000020",
-                            transition: "0.15s",
-                            alignSelf: "center",
-                            marginBottom: 20
-                        }} onClick={() => {
-                            setSpying(true);
-                            setTimeout(() => {
-                                setSpying(false);
-                            }, 5000);
-
-                        }}>
-                            ESPIAR
-                        </Button>
-                        <Button className="button" style={{
-                            backgroundColor: "#CFFF68",
-                            border: "none",
-                            width: 200,
-                            fontSize: 20,
-                            borderRadius: 20,
-                            height: 60,
-                            boxShadow: "5px 5px 5px #00000020",
-                            textShadow: "2px 2px 2px #00000020",
-                            transition: "0.15s",
-                            alignSelf: "center",
-                            marginBottom: 20
-                        }} onClick={() => {
-                            GetGame()
-                        }}>
-                            Recargar
-                        </Button>
-                        <Button className="button" style={{
-                            backgroundColor: "#CFFF68",
-                            border: "none",
-                            width: 200,
-                            fontSize: 20,
-                            borderRadius: 20,
-                            height: 60,
-                            boxShadow: "5px 5px 5px #00000020",
-                            textShadow: "2px 2px 2px #00000020",
-                            transition: "0.15s",
-                            alignSelf: "center",
-                            marginBottom: 20
-                        }} onClick={() => {
-                            console.log(sectors)
-                            console.log(beacons)
-                            console.log(lines)
-                            console.log(gamePlayers)
-                            console.log(pods)
-                            console.log(crewmates)
-                            console.log(shelterCards)
-                            console.log(slotInfos)
-                            console.log(GetCrewmatesFromPod(pods.find(pod => pod.number === 1), crewmates))
-                            console.log(gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).color)
-                            console.log(gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id))
-                            console.log(piloting)
-                            console.log(selectedPod)
-                            console.log(selectedSector)
-                            console.log(selectingSector)
-                        }}>
-                            troncos
-                        </Button>
+                        </div>
+                        <div style={{ display: "flex", flexDirection: "row" }}>
+                            <Button className="button" style={{
+                                backgroundColor: "#CFFF68",
+                                border: "none",
+                                width: 200,
+                                fontSize: 20,
+                                borderRadius: 20,
+                                height: 60,
+                                boxShadow: "5px 5px 5px #00000020",
+                                textShadow: "2px 2px 2px #00000020",
+                                transition: "0.15s",
+                                alignSelf: "center",
+                                marginBottom: 20
+                            }} onClick={() => {
+                                GetGame()
+                            }}>
+                                Recargar
+                            </Button>
+                            <Button className="button" style={{
+                                backgroundColor: "#CFFF68",
+                                border: "none",
+                                width: 200,
+                                fontSize: 20,
+                                borderRadius: 20,
+                                height: 60,
+                                boxShadow: "5px 5px 5px #00000020",
+                                textShadow: "2px 2px 2px #00000020",
+                                transition: "0.15s",
+                                alignSelf: "center",
+                                marginBottom: 20
+                            }} onClick={() => {
+                                console.log(sectors)
+                                console.log(beacons)
+                                console.log(lines)
+                                console.log(gamePlayers)
+                                console.log(pods)
+                                console.log(crewmates)
+                                console.log(shelterCards)
+                                console.log(slotInfos)
+                                console.log(actionSlots)
+                            }}>
+                                troncos
+                            </Button>
+                        </div>
+                        <UnusedBeacons />
                         {!emptyChecker("array", crewmates) &&
                             <UnusedCrewmates />
                         }
+                        <ActionCards />
+
                     </div>
                 </div >
             }

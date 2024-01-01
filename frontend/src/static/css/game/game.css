@@ -26,50 +26,143 @@
     margin-top: 66px;
 }
 
-.pod3 {
+.pod3, .pod2, .pod1 {
     position: absolute;
-    background-image: url('../../images/pod3.png');
     background-size: cover;
     display: flex;
     max-width: 100px;
     max-height: 100px;
     height: 100%;
     width: 100%;
+}
+
+.pod3 {
+    background-image: url('../../images/pod3.png');
 }
 
 .pod2 {
-    position: absolute;
     background-image: url('../../images/pod2.png');
-    background-size: cover;
-    display: flex;
-    max-width: 100px;
-    max-height: 100px;
-    height: 100%;
-    width: 100%;
 }
 
 .pod1 {
-    position: absolute;
     background-image: url('../../images/pod1.png');
-    background-size: cover;
-    display: flex;
-    max-width: 100px;
-    max-height: 100px;
-    height: 100%;
-    width: 100%;
 }
 
-.shelter-horizontal {
+.shelter-pink, .shelter-blue, .shelter-yellow, .shelter-green, .shelter-orange {
     position: absolute;
     background-size: cover;
     display: flex;
-    background-image: url('../../images/pink-shelter.png');
     max-width: 179px;
     max-height: 130px;
     height: 100%;
     width: 100%;
 }
 
-.shelter.pink {
+.shelter-pink {
+    background-image: url('../../images/pink-shelter.png');
+}
+.shelter-blue {
+    background-image: url('../../images/blue-shelter.png');
+}
+.shelter-yellow {
+    background-image: url('../../images/yellow-shelter.png');
+}
+.shelter-green {
+    background-image: url('../../images/green-shelter.png');
+}
+.shelter-orange {
+    background-image: url('../../images/orange-shelter.png');
+}
 
+.black-action-card, .black-special-action-card, .blue-action-card, .blue-special-action-card, .yellow-action-card, 
+.yellow-special-action-card, .pink-action-card, .pink-special-action-card, .white-action-card, .white-special-action-card {
+    position: absolute;
+    background-size: cover;
+    display: flex;
+    max-width: 230px;
+    max-height: 165px;
+    height: 100%;
+    width: 100%;
+}
+
+.black-action-card {
+    background-image: url('../../images/blackActionCard.png');
+}
+
+.black-special-action-card {
+    background-image: url('../../images/blackSpecialActionCard.png');
+}
+
+.blue-action-card {
+    background-image: url('../../images/blueActionCard.png');
+}
+
+.blue-special-action-card {
+    background-image: url('../../images/blueSpecialActionCard.png');
+}
+
+.yellow-action-card {
+    background-image: url('../../images/yellowActionCard.png');
+}
+
+.yellow-special-action-card {
+    background-image: url('../../images/yellowSpecialActionCard.png');
+}
+
+.pink-action-card {
+    background-image: url('../../images/pinkActionCard.png');
+}
+
+.pink-special-action-card {
+    background-image: url('../../images/pinkSpecialActionCard.png');
+}
+
+.white-action-card {
+    background-image: url('../../images/whiteActionCard.png');
+}
+
+.white-special-action-card {
+    background-image: url('../../images/whiteSpecialActionCard.png');
+}
+
+.black-yellow-beacon, .black-blue-beacon, .black-pink-beacon, .black-white-beacon, .pink-blue-beacon, .white-blue-beacon,
+.white-yellow-beacon, .white-pink-beacon, .yellow-blue-beacon, .yellow-pink-beacon {
+    position: absolute;
+    background-size: cover;
+    display: flex;
+    max-width: 54px;
+    max-height: 14px;
+    height: 100%;
+    width: 100%;
+}
+
+.black-yellow-beacon {
+    background-image: url('../../images/beacons/black-yellow-beacon.png');
+}
+.black-blue-beacon {
+    background-image: url('../../images/beacons/black-blue-beacon.png');
+}
+.black-pink-beacon {
+    background-image: url('../../images/beacons/black-pink-beacon.png');
+}
+.black-white-beacon {
+    background-image: url('../../images/beacons/black-white-beacon.png');
+}
+.pink-blue-beacon {
+    background-image: url('../../images/beacons/pink-blue-beacon.png');
+}
+.white-blue-beacon {
+    background-image: url('../../images/beacons/white-blue-beacon.png');
+}
+.white-yellow-beacon {
+    background-image: url('../../images/beacons/white-yellow-beacon.png');
+}
+.white-pink-beacon {
+    background-image: url('../../images/beacons/white-pink-beacon.png');
+}
+.yellow-blue-beacon {
+    background-image: url('../../images/beacons/yellow-blue-beacon.png');
+}
+.yellow-pink-beacon {
+    background-image: url('../../images/beacons/yellow-pink-beacon.png');
 }
