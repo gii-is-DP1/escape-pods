@@ -69,3 +69,32 @@
 .navbar {
     background-color: #2f324f;
 }
+
+.pagination {
+    display: inline-block;
+    
+  }
+  
+  .pagination a {
+    color: rgb(255, 255, 255);
+    float: left;
+    padding: 8px 16px;
+    text-decoration: none;
+  }
+  
+  .pagination a.active {
+    background-color: rgb(207, 255, 104);
+    color: rgb(0, 0, 0);
+    border-radius: 5px;
+  }
+  
+  .pagination a:hover:not(.active) {
+    background-color: #71e5ff7e;
+    border-radius: 5px;
+  }
+
+  .ul-games {
+    list-style-type: none;
+    width: 350px;
+    height: 310px;
+}

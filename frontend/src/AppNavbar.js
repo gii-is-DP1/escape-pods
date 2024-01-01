@@ -4,21 +4,48 @@ import { Link } from 'react-router-dom';
 import tokenService from './services/token.service';
 import jwt_decode from "jwt-decode";
 import "./static/css/home/home.css";
+import fotoP from "./static/images/foto-perfil-generica.png";
+
 
 function AppNavbar() {
     const [roles, setRoles] = useState([]);
     const [username, setUsername] = useState("");
     const jwt = tokenService.getLocalAccessToken();
     const [collapsed, setCollapsed] = useState(true);
-
+    const [myPlayer, setMyPlayer] = useState({})
+    
     const toggleNavbar = () => setCollapsed(!collapsed);
 
     useEffect(() => {
         if (jwt) {
             setRoles(jwt_decode(jwt).authorities);
             setUsername(jwt_decode(jwt).sub);
+            GetCurrentPlayer();
         }
     }, [jwt])
+
+    async function GetCurrentPlayer() {
+        await fetch("/api/v1/players?username=" + username, {
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${jwt}`,
+            },
+            method: "GET"
+        })
+            .then(response => response.json())
+            .then(response => { setMyPlayer(response[0]) })
+            
+    }
+
+    function emptyChecker(type, a) { //comprueba si el elemento a de tipo type está vacío
+        if (type === "array") {
+            const copy = a
+            return JSON.stringify(copy) === "[]" ? true : false
+        } else if (type === "object") {
+            const copy = a
+            return JSON.stringify(copy) === "{}" ? true : false
+        }
+    }
 
     let adminLinks = <></>;
     let ownerLinks = <></>;
@@ -30,7 +57,7 @@ function AppNavbar() {
         if (role === "ADMIN") {
             adminLinks = (
                 <>
-                    <NavItem>
+                    {/*<NavItem>
                         <NavLink style={{ color: "white" }} tag={Link} to="/owners">Owners</NavLink>
                     </NavItem>
                     <NavItem>
@@ -50,7 +77,7 @@ function AppNavbar() {
                     </NavItem>
                     <NavItem>
                         <NavLink style={{ color: "white" }} tag={Link} to="/users">Users</NavLink>
-                    </NavItem>
+                    </NavItem*/}
                 </>
             )
         }
@@ -157,6 +184,7 @@ function AppNavbar() {
             <NavbarBrand href="/">
                 <img alt="logo" src="/escape-pods-logo.png" style={{ height: 40, width: 60 }} />
             </NavbarBrand>
+            
             <NavbarToggler onClick={toggleNavbar} className="ms-2" />
             <Collapse isOpen={!collapsed} navbar>
                 <Nav className="me-auto mb-2 mb-lg-0" navbar>
@@ -166,8 +194,12 @@ function AppNavbar() {
                 </Nav>
                 <Nav className="ms-auto mb-2 mb-lg-0" navbar>
                     {publicLinks}
-                    {userLogout}
+                    <NavbarText style={{ color: "white" }} className="justify-content-end">{username}</NavbarText>
+                    
                 </Nav>
+                <NavbarBrand href={emptyChecker('object' ,myPlayer)? "/":"/profile"}>
+                <img src={myPlayer === undefined || JSON.stringify(myPlayer)==='{}'? fotoP: myPlayer.profilePicture} style={{ height: 60, width: 60, marginLeft: 10, borderRadius:'50%' }} />
+                </NavbarBrand>
             </Collapse>
         </Navbar>
         </div >
