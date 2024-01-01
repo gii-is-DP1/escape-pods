@@ -678,7 +678,7 @@ export default function Game() {
                             </div>
                         ))}
                     </div>
-                    <div style={{ height: "100%", width: "240px", position: "absolute", left: 710 }}>
+                    <div style={{ height: "100%", width: "180px", position: "absolute", left: 710 }}>
                         <div style={{ position: "absolute", top: 90, left: "-60px", height: 130, width: 179 }}>
                             <ShelterCard shelterCard={shelterCards[0]} />
                         </div>
