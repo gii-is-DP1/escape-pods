@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Pageable;
 
 @Service
 public class GameService {
@@ -18,18 +19,18 @@ public class GameService {
     }
 
     @Transactional(readOnly=true)
-    public List<Game> getAllGames(){
-        return gr.findAll();
+    public List<Game> getAllGames(Pageable pageable){
+        return gr.findAll(pageable);
     }
     
     @Transactional(readOnly=true)
-    public List<Game> getGamesByName(String namepatterm){
-        return gr.findAll();
+    public List<Game> getGamesByName(String namepatterm, Pageable pageable){
+        return gr.findAll(pageable);
     }
 
     @Transactional(readOnly=true)
-    public List<Game> getWaitingGames(){
-        return gr.findByStatus(GameStatus.WAITING);
+    public List<Game> getWaitingGames(Pageable pageable){
+        return gr.findByStatus(GameStatus.WAITING, pageable);
     }
 
     @Transactional
@@ -47,11 +48,11 @@ public class GameService {
         gr.deleteById(id);
     }
     @Transactional(readOnly=true)
-    public List<Game> getFinishedGames() {
-        return gr.findByFinishIsNotNull();
+    public List<Game> getFinishedGames(Pageable pageable) {
+        return gr.findByFinishIsNotNull(pageable);
     }
     @Transactional(readOnly=true)
-    public List<Game> getOngoingGames() {
-        return gr.findByFinishIsNullAndStartIsNotNull();
+    public List<Game> getOngoingGames(Pageable pageable) {
+        return gr.findByFinishIsNullAndStartIsNotNull(pageable);
     }
 }

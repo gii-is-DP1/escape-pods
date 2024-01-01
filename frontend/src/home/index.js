@@ -7,6 +7,7 @@ import jwt_decode from "jwt-decode";
 import { Link } from 'react-router-dom';
 import { FaLessThanEqual } from 'react-icons/fa';
 
+
 function HowToPlayButton() {
     return (
         <Button className='button' style={{
@@ -29,19 +30,20 @@ function HowToPlayButton() {
 }
 
 export default function Home() {
-    const [visible, setVisible] = useState(false);
+    const [joinLobbyvisible, setJoinLobbyVisible] = useState(false);
     const [numPlayersVisible, setNumPlayersVisible] = useState(false)
     const [roles, setRoles] = useState([]);
     const [waitingGames, setWaitingGames] = useState([])
     const [myPlayer, setMyPlayer] = useState({});
     const [numPlayers, setNumPlayers] = useState(2);
     const jwt = tokenService.getLocalAccessToken();
+    const [pages, setPages] = useState([0, 1, 2, 3, 4, 5, 6]);
 
     useEffect(() => {
         if (jwt) {
             setRoles(jwt_decode(jwt).authorities);
             GetCurrentPlayer()
-            getGames()
+            getGames(0)
         }
     }, [jwt])
 
@@ -98,17 +100,17 @@ export default function Home() {
             .then(console.log(waitingGames))
     }*/
 
-    async function getGames() {
+    async function getGames(page) {
         try {
-            const fetchedGames = await fetchAllGames();
+            const fetchedGames = await fetchWaitingGames(page);
             setWaitingGames(fetchedGames);
         } catch (error) {
             console.error("Failed to fetch games: ", error);
         }
     }
 
-    async function fetchAllGames() {
-        const response = await fetch('/api/v1/games?status=WAITING', {
+    async function fetchWaitingGames(page) {
+        const response = await fetch(`/api/v1/games?status=WAITING&page=${page}`, {
             headers: {
                 "Authorization": ' Bearer ${ jwt }',
                 'Accept': 'application/json',
@@ -163,12 +165,14 @@ export default function Home() {
                 transition: "0.15s",
             }}
                 onClick={() => {
-                    setVisible(false)
+                    setJoinLobbyVisible(false)
                     addPlayerToGame(game.id)
                 }}>
                 JOIN
             </Button>
         </li>)
+
+
 
     function CreateLobbyButton() {
         return (
@@ -206,8 +210,8 @@ export default function Home() {
                 textShadow: "2px 2px 2px #00000020"
             }}
                 onClick={() => {
-                    setVisible(true)
-                    getGames()
+                    setJoinLobbyVisible(true)
+                    getGames(0)
                 }}
             >
 
@@ -216,7 +220,13 @@ export default function Home() {
         );
     }
 
-
+    function newPages(direction) {
+        let out = []
+        for (let i = 0; i < pages.length; i++) {
+            out.push(pages[i] + (direction === 'up' ? 7 : -7))
+        }
+        return out;
+    }
 
     return (
         <div>
@@ -276,10 +286,10 @@ export default function Home() {
                             Cancel
                         </Button>
                         <Button className="done-button" style={{
-                            backgroundColor: "#CFFF68", border: "none", boxShadow: "5px 5px 5px #00000020", textShadow: "2px 2px 2px #00000020", transition: "0.15s",
+                            backgroundColor: "#cfff68", border: "none", boxShadow: "5px 5px 5px #00000020", textShadow: "2px 2px 2px #00000020", transition: "0.15s",
                         }} onClick={() => {
+                            setNumPlayersVisible(false);
                             createGameAndGoLobby()
-                            setVisible(false);
                         }}>
                             Done
                         </Button>
@@ -287,52 +297,90 @@ export default function Home() {
                 </Modal>
             </div>
             <div>
-                <Modal isOpen={visible} className="modal-join-lobby" >
+                <Modal isOpen={joinLobbyvisible} className="modal-join-lobby" >
                     <ModalHeader style={{ color: "white", textShadow: "2px 2px 2px #00000020" }}>
                         Select the game
                     </ModalHeader>
                     <ModalBody style={{ flexDirection: "row" }}>
-                        <ul className="ul-games">
-                            {waitingGamesList}
+                        {waitingGames.length !== 0 &&
+                            < ul className="ul-games">
+                        {waitingGamesList}
                         </ul>
-                    </ModalBody>
-                    <ModalFooter>
-                        <Button className="done-button" style={{
-                            backgroundColor: "#ffa952", border: "none", boxShadow: "5px 5px 5px #00000020", textShadow: "2px 2px 2px #00000020", transition: "0.15s",
-                        }}
-                            onClick={() => {
-                                setVisible(false)
-                                console.log(waitingGames);
-                            }}>
-                            Close
-                        </Button>
-                    </ModalFooter>
-                </Modal>
-            </div>
-            {roles.includes("PLAYER") &&
-                <div className="home-page-container">
-                    <div style={{ marginBottom: 25 }}>
-                        <CreateLobbyButton>
-                        </CreateLobbyButton>
+                        }
+                        {waitingGames.length === 0 &&
+                            <p style={{color:'white', height:310}}> No games found to show. </p>
+                        }
+                </ModalBody>
+                <ModalFooter>
+                    <div style={{ flexDirection: "row", alignItems: 'center' }}>
+                        <div class="pagination">
+                            <a style={{ color: 'white' }} onClick={() => {
+                                if (pages[0] != 0) {
+                                    setPages(newPages('down'))
+                                }
+
+                            }}>&laquo;</a>
+                            {pages.map((page, index) => (
+                                <a style={{ color: 'white' }} onClick={() => {
+                                    getGames(page)
+                                }}
+                                >
+                                    {pages[index] + 1}
+                                </a>))}
+                            <a style={{ color: 'white' }} onClick={() => {
+                                setPages(newPages('up'))
+                            }}
+
+                            >
+                                &raquo;
+                            </a>
+                        </div>
+
+                        <div style={{ display: 'flex', flexDirection: 'column' }}>
+                            <Button className="done-button" style={{
+                                backgroundColor: "#ffa952", border: "none", boxShadow: "5px 5px 5px #00000020",
+                                textShadow: "2px 2px 2px #00000020", transition: "0.15s", marginTop: 10, flexDirection: 'column', alignSelf: 'center', alignContent: 'center', alignItems: 'center'
+                            }}
+
+                                onClick={() => {
+                                    setJoinLobbyVisible(false)
+                                    console.log(waitingGames);
+                                }}>
+                                Close
+                            </Button>
+                        </div>
                     </div>
-                    <div style={{ marginBottom: 25 }}>
-                        <JoinLobbyButton>
-                        </JoinLobbyButton>
-                    </div>
-                    <div>
-                        <HowToPlayButton>
-                        </HowToPlayButton>
-                    </div>
+                </ModalFooter>
+            </Modal>
+        </div>
+
+
+            {
+        roles.includes("PLAYER") &&
+            <div className="home-page-container">
+                <div style={{ marginBottom: 25 }}>
+                    <CreateLobbyButton>
+                    </CreateLobbyButton>
                 </div>
-            }
-            {!roles.includes("PLAYER") && !roles.includes("ADMIN") &&
-                <div className="home-page-container">
+                <div style={{ marginBottom: 25 }}>
+                    <JoinLobbyButton>
+                    </JoinLobbyButton>
+                </div>
+                <div>
+                    <HowToPlayButton>
+                    </HowToPlayButton>
+                </div>
+            </div>
+    }
+    {
+        !roles.includes("PLAYER") && !roles.includes("ADMIN") &&
+            <div className="home-page-container">
                 <img src={"/escape-pods-logo.png"} alt="Logo" width={400} height={266} />
                 <div style={{ color: "white", fontSize: 35, marginTop: 50, textShadow: "2px 2px 2px #00000020" }}>
-                        REGISTER OR LOG IN TO START PLAYING
-                    </div>
+                    REGISTER OR LOG IN TO START PLAYING
                 </div>
-            }
-        </div>
+            </div>
+    }
+        </div >
     );
 }

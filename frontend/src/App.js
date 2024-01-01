@@ -52,6 +52,7 @@ import VetEditClinicOwner from "./clinicOwner/vets/VetEditClinicOwner";
 import AchievementList from "./achievements/achievementList";
 import Lobby from "./lobby";
 import Game from "./game"
+import Profile from "./profile"
 function ErrorFallback({ error, resetErrorBoundary }) {
   return (
     <div role="alert">
@@ -150,6 +151,7 @@ function App() {
           <Route path="/achievements/" exact={true} element={<PrivateRoute><AchievementList /></PrivateRoute>} />
           <Route path="/lobby/:gameId" element={<PrivateRoute><Lobby /></PrivateRoute>} />
           <Route path="game/:gameId" element={<PrivateRoute><Game /></PrivateRoute>} />
+          <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
         </>)
     }
   })
