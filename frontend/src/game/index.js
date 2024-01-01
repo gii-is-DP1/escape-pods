@@ -42,6 +42,10 @@ export default function Game() {
     const [selectingShelterCard, setSelectingShelterCard] = useState(false);
     const [selectedShelterCard, setSelectedShelterCard] = useState({});
     const [spying, setSpying] = useState(false);
+    const [selectingBeacon, setSelectingBeacon] = useState(false);
+    const [selectedBeacon, setSelectedBeacon] = useState({});
+    const [selectingLine, setSelectingLine] = useState(false);
+    const [selectedLine, setSelectedLine] = useState({});
 
     const [actionSlots, setActionSlots] = useState({
         embark: null,
@@ -107,9 +111,12 @@ export default function Game() {
 
     const shelterEmbarkingSlotsX = [8, 42, 76.5, 111, 145] //coordenadas X de los slots del shelter
     const shelterEmbarkingSlotsY = [1, 1, 1, 1, 1, 1] //coordenadas Y de los slots del shelter
-
-
-
+    //    1    2    3    4    5    6    7    8    9   10   11   12   13
+    const lineX = [null, 143, 174, 143, 238, 205, 205, 238, 270, 270, 364, 330, 301, 330,
+        364, 397, 427, 397, 492, 458, 458, 492, 524, 555, 524, 586, 586]
+    const lineY = [null, 189, 242, 297, 133, 189, 297, 352, 189, 297, 133, 189, 242, 297,
+        352, 189, 242, 297, 133, 189, 297, 352, 189, 242, 297, 189, 297]
+    //  14   15   16   17   18   19   20   21   22   23   24    25   26
     useEffect(() => {
         if (jwt) {
             setRoles(jwt_decode(jwt).authorities);
@@ -161,6 +168,16 @@ export default function Game() {
         return crewmates.filter(crewmate => crewmate.shelterCard && crewmate.shelterCard.id === shelterCard.id)
     }
 
+    function GetUnusedBeacons() {
+        let usedBeacons = []
+        for (let i = 0; i < lines.length; i++) {
+            if (lines[i].beacon) {
+                usedBeacons.push(lines[i].beacon.id)
+            }
+        }
+        return beacons.filter(beacon => !usedBeacons.includes(beacon.id))
+    }
+
     async function fetchCurrentGame() {
         const response = await fetch(`/api/v1/games/${gameId}`, {
             headers: {
@@ -180,7 +197,7 @@ export default function Game() {
         return (
             <div style={{ width: 100, height: 100, position: "absolute", left: props.x, top: props.y }}
                 onClick={() => {
-                    console.log(props.sector)
+                    console.log("sector")
                     if (selectingSector) {
                         sectorClickHandler(props.sector)
                     }
@@ -204,6 +221,41 @@ export default function Game() {
         )
     }
 
+    function rotation(line) {
+        const plus30deg = [1, 8, 15, 22, 6, 13, 20, 26]
+        const minus30deg = [5, 11, 19, 25, 3, 9, 17, 24]
+        if (plus30deg.includes(line.number)) {
+            return "30deg"
+        } else if (minus30deg.includes(line.number)) {
+            return "-30deg"
+        } else {
+            return "90deg"
+        }
+    }
+
+    function Line(props) {
+        if (props.line === undefined || emptyChecker("array", beacons)) {
+            return null
+        }
+        return (
+            <div style={{ width: 54, height: 14, position: "absolute", left: props.x, top: props.y, rotate: rotation(props.line), backgroundColor: `rgba(255, 128, 0, ${selectingLine && !props.line.beacon ? "0.3" : "0"})` }}
+                onClick={() => {
+                    if (selectingLine) {
+                        lineClickHandler(props.line)
+                    }
+                }}
+            >
+                {beacons.map((beacon, index) => (
+                    <div key={index}>
+                        {props.line.beacon && props.line.beacon.id === beacon.id &&
+                            <Beacon beacon={beacon} />
+                        }
+                    </div>
+                ))}
+            </div>
+        )
+    }
+
     function Pod(props) {
         if (emptyChecker("object", props.pod) || emptyChecker("array", crewmates)) {
             return null
@@ -217,9 +269,6 @@ export default function Game() {
                     }
                 }}
             >
-                {/*
-                <CrewmateSlots capacity={props.pod.capacity} crewmates={GetCrewmatesFromPod(props.pod)} />
-                */}
                 {GetCrewmatesFromPod(props.pod).map((crewmate, index) => (
                     <div key={index} style={{
                         position: "absolute",
@@ -275,7 +324,7 @@ export default function Game() {
             return null
         }
         return (
-            <div style={{height:150}}>
+            <div style={{ height: 135 }}>
                 <div style={{ display: 'flex', flexDirection: 'row', marginBottom: 3 }}>
                     {crewmates.filter(crewmate => crewmate.player.id === gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).id
                         && crewmate.role === "ENGINEER" && !crewmate.pod && !crewmate.shelterCard && !Object.values(actionSlots).includes(crewmate) && (actionSlots.embark ? !actionSlots.embark.includes(crewmate) : true) && !Object.values(specialActionSlots).includes(crewmate))
@@ -305,6 +354,46 @@ export default function Game() {
                             </div>
                         ))
                     }
+                </div>
+            </div>
+        )
+    }
+
+    function Beacon(props) {
+        if (emptyChecker("array", beacons)) {
+            return null
+        }
+        return (
+            <div className={props.beacon.color1.toLowerCase() + "-" + props.beacon.color2.toLowerCase() + "-beacon"}
+                onClick={() => {
+                    if (selectingBeacon) {
+                        beaconClickHandler(props.beacon)
+                    }
+                }}
+            >
+            </div>
+        )
+    }
+
+    function UnusedBeacons() {
+        if (emptyChecker("array", beacons)) {
+            return null
+        }
+        return (
+            <div style={{ height: 45, width: 295 }}>
+                <div style={{ display: 'flex', flexDirection: 'row', marginBottom: 20 }}>
+                    {beacons.filter(beacon => GetUnusedBeacons().includes(beacon)).slice(0, 5).map((beacon, index) => (
+                        <div key={index} style={{ marginRight: 60 }}>
+                            <Beacon beacon={beacon} />
+                        </div>
+                    ))}
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'row' }}>
+                    {beacons.filter(beacon => GetUnusedBeacons().includes(beacon)).slice(5).map((beacon, index) => (
+                        <div key={index} style={{ marginRight: 60 }}>
+                            <Beacon beacon={beacon} />
+                        </div>
+                    ))}
                 </div>
             </div>
         )
@@ -474,6 +563,23 @@ export default function Game() {
         })
     }
 
+    async function moveBeacon(beacon, line) {
+        const modifiedLine = {
+            beacon: beacon,
+            number: line.number,
+            game: game
+        }
+        await fetch(`/api/v1/lines/${line.id}`, {
+            headers: {
+                "Authorization": ' Bearer ${ jwt }',
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            method: 'PUT',
+            body: JSON.stringify(modifiedLine)
+        })
+    }
+
 
     function emptyChecker(type, a) { //comprueba si el elemento a de tipo type está vacío
         if (type === "array") {
@@ -529,10 +635,27 @@ export default function Game() {
         }
     }
 
+    function beaconClickHandler(beacon) {
+        setSelectedBeacon(beacon)
+        if (selectingBeacon) {
+            alert("Click on any line to place the beacon")
+            setSelectingLine(true)
+        }
+    }
+
+    function lineClickHandler(line) {
+        setSelectedLine(line)
+        if (selectingLine) {
+            moveBeacon(selectedBeacon, line)
+            setSelectingBeacon(false)
+            setSelectingLine(false)
+        }
+    }
+
     return (
         <>
 
-            {!emptyChecker("array", sectors) &&
+            {!emptyChecker("array", sectors) && !emptyChecker("array", lines) &&
                 <div className="game-page-container">
 
                     <div className="game-board">
@@ -548,18 +671,24 @@ export default function Game() {
                                 }
                             </div>
                         ))}
+                        {lines.map((line, index) => (
+                            <div key={index}>
+                                {console.log(line)}
+                                <Line x={lineX[line.number]} y={lineY[line.number]} line={line} />
+                            </div>
+                        ))}
                     </div>
-                    <div style={{ height: "100%", width: "240px", position: "absolute", left: 650 }}>
-                        <div style={{ position: "absolute", top: 90, height: 130, width: 179 }}>
+                    <div style={{ height: "100%", width: "240px", position: "absolute", left: 710 }}>
+                        <div style={{ position: "absolute", top: 90, left: "-60px", height: 130, width: 179 }}>
                             <ShelterCard shelterCard={shelterCards[0]} />
                         </div>
-                        <div style={{ position: "absolute", top: 245, left: 60, height: 130, width: 179 }}>
+                        <div style={{ position: "absolute", top: 245, height: 130, width: 179 }}>
                             <ShelterCard shelterCard={shelterCards[1]} />
                         </div>
-                        <div style={{ position: "absolute", top: 405, left: 60, height: 130, width: 179 }}>
+                        <div style={{ position: "absolute", top: 405, height: 130, width: 179 }}>
                             <ShelterCard shelterCard={shelterCards[2]} />
                         </div>
-                        <div style={{ position: "absolute", top: 565, height: 130, width: 179 }}>
+                        <div style={{ position: "absolute", top: 565, left: "-60px", height: 130, width: 179 }}>
                             <ShelterCard shelterCard={shelterCards[3]} />
                         </div>
                     </div>
@@ -627,6 +756,8 @@ export default function Game() {
                             }}>
                                 ESPIAR
                             </Button>
+                        </div>
+                        <div style={{ display: "flex", flexDirection: "row" }}>
                             <Button className="button" style={{
                                 backgroundColor: "#CFFF68",
                                 border: "none",
@@ -640,13 +771,10 @@ export default function Game() {
                                 alignSelf: "center",
                                 marginBottom: 20
                             }} onClick={() => {
-                                if (!actionSlots.embark) {
-                                    setActionSlots({ ...actionSlots, embark: [crewmates[0]] })
-                                } else {
-                                    setActionSlots({ ...actionSlots, embark: [...actionSlots.embark, crewmates[0]] })
-                                }
+                                setSelectingBeacon(true);
+                                alert("click on any beacon")
                             }}>
-                                ESPIAR
+                                bacon
                             </Button>
                         </div>
                         <div style={{ display: "flex", flexDirection: "row" }}>
@@ -693,6 +821,7 @@ export default function Game() {
                                 troncos
                             </Button>
                         </div>
+                        <UnusedBeacons />
                         {!emptyChecker("array", crewmates) &&
                             <UnusedCrewmates />
                         }

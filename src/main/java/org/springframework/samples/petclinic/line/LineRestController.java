@@ -75,7 +75,7 @@ public class LineRestController {
         }
     
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateGame(@Valid @RequestBody Game l,@PathVariable("id")Integer id){
+    public ResponseEntity<Void> updateLine(@Valid @RequestBody Line l,@PathVariable("id")Integer id){
         Line lToUpdate=getLineById(id);
         BeanUtils.copyProperties(l,lToUpdate, "id");
         ls.save(lToUpdate);

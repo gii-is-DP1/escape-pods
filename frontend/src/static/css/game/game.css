@@ -124,3 +124,45 @@
 .white-special-action-card {
     background-image: url('../../images/whiteSpecialActionCard.png');
 }
+
+.black-yellow-beacon, .black-blue-beacon, .black-pink-beacon, .black-white-beacon, .pink-blue-beacon, .white-blue-beacon,
+.white-yellow-beacon, .white-pink-beacon, .yellow-blue-beacon, .yellow-pink-beacon {
+    position: absolute;
+    background-size: cover;
+    display: flex;
+    max-width: 54px;
+    max-height: 14px;
+    height: 100%;
+    width: 100%;
+}
+
+.black-yellow-beacon {
+    background-image: url('../../images/beacons/black-yellow-beacon.png');
+}
+.black-blue-beacon {
+    background-image: url('../../images/beacons/black-blue-beacon.png');
+}
+.black-pink-beacon {
+    background-image: url('../../images/beacons/black-pink-beacon.png');
+}
+.black-white-beacon {
+    background-image: url('../../images/beacons/black-white-beacon.png');
+}
+.pink-blue-beacon {
+    background-image: url('../../images/beacons/pink-blue-beacon.png');
+}
+.white-blue-beacon {
+    background-image: url('../../images/beacons/white-blue-beacon.png');
+}
+.white-yellow-beacon {
+    background-image: url('../../images/beacons/white-yellow-beacon.png');
+}
+.white-pink-beacon {
+    background-image: url('../../images/beacons/white-pink-beacon.png');
+}
+.yellow-blue-beacon {
+    background-image: url('../../images/beacons/yellow-blue-beacon.png');
+}
+.yellow-pink-beacon {
+    background-image: url('../../images/beacons/yellow-pink-beacon.png');
+}
