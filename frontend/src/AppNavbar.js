@@ -13,7 +13,7 @@ function AppNavbar() {
     const jwt = tokenService.getLocalAccessToken();
     const [collapsed, setCollapsed] = useState(true);
     const [myPlayer, setMyPlayer] = useState({})
-    
+
     const toggleNavbar = () => setCollapsed(!collapsed);
 
     useEffect(() => {
@@ -34,7 +34,7 @@ function AppNavbar() {
         })
             .then(response => response.json())
             .then(response => { setMyPlayer(response[0]) })
-            
+
     }
 
     function emptyChecker(type, a) { //comprueba si el elemento a de tipo type está vacío
@@ -162,7 +162,7 @@ function AppNavbar() {
                 {/* TODO añadir el enlace hacia mi perfil en el username */}
                 <NavbarText style={{ color: "white" }} className="justify-content-end">{username}</NavbarText>
 
-                <NavItem className="d-flex">
+                <NavItem className="d-flex" style={{marginLeft:10}}>
                     <NavLink style={{ color: "white" }} id="logout" tag={Link} to="/logout">Logout</NavLink>
                 </NavItem>
             </>
@@ -181,27 +181,26 @@ function AppNavbar() {
     return (
         <div>
             <Navbar expand="md">
-            <NavbarBrand href="/">
-                <img alt="logo" src="/escape-pods-logo.png" style={{ height: 40, width: 60 }} />
-            </NavbarBrand>
-            
-            <NavbarToggler onClick={toggleNavbar} className="ms-2" />
-            <Collapse isOpen={!collapsed} navbar>
-                <Nav className="me-auto mb-2 mb-lg-0" navbar>
-                    {userLinks}
-                    {adminLinks}
-                    {ownerLinks}
-                </Nav>
-                <Nav className="ms-auto mb-2 mb-lg-0" navbar>
-                    {publicLinks}
-                    <NavbarText style={{ color: "white" }} className="justify-content-end">{username}</NavbarText>
-                    
-                </Nav>
-                <NavbarBrand href={emptyChecker('object' ,myPlayer)? "/":"/profile"}>
-                <img src={myPlayer === undefined || JSON.stringify(myPlayer)==='{}'? fotoP: myPlayer.profilePicture} style={{ height: 60, width: 60, marginLeft: 10, borderRadius:'50%' }} />
+                <NavbarBrand href="/">
+                    <img alt="logo" src="/escape-pods-logo.png" style={{ height: 40, width: 60 }} />
                 </NavbarBrand>
-            </Collapse>
-        </Navbar>
+
+                <NavbarToggler onClick={toggleNavbar} className="ms-2" />
+                <Collapse isOpen={!collapsed} navbar>
+                    <Nav className="me-auto mb-2 mb-lg-0" navbar>
+                        {userLinks}
+                        {adminLinks}
+                        {ownerLinks}
+                    </Nav>
+                    <Nav className="ms-auto mb-2 mb-lg-0" navbar>
+                        {publicLinks}
+                        {userLogout}
+                    </Nav>
+                    <NavbarBrand href={emptyChecker('object', myPlayer) ? "/" : "/profile"}>
+                        <img src={myPlayer === undefined || JSON.stringify(myPlayer) === '{}' ? fotoP : myPlayer.profilePicture} style={{ height: 60, width: 60, marginLeft: 10, borderRadius: '50%' }} />
+                    </NavbarBrand>
+                </Collapse>
+            </Navbar>
         </div >
     );
 }

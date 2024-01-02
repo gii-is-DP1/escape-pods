@@ -21,7 +21,7 @@ const Logout = () => {
     <div className="auth-page-container">
       <div className="auth-form-container" style={{textAlign:'center', marginTop:20}}>
         <h2 className="text-center text-md">
-          Do you really wanna logout?
+          Do you really want to logout?
         </h2>
         <div className="options-row">
           <Link className="auth-button" to="/" style={{textDecoration: "none"}}>
