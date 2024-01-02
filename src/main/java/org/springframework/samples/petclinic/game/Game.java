@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.samples.petclinic.explosionCard.ExplosionCard;
 import org.springframework.samples.petclinic.model.BaseEntity;
 import org.springframework.samples.petclinic.player.Player;
 import org.springframework.samples.petclinic.shelterCard.ShelterCard;
@@ -52,5 +53,9 @@ public class Game extends BaseEntity {
     @NotNull
     @ManyToMany(cascade = CascadeType.MERGE)
     List<Player> players;
+
+    @OneToMany
+    @NotNull
+    private List<ExplosionCard> explosionCards;
 
 }
