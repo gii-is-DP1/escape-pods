@@ -43,6 +43,7 @@ export default function Game() {
     const [selectedShelterCard, setSelectedShelterCard] = useState({});
     const [spying, setSpying] = useState(false);
 
+    const [programming, setProgramming] = useState(false)
     const [remotePiloting, setRemotePiloting] = useState(false)
     const [podjacking, setPodJacking] = useState(false)
     const [minipodSpawning, setMinipodSpawning] = useState(false)
@@ -931,22 +932,63 @@ export default function Game() {
 
     function beaconClickHandler(beacon) {
         setSelectedBeacon(beacon)
-        if (selectingBeacon) {
+        if (programming) {
             alert("Click on any line to place the beacon")
             setSelectingLine(true)
+            setSelectingBeacon(false)
         }
     }
 
     function lineClickHandler(line) {
+        //refresher()
         setSelectedLine(line)
-        if (selectingLine) {
-            moveBeacon(selectedBeacon, line)
-            setSelectingBeacon(false)
-            setSelectingLine(false)
+        let selectedBeaconLine = lines.find(line => line.beacon && line.beacon.id === selectedBeacon.id)
+        if (programming) {
+
+            //mover beacon nuevo a linea desokupada
+            if (!line.beacon && selectedBeacon) {
+
+                if (!GetUnusedBeacons().includes(selectedBeacon)) {
+                    moveBeacon(null, selectedBeaconLine)
+                }
+                alert('SE MOVERA EL BEACON A ESA LINEA')
+                console.log(selectedBeacon)
+                moveBeacon(selectedBeacon, line)
+                setSelectingLine(false)
+                setProgramming(false)
+
+                // caso en el que se quiera hacer un intercambio en le que uno de los beacon es de nueva instalacion
+            } else if (line.beacon && selectedBeacon && GetUnusedBeacons().includes(selectedBeacon)) {
+                alert('YA EXISTE UN BEACON EN ESA LINEA, SELECCIONA OTRA')
+
+                // intercambiar 2 beacon de sitio 
+            } else if (line.beacon && selectedBeacon && !GetUnusedBeacons().includes(selectedBeacon)) {
+                
+                console.log(selectedBeacon)
+                let selectedLineBeacon = line.beacon
+
+                //limpiamos las lineas involucradas
+                moveBeacon(null, selectedBeaconLine)
+                moveBeacon(null, line)
+                alert('SE INTERCAMBIARAN DE LUGAR LOS BEACON')
+                //movemos los beacons  asus nuevos sitios
+                moveBeacon(selectedBeacon, line)
+                moveBeacon(selectedLineBeacon, selectedBeaconLine)
+
+
+                setSelectingLine(false)
+                setProgramming(false)
+
+                //esta aerta nunca deberia salir
+            } else {
+                alert('ESTAS INTENTANDO HACER UN MOVIMIENTO INVALIDO HACIA UNA LINEA, SELECCIONA A OTRA')
+            }
+
         }
 
     }
 
+    /* NI PUTA IDEA DE PORQUE ESTA REPETIDO
     function beaconClickHandler(beacon) {
         setSelectedBeacon(beacon)
         if (selectingBeacon) {
@@ -963,7 +1005,7 @@ export default function Game() {
             setSelectingLine(false)
         }
     }
-
+    */
     return (
         <>
 
@@ -985,7 +1027,7 @@ export default function Game() {
                         ))}
                         {lines.map((line, index) => (
                             <div key={index}>
-                                {console.log(line)}
+                                {/*{console.log(line)}*/}
                                 <Line x={lineX[line.number]} y={lineY[line.number]} line={line} />
                             </div>
                         ))}
@@ -1046,6 +1088,28 @@ export default function Game() {
                             }}>
                                 EMBARCAR/DESEMBARCAR
                             </Button>
+
+                            <Button className="button" style={{
+                                backgroundColor: "#CFFF68",
+                                border: "none",
+                                width: 200,
+                                fontSize: 20,
+                                borderRadius: 20,
+                                height: 60,
+                                boxShadow: "5px 5px 5px #00000020",
+                                textShadow: "2px 2px 2px #00000020",
+                                transition: "0.15s",
+                                alignSelf: "center",
+                                marginBottom: 20
+                            }} onClick={() => {
+                                setProgramming(prevProgramming => !prevProgramming);
+                                setSelectingBeacon(prevSelectingBeacon => !prevSelectingBeacon);
+                                alert("Click on any of the beacons")
+                                console.log(programming)
+                            }}>
+                                PROGRAMAR
+                            </Button>
+
                             <Button className="button" style={{
                                 backgroundColor: "#CFFF68",
                                 border: "none",
@@ -1109,45 +1173,45 @@ export default function Game() {
                                 PILOTAR REMOTAMENTE
                             </Button>
                             <Button className="button" style={{
-                            backgroundColor: "#CFFF68",
-                            border: "none",
-                            width: 200,
-                            fontSize: 20,
-                            borderRadius: 20,
-                            height: 60,
-                            boxShadow: "5px 5px 5px #00000020",
-                            textShadow: "2px 2px 2px #00000020",
-                            transition: "0.15s",
-                            alignSelf: "center",
-                            marginBottom: 20
-                        }} onClick={() => {
-                            setPodJacking(prevPodJacking => !prevPodJacking);
-                            setSelectingCrewmate(prevSelectingCrewmate => !prevSelectingCrewmate);
-                            alert("Click on any of your crewmates")
-                            console.log(podjacking)
-                        }}>
-                            ABORDAR
-                        </Button>
-                        <Button className="button" style={{
-                            backgroundColor: "#CFFF68",
-                            border: "none",
-                            width: 200,
-                            fontSize: 20,
-                            borderRadius: 20,
-                            height: 60,
-                            boxShadow: "5px 5px 5px #00000020",
-                            textShadow: "2px 2px 2px #00000020",
-                            transition: "0.15s",
-                            alignSelf: "center",
-                            marginBottom: 20
-                        }} onClick={() => {
-                            setMinipodSpawning(prevMiniPodSpawning => !prevMiniPodSpawning);
-                            setSelectingCrewmate(prevSelectingCrewmate => !prevSelectingCrewmate);
-                            alert("Click on any of your crewmates")
-                            console.log(minipodSpawning)
-                        }}>
-                            INVOCAR MINIPOD
-                        </Button>
+                                backgroundColor: "#CFFF68",
+                                border: "none",
+                                width: 200,
+                                fontSize: 20,
+                                borderRadius: 20,
+                                height: 60,
+                                boxShadow: "5px 5px 5px #00000020",
+                                textShadow: "2px 2px 2px #00000020",
+                                transition: "0.15s",
+                                alignSelf: "center",
+                                marginBottom: 20
+                            }} onClick={() => {
+                                setPodJacking(prevPodJacking => !prevPodJacking);
+                                setSelectingCrewmate(prevSelectingCrewmate => !prevSelectingCrewmate);
+                                alert("Click on any of your crewmates")
+                                console.log(podjacking)
+                            }}>
+                                ABORDAR
+                            </Button>
+                            <Button className="button" style={{
+                                backgroundColor: "#CFFF68",
+                                border: "none",
+                                width: 200,
+                                fontSize: 20,
+                                borderRadius: 20,
+                                height: 60,
+                                boxShadow: "5px 5px 5px #00000020",
+                                textShadow: "2px 2px 2px #00000020",
+                                transition: "0.15s",
+                                alignSelf: "center",
+                                marginBottom: 20
+                            }} onClick={() => {
+                                setMinipodSpawning(prevMiniPodSpawning => !prevMiniPodSpawning);
+                                setSelectingCrewmate(prevSelectingCrewmate => !prevSelectingCrewmate);
+                                alert("Click on any of your crewmates")
+                                console.log(minipodSpawning)
+                            }}>
+                                INVOCAR MINIPOD
+                            </Button>
                         </div>
                         <div style={{ display: "flex", flexDirection: "row" }}>
                             <Button className="button" style={{
