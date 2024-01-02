@@ -906,13 +906,13 @@ export default function Game() {
     function shelterClickHandler(shelterCard) {
         setSelectedShelterCard(shelterCard)
         if (embarking) {
-            if (selectedCrewmate.pod.sector.number === 11 && shelterCard.sector.number === 11) {
+            if (selectedCrewmate.pod && selectedCrewmate.pod.sector.number === 11 && shelterCard.sector.number === 11) {
                 moveCrewmate(selectedCrewmate, null, shelterCard)
 
-            } else if (selectedCrewmate.pod.sector.number === 12 && shelterCard.sector.number === 12) {
+            } else if (selectedCrewmate.pod && selectedCrewmate.pod.sector.number === 12 && shelterCard.sector.number === 12) {
                 moveCrewmate(selectedCrewmate, null, shelterCard)
 
-            } else if (selectedCrewmate.pod.sector.number === 13 && shelterCard.sector.number === 13) {
+            } else if (selectedCrewmate.pod && selectedCrewmate.pod.sector.number === 13 && shelterCard.sector.number === 13) {
                 moveCrewmate(selectedCrewmate, null, shelterCard)
 
             } else {
@@ -964,6 +964,21 @@ export default function Game() {
         }
     }
 
+    function handleCancel() {
+        setPiloting(false)
+        setEmbarking(false)
+        setSpying(false)
+        setMinipodSpawning(false)
+        setRemotePiloting(false)
+        setPodJacking(false)
+        setSelectingPod(false)
+        setSelectingCrewmate(false)
+        setSelectingSector(false)
+        setSelectingShelterCard(false)
+        setSelectingBeacon(false)
+        setSelectingLine(false)
+    }
+
     return (
         <>
 
@@ -985,7 +1000,6 @@ export default function Game() {
                         ))}
                         {lines.map((line, index) => (
                             <div key={index}>
-                                {console.log(line)}
                                 <Line x={lineX[line.number]} y={lineY[line.number]} line={line} />
                             </div>
                         ))}
@@ -1019,8 +1033,8 @@ export default function Game() {
                                 alignSelf: "center",
                                 marginBottom: 20
                             }} onClick={() => {
-                                setPiloting(prevPiloting => !prevPiloting);
-                                setSelectingPod(prevSelectingPod => !prevSelectingPod);
+                                setPiloting(true);
+                                setSelectingPod(true);
                                 alert("Click on any pod to pilot it")
                                 console.log(piloting)
                             }}>
@@ -1039,8 +1053,8 @@ export default function Game() {
                                 alignSelf: "center",
                                 marginBottom: 20
                             }} onClick={() => {
-                                setEmbarking(prevEmbarking => !prevEmbarking);
-                                setSelectingCrewmate(prevSelectingCrewmate => !prevSelectingCrewmate);
+                                setEmbarking(true);
+                                setSelectingCrewmate(true);
                                 alert("Click on any of your crewmates")
                                 console.log(embarking)
                             }}>
@@ -1101,53 +1115,53 @@ export default function Game() {
                                 alignSelf: "center",
                                 marginBottom: 20
                             }} onClick={() => {
-                                setRemotePiloting(prevRemotePiloting => !prevRemotePiloting);
-                                setSelectingPod(prevSelectingPod => !prevSelectingPod);
+                                setRemotePiloting(true);
+                                setSelectingPod(true);
                                 alert("Click on any pod to pilot it")
                                 console.log(remotePiloting)
                             }}>
                                 PILOTAR REMOTAMENTE
                             </Button>
                             <Button className="button" style={{
-                            backgroundColor: "#CFFF68",
-                            border: "none",
-                            width: 200,
-                            fontSize: 20,
-                            borderRadius: 20,
-                            height: 60,
-                            boxShadow: "5px 5px 5px #00000020",
-                            textShadow: "2px 2px 2px #00000020",
-                            transition: "0.15s",
-                            alignSelf: "center",
-                            marginBottom: 20
-                        }} onClick={() => {
-                            setPodJacking(prevPodJacking => !prevPodJacking);
-                            setSelectingCrewmate(prevSelectingCrewmate => !prevSelectingCrewmate);
-                            alert("Click on any of your crewmates")
-                            console.log(podjacking)
-                        }}>
-                            ABORDAR
-                        </Button>
-                        <Button className="button" style={{
-                            backgroundColor: "#CFFF68",
-                            border: "none",
-                            width: 200,
-                            fontSize: 20,
-                            borderRadius: 20,
-                            height: 60,
-                            boxShadow: "5px 5px 5px #00000020",
-                            textShadow: "2px 2px 2px #00000020",
-                            transition: "0.15s",
-                            alignSelf: "center",
-                            marginBottom: 20
-                        }} onClick={() => {
-                            setMinipodSpawning(prevMiniPodSpawning => !prevMiniPodSpawning);
-                            setSelectingCrewmate(prevSelectingCrewmate => !prevSelectingCrewmate);
-                            alert("Click on any of your crewmates")
-                            console.log(minipodSpawning)
-                        }}>
-                            INVOCAR MINIPOD
-                        </Button>
+                                backgroundColor: "#CFFF68",
+                                border: "none",
+                                width: 200,
+                                fontSize: 20,
+                                borderRadius: 20,
+                                height: 60,
+                                boxShadow: "5px 5px 5px #00000020",
+                                textShadow: "2px 2px 2px #00000020",
+                                transition: "0.15s",
+                                alignSelf: "center",
+                                marginBottom: 20
+                            }} onClick={() => {
+                                setPodJacking(true);
+                                setSelectingCrewmate(true);
+                                alert("Click on any of your crewmates")
+                                console.log(podjacking)
+                            }}>
+                                ABORDAR
+                            </Button>
+                            <Button className="button" style={{
+                                backgroundColor: "#CFFF68",
+                                border: "none",
+                                width: 200,
+                                fontSize: 20,
+                                borderRadius: 20,
+                                height: 60,
+                                boxShadow: "5px 5px 5px #00000020",
+                                textShadow: "2px 2px 2px #00000020",
+                                transition: "0.15s",
+                                alignSelf: "center",
+                                marginBottom: 20
+                            }} onClick={() => {
+                                setMinipodSpawning(true);
+                                setSelectingCrewmate(true);
+                                alert("Click on any of your crewmates")
+                                console.log(minipodSpawning)
+                            }}>
+                                INVOCAR MINIPOD
+                            </Button>
                         </div>
                         <div style={{ display: "flex", flexDirection: "row" }}>
                             <Button className="button" style={{
@@ -1192,6 +1206,27 @@ export default function Game() {
                             }}>
                                 troncos
                             </Button>
+                            {(selectingBeacon || selectingCrewmate || selectingPod || selectingSector || selectingLine ||
+                                selectingShelterCard || piloting || embarking || spying || minipodSpawning || remotePiloting ||
+                                podjacking) &&
+                                <Button className="button" style={{
+                                    backgroundColor: "#ff8368",
+                                    border: "none",
+                                    width: 200,
+                                    fontSize: 20,
+                                    borderRadius: 20,
+                                    height: 60,
+                                    boxShadow: "5px 5px 5px #00000020",
+                                    textShadow: "2px 2px 2px #00000020",
+                                    transition: "0.15s",
+                                    alignSelf: "center",
+                                    marginBottom: 20
+                                }} onClick={() => {
+                                    handleCancel()
+                                }}>
+                                    Cancelar accion
+                                </Button>
+                            }
                         </div>
                         <UnusedBeacons />
                         {!emptyChecker("array", crewmates) &&
