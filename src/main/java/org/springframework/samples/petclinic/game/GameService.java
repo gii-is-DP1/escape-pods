@@ -22,12 +22,7 @@ public class GameService {
     public List<Game> getAllGames(Pageable pageable){
         return gr.findAll(pageable);
     }
-    
-    @Transactional(readOnly=true)
-    public List<Game> getGamesByName(String namepatterm, Pageable pageable){
-        return gr.findAll(pageable);
-    }
-
+   
     @Transactional(readOnly=true)
     public List<Game> getWaitingGames(Pageable pageable){
         return gr.findByStatus(GameStatus.WAITING, pageable);
