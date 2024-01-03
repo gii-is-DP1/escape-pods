@@ -127,18 +127,24 @@ export default function Game() {
         if (jwt) {
             setRoles(jwt_decode(jwt).authorities);
             GetCurrentPlayer();
-            GetGame();
-            //            refresher();
+            GetGameData();
+            refresher();
         }
     }, [jwt])
 
     function refresher() {
         let intervalID = setInterval(() => {
-            GetGame();
-        }, 2500);
+            refresherSetters();
+        }, 4000);
         return () => {
             clearInterval(intervalID);
         };
+    }
+
+    async function refresherSetters() {
+        setPods(await itemGetters.fetchPods(gameId, jwt));
+        setCrewmates(await itemGetters.fetchCrewmates(gameId, jwt));
+        setLines(await itemGetters.fetchLines(gameId, jwt));
     }
 
     function GetCurrentPlayer() {
@@ -153,7 +159,7 @@ export default function Game() {
             .then(response => { setMyPlayer(response[0]) })
     }
 
-    async function GetGame() {
+    async function GetGameData() {
         const currentGame = await fetchCurrentGame();
         setGame(currentGame);
         setPods(await itemGetters.fetchPods(currentGame.id, jwt));
@@ -167,7 +173,7 @@ export default function Game() {
     }
 
     function GetCrewmatesFromPod(pod) {
-        return crewmates.filter(crewmate => crewmate.pod && crewmate.pod.number === pod.number)
+        return crewmates.filter(crewmate => crewmate.pod && (crewmate.pod.number === pod.number))
     }
 
     function GetCrewmatesFromShelter(shelterCard) {
@@ -634,9 +640,11 @@ export default function Game() {
             method: 'PUT',
             body: JSON.stringify(movedPod)
         })
+        setPods(await itemGetters.fetchPods(gameId, jwt))
     }
 
     async function moveCrewmate(crewmate, pod, shelterCard) {
+        const oldPod = crewmate.pod
         const movedCrewmate = {
             color: crewmate.color,
             role: crewmate.role,
@@ -654,6 +662,13 @@ export default function Game() {
             method: 'PUT',
             body: JSON.stringify(movedCrewmate)
         })
+
+        const newCrewmates = await itemGetters.fetchCrewmates(gameId, jwt)
+        console.log("LENGTH" + newCrewmates.filter(crewmate => crewmate.pod && oldPod && (crewmate.pod.number === oldPod.number)).length)
+        if (oldPod && newCrewmates.filter(crewmate => crewmate.pod && oldPod && (crewmate.pod.number === oldPod.number)).length === 0) {
+            movePod(oldPod, null)
+        }
+        setCrewmates(newCrewmates)
     }
 
     async function moveBeacon(beacon, line) {
@@ -671,6 +686,7 @@ export default function Game() {
             method: 'PUT',
             body: JSON.stringify(modifiedLine)
         })
+        setLines(await itemGetters.fetchLines(gameId, jwt))
     }
 
 
@@ -686,7 +702,6 @@ export default function Game() {
 
 
     function sectorClickHandler(sector) {
-        refresher()
         setSelectedSector(sector)
         if ((piloting || remotePiloting) && selectingSector) {
             if ((!selectedPod.sector && adjacencyList[0].includes(sector.number)) || (selectedPod.sector && adjacencyList[selectedPod.sector.number].includes(sector.number))) {
@@ -775,16 +790,14 @@ export default function Game() {
             }
         } else if (embarking) {
             if ((embarkSectorsNumbers.includes(pod.sector ? pod.sector.number : '') || !pod.sector) && (pod && GetCrewmatesFromPod(pod).length < pod.capacity)) {
-
                 if (pod.number > 3 && pods.filter(pod => pod.number <= 3 && (!pod.sector || embarkSectorsNumbers.includes(pod.sector.number)) && GetCrewmatesFromPod(pod).length < pod.capacity).length >= 1) {
                     alert('NO PIUEDES EMBARCAR EN UN POD DE 1 SI TU TRIPULANTE PUEDE EMBARCAR EN UNO DE LOS PODS PREDETERMINADOS, SELECCIONA OTRO')
                 } else {
                     moveCrewmate(selectedCrewmate, pod, null)
                     setSelectingCrewmate(false)
                     setSelectingPod(false)
-                    alert(' se ha movido el crewmate al pod selecionado')
                     setSelectedCrewmate(null)
-                    console.log(pods)
+                    alert(' se ha movido el crewmate al pod selecionado')
                     if (!pod.sector) {
                         if (pod.number === 1 && (pods.filter(pod => pod.sector && pod.sector.number === 2).length === 0)) {
                             movePod(pod, sectors.find(sector => sector.number === 2));
@@ -801,22 +814,19 @@ export default function Game() {
                         }
                     }
                 }
-
             } else if ((selectedCrewmate.pod && adjacencyList[selectedCrewmate.pod.sector.number].includes(pod.sector.number)) && (pod && GetCrewmatesFromPod(pod).length < pod.capacity)) {
-                alert('el crewmate ha sido cambiado al nuevo pod')
                 moveCrewmate(selectedCrewmate, pod, null)
                 setSelectingPod(false)
                 setSelectingCrewmate(false)
                 setEmbarking(false)
                 setSelectedCrewmate(null)
+                alert('el crewmate ha sido cambiado al nuevo pod')
             } else {
                 setSelectingCrewmate(false)
                 setSelectingPod(false)
                 setEmbarking(false)
-
                 alert(`You cannot move your ${selectedCrewmate.role} to a not valid pod`)
             }
-
         } else if (remotePiloting) {
             if (GetCrewmatesFromPod(pod).length !== 0) {
                 setSelectingPod(false)
@@ -827,7 +837,7 @@ export default function Game() {
     }
 
     function crewmateClickHandler(crewmate) {
-        refresher()
+        //        refresher()
         console.log(selectedCrewmate)
         if (embarking) {
             setSelectedCrewmate(crewmate)
@@ -982,9 +992,9 @@ export default function Game() {
     return (
         <>
 
-            {!emptyChecker("array", sectors) && !emptyChecker("array", lines) &&
+            {!emptyChecker("array", sectors) && !emptyChecker("array", lines) && !emptyChecker("array", pods) &&
+                !emptyChecker("array", shelterCards) && !emptyChecker("array", lines) &&
                 <div className="game-page-container">
-
                     <div className="game-board">
                         {sectors.map((sector, index) => (
                             <div key={index}>
@@ -1177,7 +1187,7 @@ export default function Game() {
                                 alignSelf: "center",
                                 marginBottom: 20
                             }} onClick={() => {
-                                GetGame()
+                                GetGameData()
                             }}>
                                 Recargar
                             </Button>
