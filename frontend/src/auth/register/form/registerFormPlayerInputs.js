@@ -28,8 +28,9 @@ export const registerFormPlayerInputs = [
   {
     tag: "Profile Picture",
     name: "profilePicture",
-    type: "files",
+    type: "text",
+    defaultValue: "https://www.webwise.ie/wp-content/uploads/2020/12/IMG1207.jpg",
     isRequired: true,
-    validators: [formValidators.pictureValidator],
+    validators: [formValidators.notEmptyValidator],
   },
 ];

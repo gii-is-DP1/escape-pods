@@ -135,7 +135,7 @@ export default function Game() {
             setRoles(jwt_decode(jwt).authorities);
             GetCurrentPlayer();
             GetGameData();
-            //            refresher();
+            refresher();
         }
     }, [jwt])
 

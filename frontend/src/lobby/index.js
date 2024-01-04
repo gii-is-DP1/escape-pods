@@ -31,7 +31,7 @@ export default function Lobby() {
             setRoles(jwt_decode(jwt).authorities);
             GetCurrentPlayer();
             GetCurrentGame();
-//            refresher();
+            refresher();
         }
     }, [jwt])
 
