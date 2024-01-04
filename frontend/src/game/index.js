@@ -1260,6 +1260,7 @@ export default function Game() {
                                 console.log(shelterCards)
                                 console.log(slotInfos)
                                 console.log(actionSlots)
+                                console.log(game.numbers)
                             }}>
                                 troncos
                             </Button>

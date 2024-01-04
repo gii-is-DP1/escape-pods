@@ -1,17 +1,20 @@
 package org.springframework.samples.petclinic.game;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.samples.petclinic.explosionCard.ExplosionCard;
 import org.springframework.samples.petclinic.model.BaseEntity;
 import org.springframework.samples.petclinic.player.Player;
 import org.springframework.samples.petclinic.shelterCard.ShelterCard;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -54,8 +57,16 @@ public class Game extends BaseEntity {
     @ManyToMany(cascade = CascadeType.MERGE)
     List<Player> players;
 
-    @OneToMany
-    @NotNull
-    private List<ExplosionCard> explosionCards;
+    // @OneToMany
+    // @NotNull
+    // private List<ExplosionCard> explosionCards;
+
+    @ElementCollection
+    private List<Integer> explosions;
+
+    public Game() {
+        explosions = new ArrayList<>(Arrays.asList(4, 5, 6, 7, 8, 9, 10));
+        Collections.shuffle(explosions);
+    }
 
 }
