@@ -13,6 +13,6 @@ public interface ExplosionCardRepository extends CrudRepository<ExplosionCard,In
     List<ExplosionCard> findAll();
     List<ExplosionCard> findByNumber(Integer number);
     Optional<ExplosionCard> findById(Integer id);
-    @Query("SELECT ec FROM ExplosionCard ec WHERE ec.game.id= :id")
+    @Query("SELECT g.explosionCards FROM Game g WHERE g.id = :id")
     List<ExplosionCard> findByGameId(Integer id);
 }
