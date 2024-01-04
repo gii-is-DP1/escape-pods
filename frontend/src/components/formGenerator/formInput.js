@@ -114,9 +114,9 @@ const FormInput = forwardRef(({ tag, name, type, defaultValue, values, isRequire
                     <FilePond 
                         files={files}
                         onupdatefiles={handleFiles}
-                        allowMultiple={true}
+                        allowMultiple={false} //originalmente true, se ha cambiado para escape pods
                         allowReorder={true}
-                        maxFiles={1}  //originalmente 10, se ha cambiado para escape pods
+                        maxFiles={10}
                         name={name} /* sets the file input name, it's filepond by default */
                         labelIdle='Arrastra tus archivos o <span class="filepond--label-action">Selecciona</span>'
                         credits={false}
