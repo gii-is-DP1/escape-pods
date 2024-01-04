@@ -787,8 +787,6 @@ export default function Game() {
                     }
                     setSelectedPod(crashedPod)
                     setSelectingPod(false)
-
-
                 }
             } else {
                 alert('NO PUEDES MOVER UN POD A UN SECTOR NO ADYACENTE A SU UBICACION INICIAL')
@@ -1019,23 +1017,6 @@ export default function Game() {
             setSelectingLine(false)
         }
 
-    }
-
-    function beaconClickHandler(beacon) {
-        setSelectedBeacon(beacon)
-        if (selectingBeacon) {
-            alert("Click on any line to place the beacon")
-            setSelectingLine(true)
-        }
-    }
-
-    function lineClickHandler(line) {
-        setSelectedLine(line)
-        if (selectingLine) {
-            moveBeacon(selectedBeacon, line)
-            setSelectingBeacon(false)
-            setSelectingLine(false)
-        }
     }
 
     function handleCancel() {
@@ -1279,6 +1260,7 @@ export default function Game() {
                                 console.log(shelterCards)
                                 console.log(slotInfos)
                                 console.log(actionSlots)
+                                console.log(game.numbers)
                             }}>
                                 troncos
                             </Button>
