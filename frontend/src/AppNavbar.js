@@ -5,6 +5,7 @@ import tokenService from './services/token.service';
 import jwt_decode from "jwt-decode";
 import "./static/css/home/home.css";
 import fotoP from "./static/images/foto-perfil-generica.png";
+import fotoP2 from "./static/images/amongus-profile-picture.png";
 
 
 function AppNavbar() {
@@ -197,7 +198,7 @@ function AppNavbar() {
                         {userLogout}
                     </Nav>
                     <NavbarBrand href={emptyChecker('object', myPlayer) ? "/" : "/profile"}>
-                        <img src={myPlayer === undefined || JSON.stringify(myPlayer) === '{}' ? fotoP : myPlayer.profilePicture} style={{ height: 60, width: 60, marginLeft: 10, borderRadius: '50%' }} />
+                        <img src={myPlayer === undefined || JSON.stringify(myPlayer) === '{}' ? fotoP2 : myPlayer.profilePicture} style={{ height: 60, width: 60, marginLeft: 10, borderRadius: '50%' }} />
                     </NavbarBrand>
                 </Collapse>
             </Navbar>
