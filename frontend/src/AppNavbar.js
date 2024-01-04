@@ -26,17 +26,19 @@ function AppNavbar() {
     }, [jwt])
 
     async function GetCurrentPlayer() {
-        await fetch("/api/v1/players?username=" + username, {
+        const usrnm = jwt_decode(jwt).sub;
+        const response = await fetch("/api/v1/players?username=" + usrnm, {
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${jwt}`,
             },
             method: "GET"
         })
-            .then(response => response.json())
-            .then(response => { setMyPlayer(response[0]) })
-
+        const fetchedPlayer = await response.json();
+        console.log(fetchedPlayer[0]);
+        setMyPlayer(fetchedPlayer[0]);
     }
+
 
     function emptyChecker(type, a) { //comprueba si el elemento a de tipo type está vacío
         if (type === "array") {
@@ -163,7 +165,7 @@ function AppNavbar() {
                 {/* TODO añadir el enlace hacia mi perfil en el username */}
                 <NavbarText style={{ color: "white" }} className="justify-content-end">{username}</NavbarText>
 
-                <NavItem className="d-flex" style={{marginLeft:10}}>
+                <NavItem className="d-flex" style={{ marginLeft: 10 }}>
                     <NavLink style={{ color: "white" }} id="logout" tag={Link} to="/logout">Logout</NavLink>
                 </NavItem>
             </>
@@ -197,10 +199,12 @@ function AppNavbar() {
                         {publicLinks}
                         {userLogout}
                     </Nav>
-                    <NavbarBrand href={emptyChecker('object', myPlayer) ? "/" : "/profile"}>
-                        <img src={myPlayer === undefined || JSON.stringify(myPlayer) === '{}' ? fotoP2 : myPlayer.profilePicture} style={{ height: 60, width: 60, marginLeft: 10, borderRadius: '50%' }} />
-                    </NavbarBrand>
                 </Collapse>
+                {!emptyChecker('object', myPlayer) &&
+                    <NavbarBrand href="/profile">
+                        <img src={!emptyChecker("object",myPlayer) ? myPlayer.profilePicture : fotoP2} style={{ height: 45, width: 45, marginLeft: 10, borderRadius: '50%' }} />
+                    </NavbarBrand>
+                }
             </Navbar>
         </div >
     );

@@ -788,8 +788,6 @@ export default function Game() {
                     }
                     setSelectedPod(crashedPod)
                     setSelectingPod(false)
-
-
                 }
             } else {
                 alert('NO PUEDES MOVER UN POD A UN SECTOR NO ADYACENTE A SU UBICACION INICIAL')
@@ -1344,6 +1342,7 @@ export default function Game() {
                                 console.log(shelterCards)
                                 console.log(slotInfos)
                                 console.log(actionSlots)
+                                console.log(game.numbers)
                             }}>
                                 troncos
                             </Button>
