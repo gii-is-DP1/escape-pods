@@ -10,8 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
-import org.springframework.samples.petclinic.player.Player;
-import org.springframework.security.config.web.server.ServerHttpSecurity.HttpsRedirectSpec;
+
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -45,7 +44,7 @@ public class GameRestController {
 
     @GetMapping
     public ResponseEntity<List<Game>> getAllGames(
-            @ParameterObject @RequestParam(value = "status", required = false) GameStatus status, 
+            @ParameterObject @RequestParam(value = "status", required = false) GameStatus status,
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String order,
             @RequestParam(defaultValue = "0") int page,
@@ -56,22 +55,21 @@ public class GameRestController {
                 paging = PageRequest.of(page, size, Sort.by(order.substring(1)).descending());
             else
                 paging = PageRequest.of(page, size, Sort.by(order).ascending());
-        }
-        else{
+        } else {
             paging = PageRequest.of(page, size);
         }
 
         if (status != null) {
             switch (status) {
                 case WAITING:
-                    return new ResponseEntity<>((List<Game>) gs.getWaitingGames(paging),HttpStatus.OK);
+                    return new ResponseEntity<>((List<Game>) gs.getWaitingGames(paging), HttpStatus.OK);
                 case PLAYING:
-                    return new ResponseEntity<>((List<Game>) gs.getOngoingGames(paging),HttpStatus.OK);
+                    return new ResponseEntity<>((List<Game>) gs.getOngoingGames(paging), HttpStatus.OK);
                 default:
-                    return new ResponseEntity<>((List<Game>) gs.getFinishedGames(paging),HttpStatus.OK);
+                    return new ResponseEntity<>((List<Game>) gs.getFinishedGames(paging), HttpStatus.OK);
             }
         } else
-            return new ResponseEntity<>((List<Game>) gs.getAllGames(paging),HttpStatus.OK);
+            return new ResponseEntity<>((List<Game>) gs.getAllGames(paging), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")

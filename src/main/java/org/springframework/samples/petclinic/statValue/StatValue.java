@@ -8,11 +8,14 @@ import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotNull;
 
 @Entity
-public class StatValue extends BaseEntity{
+public class StatValue extends BaseEntity {
     @NotNull
     Double value;
-    
-//    @ManyToOne
-//    @NotNull
-//    User user;
+
+    /*
+     * @ManyToOne
+     * 
+     * @NotNull
+     * User user;
+     */
 }

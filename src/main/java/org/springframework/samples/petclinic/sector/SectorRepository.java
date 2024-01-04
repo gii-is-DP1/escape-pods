@@ -8,13 +8,15 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface SectorRepository extends CrudRepository<Sector,Integer>{
+public interface SectorRepository extends CrudRepository<Sector, Integer> {
 
     List<Sector> findAll();
+
     Optional<Sector> findById(Integer id);
+
     List<Sector> findByScrap(Boolean scrap);
 
     @Query("SELECT s FROM Sector s WHERE s.game.id= :id")
     List<Sector> findByGameId(Integer id);
-    
+
 }

@@ -7,8 +7,9 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface BeaconRepository extends CrudRepository<Beacon,Integer>{
+public interface BeaconRepository extends CrudRepository<Beacon, Integer> {
     List<Beacon> findAll();
+
     List<Beacon> findByColor1(String color1);
 
     @Query("SELECT b FROM Beacon b WHERE b.game.id= :id")

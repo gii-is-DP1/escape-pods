@@ -37,15 +37,14 @@ public class BeaconRestController {
     }
 
     @GetMapping
-    public List<Beacon> getAllBeacons(@ParameterObject() @RequestParam(value="color",required = false) String color1,
-    @ParameterObject @RequestParam(value = "gameid", required = false) Integer gameid){
-        if(color1!=null){
+    public List<Beacon> getAllBeacons(@ParameterObject() @RequestParam(value = "color", required = false) String color1,
+            @ParameterObject @RequestParam(value = "gameid", required = false) Integer gameid) {
+        if (color1 != null) {
             return bs.getBeaconByColor(color1);
         }
-        if(gameid!= null){
+        if (gameid != null) {
             return bs.getBeaconsByGameId(gameid);
-        }
-        else
+        } else
             return bs.getAllBeacons();
     }
 
@@ -57,7 +56,7 @@ public class BeaconRestController {
         return b.get();
     }
 
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<Beacon> createBeacon(@Valid @RequestBody Beacon b) {
         b = bs.save(b);
         URI location = ServletUriComponentsBuilder

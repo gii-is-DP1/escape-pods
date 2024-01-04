@@ -43,7 +43,7 @@ public class SectorController {
             return scs.getSectorScrapped(scrap);
         } else if (scrap == null && gameid != null) {
             return scs.getAllSectorsByGameId(gameid);
-        }else{
+        } else {
             return scs.getAllSectors();
         }
     }

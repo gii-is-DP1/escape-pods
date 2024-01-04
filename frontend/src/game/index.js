@@ -43,6 +43,7 @@ export default function Game() {
     const [selectedShelterCard, setSelectedShelterCard] = useState({});
     const [spying, setSpying] = useState(false);
 
+    const [programming, setProgramming] = useState(false)
     const [remotePiloting, setRemotePiloting] = useState(false)
     const [podjacking, setPodJacking] = useState(false)
     const [minipodSpawning, setMinipodSpawning] = useState(false)
@@ -930,6 +931,7 @@ export default function Game() {
                         moveCrewmate(selectedCrewmate, null, null)
                         moveCrewmate(changedCrewmate, selectedCrewmate.pod, null)
                         moveCrewmate(selectedCrewmate, crewmate.pod)
+                        
 
                         //intercambio pod a hangar
                     } else if ((!selectedCrewmate.pod && crewmate.pod) && embarkSectorsNumbers.includes(crewmate.pod.sector.number)) {
@@ -1003,6 +1005,65 @@ export default function Game() {
 
     function beaconClickHandler(beacon) {
         setSelectedBeacon(beacon)
+        if (programming) {
+            alert("Click on any line to place the beacon")
+            setSelectingLine(true)
+            setSelectingBeacon(false)
+        }
+    }
+
+    function lineClickHandler(line) {
+        //refresher()
+        setSelectedLine(line)
+        let selectedBeaconLine = lines.find(line => line.beacon && line.beacon.id === selectedBeacon.id)
+        if (programming) {
+
+            //mover beacon nuevo a linea desokupada
+            if (!line.beacon && selectedBeacon) {
+
+                if (!GetUnusedBeacons().includes(selectedBeacon)) {
+                    moveBeacon(null, selectedBeaconLine)
+                }
+                alert('SE MOVERA EL BEACON A ESA LINEA')
+                console.log(selectedBeacon)
+                moveBeacon(selectedBeacon, line)
+                setSelectingLine(false)
+                setProgramming(false)
+
+                // caso en el que se quiera hacer un intercambio en le que uno de los beacon es de nueva instalacion
+            } else if (line.beacon && selectedBeacon && GetUnusedBeacons().includes(selectedBeacon)) {
+                alert('YA EXISTE UN BEACON EN ESA LINEA, SELECCIONA OTRA')
+
+                // intercambiar 2 beacon de sitio 
+            } else if (line.beacon && selectedBeacon && !GetUnusedBeacons().includes(selectedBeacon)) {
+                
+                console.log(selectedBeacon)
+                let selectedLineBeacon = line.beacon
+
+                //limpiamos las lineas involucradas
+                moveBeacon(null, selectedBeaconLine)
+                moveBeacon(null, line)
+                alert('SE INTERCAMBIARAN DE LUGAR LOS BEACON')
+                //movemos los beacons  asus nuevos sitios
+                moveBeacon(selectedBeacon, line)
+                moveBeacon(selectedLineBeacon, selectedBeaconLine)
+
+
+                setSelectingLine(false)
+                setProgramming(false)
+
+                //esta aerta nunca deberia salir
+            } else {
+                alert('ESTAS INTENTANDO HACER UN MOVIMIENTO INVALIDO HACIA UNA LINEA, SELECCIONA A OTRA')
+            }
+
+        }
+
+    }
+
+    /* NI PUTA IDEA DE PORQUE ESTA REPETIDO
+    function beaconClickHandler(beacon) {
+        setSelectedBeacon(beacon)
         if (selectingBeacon) {
             alert("Click on any line to place the beacon")
             setSelectingLine(true)
@@ -1016,9 +1077,8 @@ export default function Game() {
             setSelectingBeacon(false)
             setSelectingLine(false)
         }
-
     }
-
+    */
     function handleCancel() {
         setPiloting(false)
         setEmbarking(false)
@@ -1119,6 +1179,28 @@ export default function Game() {
                             }}>
                                 EMBARCAR/DESEMBARCAR
                             </Button>
+
+                            <Button className="button" style={{
+                                backgroundColor: "#CFFF68",
+                                border: "none",
+                                width: 200,
+                                fontSize: 20,
+                                borderRadius: 20,
+                                height: 60,
+                                boxShadow: "5px 5px 5px #00000020",
+                                textShadow: "2px 2px 2px #00000020",
+                                transition: "0.15s",
+                                alignSelf: "center",
+                                marginBottom: 20
+                            }} onClick={() => {
+                                setProgramming(prevProgramming => !prevProgramming);
+                                setSelectingBeacon(prevSelectingBeacon => !prevSelectingBeacon);
+                                alert("Click on any of the beacons")
+                                console.log(programming)
+                            }}>
+                                PROGRAMAR
+                            </Button>
+
                             <Button className="button" style={{
                                 backgroundColor: "#CFFF68",
                                 border: "none",
