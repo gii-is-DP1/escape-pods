@@ -24,8 +24,6 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
-//creación de operaciones crud
-
 @RestController
 @RequestMapping("/api/v1/gamePlayers")
 @Tag(name = "gamePlayers", description = "API for the  management of  gamePlayers.")
@@ -42,26 +40,11 @@ public class GamePlayerRestController {
     public List<GamePlayer> getAllGamePlayers(
             @ParameterObject() @RequestParam(value = "color", required = false) Color color,
             @ParameterObject() @RequestParam(value = "gameid", required = false) Integer gameid) {
-        if (color != null) {
-            switch (color) {
-                case PINK:
-                    return ps.getPinkGamePlayer();
-                case BLACK:
-                    return ps.getBlackGamePlayer();
-                case WHITE:
-                    return ps.getWhiteGamePlayer();
-                case BLUE:
-                    return ps.getBlueGamePlayer();
-                default:
-                    return ps.getYellowGamePlayer();
-            }
-        } else if (color == null && gameid != null) {
+        if (color == null && gameid != null) {
             return ps.getGamePlayersByGameId(gameid);
         } else
-        return ps.getAllGamePlayers();
+            return ps.getAllGamePlayers();
     }
-
-    
 
     @GetMapping("/{id}")
     public GamePlayer getGamePlayerById(@PathVariable("id") Integer id) {
@@ -85,8 +68,6 @@ public class GamePlayerRestController {
     @PutMapping("/{id}")
     public ResponseEntity<Void> updateGamePlayer(@Valid @RequestBody GamePlayer p, @PathVariable("id") Integer id) {
         GamePlayer pToUpdate = getGamePlayerById(id);
-        // el copy properties parece que necesita los datos a alterar,
-        // un nombre de la actualizacion y el id del juego que se actualizara
         BeanUtils.copyProperties(p, pToUpdate, "id");
         ps.save(pToUpdate);
         return ResponseEntity.noContent().build();

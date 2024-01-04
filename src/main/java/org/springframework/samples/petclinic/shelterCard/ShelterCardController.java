@@ -32,15 +32,16 @@ public class ShelterCardController {
     ShelterCardService scs;
 
     @Autowired
-    public ShelterCardController(ShelterCardService scs){
-        this.scs=scs;
+    public ShelterCardController(ShelterCardService scs) {
+        this.scs = scs;
     }
 
     @GetMapping
-    public List<ShelterCard> getAllShelterCards(@ParameterObject @RequestParam(value="status",required = false) Type type,
-    @ParameterObject @RequestParam(value="gameid",required = false) Integer gameid){
-        if(type!=null){
-            switch(type){
+    public List<ShelterCard> getAllShelterCards(
+            @ParameterObject @RequestParam(value = "status", required = false) Type type,
+            @ParameterObject @RequestParam(value = "gameid", required = false) Integer gameid) {
+        if (type != null) {
+            switch (type) {
                 case PINK:
                     return scs.getShelterCardByType(Type.PINK);
                 case YELLOW:
@@ -52,44 +53,44 @@ public class ShelterCardController {
                 default:
                     return scs.getShelterCardByType(Type.GREEN);
             }
-        }else if(type==null && gameid!=null ){
-            return scs.getShelterCardByGameId(gameid);}
+        } else if (type == null && gameid != null) {
+            return scs.getShelterCardByGameId(gameid);
+        }
         return scs.getAllShelterCards();
     }
 
     @GetMapping("/{id}")
-    public ShelterCard getShelterCardById(@PathVariable("id")Integer id){
-        Optional<ShelterCard> g=scs.getShelterCardById(id);
-        if(!g.isPresent())
+    public ShelterCard getShelterCardById(@PathVariable("id") Integer id) {
+        Optional<ShelterCard> g = scs.getShelterCardById(id);
+        if (!g.isPresent())
             throw new ResourceNotFoundException("ShelterCard", "id", id);
         return g.get();
     }
 
     @PostMapping()
-    public ResponseEntity<ShelterCard> createShelterCard(@Valid @RequestBody ShelterCard g){
-        g=scs.save(g);
+    public ResponseEntity<ShelterCard> createShelterCard(@Valid @RequestBody ShelterCard g) {
+        g = scs.save(g);
         URI location = ServletUriComponentsBuilder
-                    .fromCurrentRequest()
-                    .path("/{id}")
-                    .buildAndExpand(g.getId())
-                    .toUri();
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(g.getId())
+                .toUri();
         return ResponseEntity.created(location).body(g);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateShelterCard(@Valid @RequestBody ShelterCard g,@PathVariable("id")Integer id){
-        ShelterCard gToUpdate=getShelterCardById(id);
-        BeanUtils.copyProperties(g,gToUpdate, "id");
+    public ResponseEntity<Void> updateShelterCard(@Valid @RequestBody ShelterCard g, @PathVariable("id") Integer id) {
+        ShelterCard gToUpdate = getShelterCardById(id);
+        BeanUtils.copyProperties(g, gToUpdate, "id");
         scs.save(gToUpdate);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteShelterCard(@PathVariable("id")Integer id){
-        if(getShelterCardById(id)!=null)
+    public ResponseEntity<Void> deleteShelterCard(@PathVariable("id") Integer id) {
+        if (getShelterCardById(id) != null)
             scs.delete(id);
         return ResponseEntity.noContent().build();
     }
-      
-    
+
 }

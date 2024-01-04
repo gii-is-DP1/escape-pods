@@ -868,6 +868,7 @@ export default function Game() {
                         moveCrewmate(selectedCrewmate, null, null)
                         moveCrewmate(changedCrewmate, selectedCrewmate.pod, null)
                         moveCrewmate(selectedCrewmate, crewmate.pod)
+                        
 
                         //intercambio pod a hangar
                     } else if ((!selectedCrewmate.pod && crewmate.pod) && embarkSectorsNumbers.includes(crewmate.pod.sector.number)) {

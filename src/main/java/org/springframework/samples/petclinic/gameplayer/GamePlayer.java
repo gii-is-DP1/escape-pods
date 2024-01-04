@@ -1,7 +1,5 @@
 package org.springframework.samples.petclinic.gameplayer;
 
-
-import org.h2.engine.User;
 import org.springframework.samples.petclinic.game.Game;
 import org.springframework.samples.petclinic.model.BaseEntity;
 import org.springframework.samples.petclinic.player.Player;
@@ -17,7 +15,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@EqualsAndHashCode(of="id")
+@EqualsAndHashCode(of = "id")
 public class GamePlayer extends BaseEntity {
     @NotNull
     Integer actions;
@@ -31,10 +29,9 @@ public class GamePlayer extends BaseEntity {
     @NotNull
     @OneToOne
     Player player;
-    
+
     @ManyToOne
     @NotNull
     Game game;
-
 
 }

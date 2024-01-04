@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -33,55 +32,56 @@ public class PodController {
     PodService ps;
 
     @Autowired
-    public PodController(PodService ps){
-        this.ps=ps;
+    public PodController(PodService ps) {
+        this.ps = ps;
     }
 
     @GetMapping
-    public List<Pod> getAllPods(@ParameterObject @RequestParam(value="status",required = false) Integer capacity,
-    @ParameterObject @RequestParam(value = "gameid", required = false) Integer gameid){
-        if(capacity!=null){
+    public List<Pod> getAllPods(@ParameterObject @RequestParam(value = "status", required = false) Integer capacity,
+            @ParameterObject @RequestParam(value = "gameid", required = false) Integer gameid) {
+        if (capacity != null) {
             return ps.getPodsByCapacity(capacity);
-        }if(gameid!=null){
+        }
+        if (gameid != null) {
             return ps.getPodsByGameId(gameid);
-        } else{
+        } else {
             return ps.getAllPodss();
         }
     }
 
     @GetMapping("/{id}")
-    public Pod getPodsById(@PathVariable("id")Integer id){
-        Optional<Pod> g=ps.getPodsById(id);
-        if(!g.isPresent())
+    public Pod getPodsById(@PathVariable("id") Integer id) {
+        Optional<Pod> g = ps.getPodsById(id);
+        if (!g.isPresent())
             throw new ResourceNotFoundException("Pods", "id", id);
-            
+
         return g.get();
     }
 
     @PostMapping()
-    public ResponseEntity<Pod> createPods(@Valid @RequestBody Pod g){
-        g=ps.save(g);
+    public ResponseEntity<Pod> createPods(@Valid @RequestBody Pod g) {
+        g = ps.save(g);
         URI location = ServletUriComponentsBuilder
-                    .fromCurrentRequest()
-                    .path("/{id}")
-                    .buildAndExpand(g.getId())
-                    .toUri();
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(g.getId())
+                .toUri();
         return ResponseEntity.created(location).body(g);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updatePods(@Valid @RequestBody Pod g,@PathVariable("id")Integer id){
-        Pod gToUpdate=getPodsById(id);
-        BeanUtils.copyProperties(g,gToUpdate, "id");
+    public ResponseEntity<Void> updatePods(@Valid @RequestBody Pod g, @PathVariable("id") Integer id) {
+        Pod gToUpdate = getPodsById(id);
+        BeanUtils.copyProperties(g, gToUpdate, "id");
         ps.save(gToUpdate);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePods(@PathVariable("id")Integer id){
-        if(getPodsById(id)!=null)
+    public ResponseEntity<Void> deletePods(@PathVariable("id") Integer id) {
+        if (getPodsById(id) != null)
             ps.delete(id);
         return ResponseEntity.noContent().build();
     }
-       
+
 }

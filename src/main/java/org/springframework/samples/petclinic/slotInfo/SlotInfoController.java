@@ -32,55 +32,57 @@ public class SlotInfoController {
     SlotInfoService sis;
 
     @Autowired
-    public SlotInfoController(SlotInfoService sis){
-        this.sis=sis;
+    public SlotInfoController(SlotInfoService sis) {
+        this.sis = sis;
     }
 
     @GetMapping
-    public List<SlotInfo> getAllSlotInfos(@ParameterObject @RequestParam(value="status",required = false) Integer position,
-    @ParameterObject @RequestParam(value = "gameid", required = false) Integer gameid){
-        if(position!=null){
+    public List<SlotInfo> getAllSlotInfos(
+            @ParameterObject @RequestParam(value = "status", required = false) Integer position,
+            @ParameterObject @RequestParam(value = "gameid", required = false) Integer gameid) {
+        if (position != null) {
             return sis.getSlotInfoByPosition(position);
-        } if (gameid!=null) {
-            return sis.getSlotInfoByGameId(gameid);
-        } else{
-        return sis.getAllSlotInfos();
         }
-    
+        if (gameid != null) {
+            return sis.getSlotInfoByGameId(gameid);
+        } else {
+            return sis.getAllSlotInfos();
+        }
+
     }
 
     @GetMapping("/{id}")
-    public SlotInfo getSlotInfoById(@PathVariable("id")Integer id){
-        Optional<SlotInfo> g=sis.getSlotInfoById(id);
-        if(!g.isPresent())
+    public SlotInfo getSlotInfoById(@PathVariable("id") Integer id) {
+        Optional<SlotInfo> g = sis.getSlotInfoById(id);
+        if (!g.isPresent())
             throw new ResourceNotFoundException("SlotInfo", "id", id);
         return g.get();
     }
 
     @PostMapping()
-    public ResponseEntity<SlotInfo> createSlotInfo(@Valid @RequestBody SlotInfo g){
-        g=sis.save(g);
+    public ResponseEntity<SlotInfo> createSlotInfo(@Valid @RequestBody SlotInfo g) {
+        g = sis.save(g);
         URI location = ServletUriComponentsBuilder
-                    .fromCurrentRequest()
-                    .path("/{id}")
-                    .buildAndExpand(g.getId())
-                    .toUri();
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(g.getId())
+                .toUri();
         return ResponseEntity.created(location).body(g);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateSlotInfo(@Valid @RequestBody SlotInfo g,@PathVariable("id")Integer id){
-        SlotInfo gToUpdate=getSlotInfoById(id);
-        BeanUtils.copyProperties(g,gToUpdate, "id");
+    public ResponseEntity<Void> updateSlotInfo(@Valid @RequestBody SlotInfo g, @PathVariable("id") Integer id) {
+        SlotInfo gToUpdate = getSlotInfoById(id);
+        BeanUtils.copyProperties(g, gToUpdate, "id");
         sis.save(gToUpdate);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteSlotInfo(@PathVariable("id")Integer id){
-        if(getSlotInfoById(id)!=null)
+    public ResponseEntity<Void> deleteSlotInfo(@PathVariable("id") Integer id) {
+        if (getSlotInfoById(id) != null)
             sis.delete(id);
         return ResponseEntity.noContent().build();
     }
-    
+
 }

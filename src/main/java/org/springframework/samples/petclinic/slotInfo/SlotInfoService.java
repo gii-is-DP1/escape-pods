@@ -4,13 +4,14 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class SlotInfoService {
 
-    SlotInfoRepository si;
+   private  SlotInfoRepository si;
     
     @Autowired
     public SlotInfoService(SlotInfoRepository si){
@@ -18,34 +19,34 @@ public class SlotInfoService {
     }
 
     @Transactional(readOnly=true)
-    public List<SlotInfo> getAllSlotInfos(){
+    public List<SlotInfo> getAllSlotInfos() throws DataAccessException{
         return si.findAll();
     }
     
     @Transactional(readOnly=true)
-    public Optional<SlotInfo> getSlotInfoById(Integer id){
+    public Optional<SlotInfo> getSlotInfoById(Integer id)throws DataAccessException{
         return si.findById(id);
     }
 
     @Transactional
-    public SlotInfo save(SlotInfo g) {
+    public SlotInfo save(SlotInfo g) throws DataAccessException{
         si.save(g);
         return g;
     }
 
     @Transactional(readOnly=true)
-    public List<SlotInfo> getSlotInfoByPosition(Integer postion){
+    public List<SlotInfo> getSlotInfoByPosition(Integer postion)throws DataAccessException{
         return si.findByPosition(postion);
     }
 
     @Transactional(readOnly=true)
-    public List<SlotInfo> getSlotInfoByGameId(Integer id){
+    public List<SlotInfo> getSlotInfoByGameId(Integer id)throws DataAccessException{
         return si.findByGameId(id);
     }
 
 
-    @Transactional()
-    public void delete(Integer id) {
+    @Transactional
+    public void delete(Integer id) throws DataAccessException{
         si.deleteById(id);
     }
 }
