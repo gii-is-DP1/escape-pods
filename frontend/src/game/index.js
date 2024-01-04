@@ -1195,6 +1195,28 @@ export default function Game() {
                                 alignSelf: "center",
                                 marginBottom: 20
                             }} onClick={() => {
+                                setProgramming(prevProgramming => !prevProgramming);
+                                setSelectingBeacon(prevSelectingBeacon => !prevSelectingBeacon);
+                                alert("Click on any of the beacons")
+                                console.log(programming)
+                            }}>
+                                PROGRAMAR
+                            </Button>
+
+                            <Button className="button" style={{
+                                backgroundColor: "#CFFF68",
+                                border: "none",
+                                width: 200,
+                                fontSize: 20,
+                                borderRadius: 20,
+                                height: 60,
+                                boxShadow: "5px 5px 5px #00000020",
+                                textShadow: "2px 2px 2px #00000020",
+                                transition: "0.15s",
+                                alignSelf: "center",
+                                marginBottom: 20
+                            }} onClick={() => {
+                                alert("Click on the pod or shelter you want to spy")
                                 setSpying(true);
                                 setSelectingPod(true);
                                 setSelectingShelterCard(true);
