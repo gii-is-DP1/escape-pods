@@ -750,11 +750,11 @@ export default function Game() {
         } else if (embarking) {
             //el pod seleccionado tieen espacio y esta en un sector adyacente o hangar
             if ((embarkSectorsNumbers.includes(pod.sector ? pod.sector.number : '') || !pod.sector) && (pod && GetCrewmatesFromPod(pod).length < pod.capacity)) {
-               // el pod seleccionado es de 1cap y haya otros pods de 3 o 2 que se pueden seleccionar
+                // el pod seleccionado es de 1cap y haya otros pods de 3 o 2 que se pueden seleccionar
                 if (pod.number > 3 && pods.filter(pod => pod.number <= 3 && (!pod.sector || embarkSectorsNumbers.includes(pod.sector.number)) && GetCrewmatesFromPod(pod).length < pod.capacity).length >= 1) {
                     alert('NO PIUEDES EMBARCAR EN UN POD DE 1 SI TU TRIPULANTE PUEDE EMBARCAR EN UNO DE LOS PODS PREDETERMINADOS, SELECCIONA OTRO')
-                
-                // el pod seleccionado no es de 1 o puede no haber pods de 3 o 2 disponibles
+
+                    // el pod seleccionado no es de 1 o puede no haber pods de 3 o 2 disponibles
                 } else {
                     moveCrewmate(selectedCrewmate, pod, null)
                     setSelectingCrewmate(false)
@@ -768,26 +768,26 @@ export default function Game() {
                             movePod(pod, sectors.find(sector => sector.number === 2));
                             setEmbarking(false)
 
-                        //pod 2 y que haya hueco en el sector asignado a este
+                            //pod 2 y que haya hueco en el sector asignado a este
                         } else if (pod.number === 2 && (pods.filter(pod => pod.sector && pod.sector.number === 1).length === 0)) {
                             movePod(pod, sectors.find(sector => sector.number === 1));
                             setEmbarking(false)
 
-                        //pod 3 y que haya hueco en el sector asignado a este
+                            //pod 3 y que haya hueco en el sector asignado a este
                         } else if (pod.number === 3 && (pods.filter(pod => pod.sector && pod.sector.number === 3).length === 0)) {
                             movePod(pod, sectors.find(sector => sector.number === 3));
                             setEmbarking(false)
 
-                        //hay 3 pods que obstaculizan salir( debido a las reglas de juego y acciones, esto siempre le ocurrira a un pod de 1)   
-                        }else if(pods.filter(pod=> pod.sector && embarkSectorsNumbers.includes(pod.sector.number)).length===3){
+                            //hay 3 pods que obstaculizan salir( debido a las reglas de juego y acciones, esto siempre le ocurrira a un pod de 1)   
+                        } else if (pods.filter(pod => pod.sector && embarkSectorsNumbers.includes(pod.sector.number)).length === 3) {
                             alert('NO ES POSIBLE SALIR DEL HANGAR CON EL POD, SE REVERTIRA LA ACCION')
-                            moveCrewmate(selectedCrewmate,null,null)
+                            moveCrewmate(selectedCrewmate, null, null)
                             setSelectingPod(false)
                             setSelectingCrewmate(false)
                             setEmbarking(false)
                             setSelectedCrewmate(null)
 
-                        //cualquier pod en el que no haya hueco en el sector asignado a este(los pods de 1 no salen del hangar  aun sector especifico)
+                            //cualquier pod en el que no haya hueco en el sector asignado a este(los pods de 1 no salen del hangar  aun sector especifico)
                         } else {
                             alert('Select one of the adjacent sectors to the hangar')
                             setSelectingSector(true);
@@ -813,7 +813,7 @@ export default function Game() {
                 setSelectingSector(true)
                 alert(`HAS SELECCIONADO UN POD, ELIGE DONDE SE DIRIGIRA ESTE`)
             }
-        } else if(spying) {
+        } else if (spying) {
             setSelectingPod(false)
             setSelectingShelterCard(false)
             setSpiedCrewmates(GetCrewmatesFromPod(pod))
@@ -825,7 +825,7 @@ export default function Game() {
     }
 
     function crewmateClickHandler(crewmate) {
-        //        refresher()
+        //refresher()
         console.log(selectedCrewmate)
         if (embarking) {
             setSelectedCrewmate(crewmate)
@@ -865,7 +865,7 @@ export default function Game() {
                         moveCrewmate(selectedCrewmate, null, null)
                         moveCrewmate(changedCrewmate, selectedCrewmate.pod, null)
                         moveCrewmate(selectedCrewmate, crewmate.pod)
-                        
+
 
                         //intercambio pod a hangar
                     } else if ((!selectedCrewmate.pod && crewmate.pod) && embarkSectorsNumbers.includes(crewmate.pod.sector.number)) {
@@ -970,7 +970,7 @@ export default function Game() {
 
                 // intercambiar 2 beacon de sitio 
             } else if (line.beacon && selectedBeacon && !GetUnusedBeacons().includes(selectedBeacon)) {
-                
+
                 console.log(selectedBeacon)
                 let selectedLineBeacon = line.beacon
 
