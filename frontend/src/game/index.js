@@ -542,93 +542,6 @@ export default function Game() {
         )
     }
 
-    function ActionCards() {
-        if (emptyChecker("array", gamePlayers)) {
-            return null
-        }
-        return (
-            <div style={{ display: "flex", flexDirection: "row", width: 480, height: 230, position: "relative" }}>
-                <div className={gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).color.toLowerCase() + "-action-card"}>
-                    <div style={{ position: "absolute", left: 92, top: 20, width: 40, height: 40 }}
-                        onClick={() => {
-                            if (!actionSlots.embark) {
-                                setActionSlots({ ...actionSlots, embark: [crewmates[0]] })
-                            } else {
-                                setActionSlots({ ...actionSlots, embark: [...actionSlots.embark, crewmates[0]] })
-                            }
-                        }}
-                    >
-                        <Crewmate crewmate={actionSlots.embark ? actionSlots.embark[0] : null}></Crewmate>
-                    </div>
-                    <div style={{ position: "absolute", left: 138, top: 20, width: 40, height: 40 }}
-                        onClick={() => {
-                            if (!actionSlots.embark) {
-                                setActionSlots({ ...actionSlots, embark: [crewmates[0]] })
-                            } else {
-                                setActionSlots({ ...actionSlots, embark: [...actionSlots.embark, crewmates[0]] })
-                            }
-                        }}
-                    >
-                        <Crewmate crewmate={actionSlots.embark ? actionSlots.embark[1] : null}></Crewmate>
-                    </div>
-                    <div style={{ position: "absolute", left: 33, top: 95.5, width: 40, height: 40 }}
-                        onClick={() => {
-                            setActionSlots({ ...actionSlots, accelerate: crewmates[0] })
-                        }}
-                    >
-                        <Crewmate crewmate={actionSlots.accelerate}></Crewmate>
-                    </div>
-                    <div style={{ position: "absolute", left: 96, top: 95.5, width: 40, height: 40 }}
-                        onClick={() => {
-                            setActionSlots({ ...actionSlots, spy: crewmates[0] })
-                        }}
-                    >
-                        <Crewmate crewmate={actionSlots.spy}></Crewmate>
-                    </div>
-                    <div style={{ position: "absolute", left: 159, top: 95.5, width: 40, height: 40 }}
-                        onClick={() => {
-                            setActionSlots({ ...actionSlots, minipod: crewmates[0] })
-                        }}
-                    >
-                        <Crewmate crewmate={actionSlots.minipod}></Crewmate>
-                    </div>
-
-                </div>
-                <div className={gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).color.toLowerCase() + "-special-action-card"} style={{ position: "absolute", left: 250 }}>
-                    <div style={{ position: "absolute", left: 65.5, top: 26, width: 40, height: 40 }}
-                        onClick={() => {
-                            setSpecialActionSlots({ ...specialActionSlots, board: crewmates[0] })
-                        }}
-                    >
-                        <Crewmate crewmate={specialActionSlots.board}></Crewmate>
-                    </div>
-                    <div style={{ position: "absolute", left: 160.5, top: 26, width: 40, height: 40 }}
-                        onClick={() => {
-                            setSpecialActionSlots({ ...specialActionSlots, pilot: crewmates[0] })
-                        }}
-                    >
-                        <Crewmate crewmate={specialActionSlots.pilot}></Crewmate>
-                    </div>
-                    <div style={{ position: "absolute", left: 65, top: 89.5, width: 40, height: 40 }}
-                        onClick={() => {
-                            setSpecialActionSlots({ ...specialActionSlots, program: crewmates[0] })
-                        }}
-                    >
-                        <Crewmate crewmate={specialActionSlots.program}></Crewmate>
-                    </div>
-                    <div style={{ position: "absolute", left: 160.5, top: 89.5, width: 40, height: 40 }}
-                        onClick={() => {
-                            setSpecialActionSlots({ ...specialActionSlots, refresh: crewmates[0] })
-                        }}
-                    >
-                        <Crewmate crewmate={specialActionSlots.refresh}></Crewmate>
-                    </div>
-                </div>
-
-            </div>
-        )
-    }
-
     async function movePod(pod, sector) {
         console.log("fetch pod" + pod)
         console.log("fetch sector" + sector)
@@ -835,25 +748,46 @@ export default function Game() {
 
             }
         } else if (embarking) {
+            //el pod seleccionado tieen espacio y esta en un sector adyacente o hangar
             if ((embarkSectorsNumbers.includes(pod.sector ? pod.sector.number : '') || !pod.sector) && (pod && GetCrewmatesFromPod(pod).length < pod.capacity)) {
+               // el pod seleccionado es de 1cap y haya otros pods de 3 o 2 que se pueden seleccionar
                 if (pod.number > 3 && pods.filter(pod => pod.number <= 3 && (!pod.sector || embarkSectorsNumbers.includes(pod.sector.number)) && GetCrewmatesFromPod(pod).length < pod.capacity).length >= 1) {
                     alert('NO PIUEDES EMBARCAR EN UN POD DE 1 SI TU TRIPULANTE PUEDE EMBARCAR EN UNO DE LOS PODS PREDETERMINADOS, SELECCIONA OTRO')
+                
+                // el pod seleccionado no es de 1 o puede no haber pods de 3 o 2 disponibles
                 } else {
                     moveCrewmate(selectedCrewmate, pod, null)
                     setSelectingCrewmate(false)
                     setSelectingPod(false)
                     setSelectedCrewmate(null)
                     alert(' se ha movido el crewmate al pod selecionado')
+                    //para pods en hangar
                     if (!pod.sector) {
+                        //pod 1 y que haya hueco en el sector asignado a este
                         if (pod.number === 1 && (pods.filter(pod => pod.sector && pod.sector.number === 2).length === 0)) {
                             movePod(pod, sectors.find(sector => sector.number === 2));
                             setEmbarking(false)
+
+                        //pod 2 y que haya hueco en el sector asignado a este
                         } else if (pod.number === 2 && (pods.filter(pod => pod.sector && pod.sector.number === 1).length === 0)) {
                             movePod(pod, sectors.find(sector => sector.number === 1));
                             setEmbarking(false)
+
+                        //pod 3 y que haya hueco en el sector asignado a este
                         } else if (pod.number === 3 && (pods.filter(pod => pod.sector && pod.sector.number === 3).length === 0)) {
                             movePod(pod, sectors.find(sector => sector.number === 3));
                             setEmbarking(false)
+
+                        //hay 3 pods que obstaculizan salir( debido a las reglas de juego y acciones, esto siempre le ocurrira a un pod de 1)   
+                        }else if(pods.filter(pod=> pod.sector && embarkSectorsNumbers.includes(pod.sector.number)).length===3){
+                            alert('NO ES POSIBLE SALIR DEL HANGAR CON EL POD, SE REVERTIRA LA ACCION')
+                            moveCrewmate(selectedCrewmate,null,null)
+                            setSelectingPod(false)
+                            setSelectingCrewmate(false)
+                            setEmbarking(false)
+                            setSelectedCrewmate(null)
+
+                        //cualquier pod en el que no haya hueco en el sector asignado a este(los pods de 1 no salen del hangar  aun sector especifico)
                         } else {
                             alert('Select one of the adjacent sectors to the hangar')
                             setSelectingSector(true);
