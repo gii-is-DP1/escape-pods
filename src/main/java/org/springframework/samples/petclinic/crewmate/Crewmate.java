@@ -18,8 +18,8 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@EqualsAndHashCode(of="id")
-public class Crewmate extends BaseEntity{
+@EqualsAndHashCode(of = "id")
+public class Crewmate extends BaseEntity {
     @NotNull
     Color color;
 
@@ -39,5 +39,5 @@ public class Crewmate extends BaseEntity{
     @ManyToOne
     @NotNull
     Game game;
-    
+
 }

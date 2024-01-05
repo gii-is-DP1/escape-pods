@@ -16,7 +16,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-public class Pod extends BaseEntity{
+public class Pod extends BaseEntity {
     @NotNull
     @Max(3)
     @Min(0)
@@ -30,7 +30,12 @@ public class Pod extends BaseEntity{
     @NotNull
     @Min(1)
     @Max(6)
-    Integer number; //representa al pod dentro de cada partida: 1 para pod de capacidad 3, 2 y 3 para capacidad 2, resto para capacidad 1
+    Integer number;
+    /*
+     * representa al pod dentro de cada partida: 1 para pod de capacidad 3, 2 y 3
+     * para capacidad 2,
+     * resto para capacidad 1
+     */
 
     @OneToOne
     Sector sector;
@@ -38,6 +43,5 @@ public class Pod extends BaseEntity{
     @ManyToOne
     @NotNull
     Game game;
-    
-    
+
 }

@@ -1,16 +1,13 @@
 package org.springframework.samples.petclinic.player;
 
 import java.net.URISyntaxException;
-import java.net.http.HttpResponse;
 import java.util.List;
 
-import org.apache.tomcat.util.http.parser.HttpParser;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.samples.petclinic.auth.payload.response.MessageResponse;
-import org.springframework.samples.petclinic.owner.Owner;
 import org.springframework.samples.petclinic.user.User;
 import org.springframework.samples.petclinic.user.UserService;
 import org.springframework.samples.petclinic.util.RestPreconditions;
@@ -57,12 +54,6 @@ public class PlayerRestController {
 	@GetMapping(value = "/{id}")
 	public ResponseEntity<Player> findById(@PathVariable("id") int id) {
 		return new ResponseEntity<>(playerService.findPlayerById(id), HttpStatus.OK);
-	}
-
-	//Este creo que al final no hace falta
-	@GetMapping(value = "/{id}/username")
-	public ResponseEntity<String> findUsernameByPlayerId(@PathVariable("id") int id) {
-		return new ResponseEntity<>(playerService.findPlayerById(id).getUser().getUsername(), HttpStatus.OK);
 	}
 
 	@PostMapping()
