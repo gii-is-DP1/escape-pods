@@ -6,7 +6,7 @@ import tokenService from '../services/token.service';
 import '../static/css/home/home.css';
 import "../static/css/lobby/lobby.css";
 import { Link } from 'react-router-dom';
-import foto from "../static/images/pod1.png";
+import foto from "../static/images/pods/pod1.png";
 
 
 //ICONOS
