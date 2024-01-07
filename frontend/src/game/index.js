@@ -31,21 +31,23 @@ export default function Game() {
     const [crewmates, setCrewmates] = useState([]);
     const [shelterCards, setShelterCards] = useState([]);
     const [slotInfos, setSlotInfos] = useState([]);
+
+    //acciones
     const [piloting, setPiloting] = useState(false);
     const [embarking, setEmbarking] = useState(false);
     const [selectingSector, setSelectingSector] = useState(false);
     const [selectedSector, setSelectedSector] = useState({});
     const [selectedPod, setSelectedPod] = useState({});
     const [selectingPod, setSelectingPod] = useState(false);
-    const [selectedCrewmate, setSelectedCrewmate] = useState({});
+    const [selectedCrewmate, setSelectedCrewmate] = useState(null);
     const [selectingCrewmate, setSelectingCrewmate] = useState(false);
     const [selectingShelterCard, setSelectingShelterCard] = useState(false);
     const [selectedShelterCard, setSelectedShelterCard] = useState({});
     const [spying, setSpying] = useState(false);
+    const [boarding, setBoarding] = useState(false)
 
     const [programming, setProgramming] = useState(false)
     const [remotePiloting, setRemotePiloting] = useState(false)
-    const [podjacking, setPodJacking] = useState(false)
     const [minipodSpawning, setMinipodSpawning] = useState(false)
     const [selectingBeacon, setSelectingBeacon] = useState(false);
     const [selectedBeacon, setSelectedBeacon] = useState({});
@@ -536,10 +538,10 @@ export default function Game() {
                     <div style={{ position: "absolute", left: 65.5, top: 26, width: 40, height: 40 }}
                         onClick={() => {
                             setSpecialActionSlots({ ...specialActionSlots, board: crewmates[0] })
-                            setPodJacking(true);
+                            setBoarding(true);
                             setSelectingCrewmate(true);
                             ShowAlert("Click on any of your crewmates")
-                            console.log(podjacking)
+
                         }}
                     >
                         <Crewmate crewmate={specialActionSlots.board}></Crewmate>
@@ -623,7 +625,7 @@ export default function Game() {
             role: crewmate.role,
             player: crewmate.player,
             shelterCard: shelterCard ? shelterCard : crewmate.shelterCard,
-            pod: pod ? pod : null,  // si se pasa un pod se mueve al pod, el unico caso en el que se mueve un crewmate sin pasar un pod es para subir a un refugio, asi que se baja del pod
+            pod: pod && !shelterCard ? pod : null,  // si se mueve a un pod, se pone el pod. Si se mueve a un shelter, se pone a null. Si no se le pasa nada, se pone null (para hacer boarding)
             game: game
         }
         await fetch(`/api/v1/crewmates/${crewmate.id}`, {
@@ -637,7 +639,7 @@ export default function Game() {
         })
 
         const newCrewmates = await itemGetters.fetchCrewmates(gameId, jwt)
-        if (oldPod && newCrewmates.filter(crewmate => crewmate.pod && oldPod && (crewmate.pod.number === oldPod.number)).length === 0) {
+        if (oldPod && newCrewmates.filter(crewmate => crewmate.pod && oldPod && (crewmate.pod.number === oldPod.number)).length === 0 && !boarding) { //boarding porque puede haber casos en los que el pod se quede vacío por un instante al intercambiar crewmates pero no debe irse al hangar
             movePod(oldPod, null)
         }
         setCrewmates(newCrewmates)
@@ -888,8 +890,7 @@ export default function Game() {
         }
     }
 
-    function crewmateClickHandler(crewmate) {
-        console.log(selectedCrewmate)
+    async function crewmateClickHandler(crewmate) {
         if (embarking) {
             setSelectedCrewmate(crewmate)
             if (crewmate.player.id === gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).id) {
@@ -901,46 +902,70 @@ export default function Game() {
             } else {
                 ShowAlert("The crewmate must be yours")
             }
-        } else if (podjacking) {
-            console.log(!selectedCrewmate.id)
-            if (!selectedCrewmate.id) {
-                //con la imosicion de un orden estamos obligando a que siempre se use para el intercambio un crewmate del jugador que realiza la accion
-                if (crewmate.player.id === gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).id) {
+        } else if (boarding) {
+            console.log(crewmate)
+            console.log(selectedCrewmate)
+            if (crewmate.shelterCard) {
+                ShowAlert("You cannot use this action on a crewmate that is in a shelter")
+            } else if (crewmate.player.id === gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).id) {
+                if (!selectedCrewmate) {
                     setSelectedCrewmate(crewmate)
                     ShowAlert("Select the crewmate you want to swap")
                 } else {
+                    ShowAlert("One of the crewmates you swap must not be yours")
+                }
+            } else {
+                if (!selectedCrewmate) {
                     ShowAlert("You must select one of your crewmates first")
-                }
-            } else if (selectedCrewmate.id) {
-                console.log((!selectedCrewmate.pod && crewmate.pod) && embarkSectorsNumbers.includes(crewmate.pod.sector.number))
-
-
-
-                //que el crewmate nuevo no sea tuyo y que el estado contenga ya un crewmate del jugador q realiza la acion
-                if ((crewmate.player.id !== gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).id) && (selectedCrewmate && selectedCrewmate.player.id === gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).id)) {
-                    let changedCrewmate = crewmate
-
-                    //intercambio entre 2 pods
-                    if (selectedCrewmate.pod && (crewmate.pod && adjacencyList[selectedCrewmate.pod.sector.number].includes(crewmate.pod.sector.number))) {
-                        ShowAlert("Crewmates swapped")
-                        moveCrewmate(selectedCrewmate, null, null)
-                        moveCrewmate(changedCrewmate, selectedCrewmate.pod, null)
-                        moveCrewmate(selectedCrewmate, crewmate.pod)
-
-
-                        //intercambio pod a hangar
-                    } else if ((!selectedCrewmate.pod && crewmate.pod) && embarkSectorsNumbers.includes(crewmate.pod.sector.number)) {
-                        moveCrewmate(changedCrewmate, null, null)
-                        moveCrewmate(selectedCrewmate, crewmate.pod)
-                        ShowAlert("Crewmates swapped. The swapped crewmate was sent back to its player reserve.")
-
-                    } else {
-                        ShowAlert("You can't do that")
-                    }
                 } else {
-                    alert('PARA CAMBIAR 2 DE TUS TRIPULANTES SELECCIONA EMBARCAR/DESEMBARCAR')
+                    if (selectedCrewmate.pod) {
+                        if (adjacencyList[selectedCrewmate.pod.sector.number].includes(crewmate.pod.sector.number)) {
+                            if (crewmate.pod.capacity === GetCrewmatesFromPod(crewmate.pod).length ||
+                                selectedCrewmate.pod.capacity === GetCrewmatesFromPod(selectedCrewmate.pod).length) {
+                                let yourCrewmatePod = selectedCrewmate.pod
+                                let otherCrewmatePod = crewmate.pod
+                                await moveCrewmate(selectedCrewmate, null, null)
+                                await moveCrewmate(crewmate, null, null)
+                                moveCrewmate(selectedCrewmate, otherCrewmatePod, null)
+                                moveCrewmate(crewmate, yourCrewmatePod, null)
+                                ShowAlert("Crewmates swapped")
+                                setSelectedCrewmate(null)
+                                setSelectingCrewmate(false)
+                                setBoarding(false)
+                            } else {
+                                moveCrewmate(selectedCrewmate, crewmate.pod, null)
+                                moveCrewmate(crewmate, selectedCrewmate.pod, null)
+                                ShowAlert("Crewmates swapped")
+                                setSelectedCrewmate(null)
+                                setSelectingCrewmate(false)
+                                setBoarding(false)
+                            }
+                        } else {
+                            ShowAlert("You can only swap crewmates in adjacent pods")
+                        }
+                    } else {
+                        if (embarkSectorsNumbers.includes(crewmate.pod.sector.number)) {
+                            if (crewmate.pod.capacity === GetCrewmatesFromPod(crewmate.pod).length) {
+                                let otherCrewmatePod = crewmate.pod
+                                moveCrewmate(crewmate, null, null)
+                                moveCrewmate(selectedCrewmate, otherCrewmatePod, null)
+                                ShowAlert("Crewmates swapped")
+                                setSelectedCrewmate(null)
+                                setSelectingCrewmate(false)
+                                setBoarding(false)
+                            } else {
+                                moveCrewmate(selectedCrewmate, crewmate.pod, null)
+                                moveCrewmate(crewmate, null, null)
+                                ShowAlert("Crewmates swapped")
+                                setSelectedCrewmate(null)
+                                setSelectingCrewmate(false)
+                                setBoarding(false)
+                            }
+                        } else {
+                            ShowAlert("If your selected crewmate is in your reserve you can only board pods adjacent to the hangar")
+                        }
+                    }
                 }
-
             }
         } else if (minipodSpawning) {
             setSelectedCrewmate(crewmate)
@@ -1061,7 +1086,13 @@ export default function Game() {
         setSpying(false)
         setMinipodSpawning(false)
         setRemotePiloting(false)
-        setPodJacking(false)
+        setBoarding(false)
+        setSelectedSector(null)
+        setSelectedPod(null)
+        setSelectedCrewmate(null)
+        setSelectedShelterCard(null)
+        setSelectedBeacon(null)
+        setSelectedLine(null)
         setSelectingPod(false)
         setSelectingCrewmate(false)
         setSelectingSector(false)
@@ -1080,7 +1111,7 @@ export default function Game() {
         console.log("spying " + spying)
         console.log("minipodSpawning " + minipodSpawning)
         console.log("remotePiloting " + remotePiloting)
-        console.log("podjacking " + podjacking)
+        console.log("boarding " + boarding)
         console.log("selectingPod " + selectingPod)
         console.log("selectingCrewmate " + selectingCrewmate)
         console.log("selectingSector " + selectingSector)
@@ -1091,6 +1122,12 @@ export default function Game() {
         console.log("crasher2 " + crasher2)
         console.log("crashSector1 " + crashSector1)
         console.log("crashSector2 " + crashSector2)
+        console.log(selectedSector)
+        console.log(selectedPod)
+        console.log(selectedCrewmate)
+        console.log(selectedShelterCard)
+        console.log(selectedBeacon)
+        console.log(selectedLine)
     }
 
     const [alertMessage, setAlertMessage] = useState("");
@@ -1215,7 +1252,7 @@ export default function Game() {
                             </Button>
                             {(selectingBeacon || selectingCrewmate || selectingPod || selectingSector || selectingLine ||
                                 selectingShelterCard || piloting || embarking || spying || minipodSpawning || remotePiloting ||
-                                podjacking) &&
+                                boarding) &&
                                 <Button className="button" style={{
                                     backgroundColor: "#ff8368",
                                     border: "none",
