@@ -152,7 +152,6 @@ export default function Game() {
     }
 
     async function refresherSetters() {
-//        ShowAlert("Refreshing game data...")
         setPods(await itemGetters.fetchPods(gameId, jwt));
         setCrewmates(await itemGetters.fetchCrewmates(gameId, jwt));
         setLines(await itemGetters.fetchLines(gameId, jwt));
@@ -236,11 +235,6 @@ export default function Game() {
                 {props.sector.scrap &&
                     <img src={scrap} style={{ maxHeight: 100, maxWidth: 100 }} />
                 }
-                {/* 
-                <Button style={{ border: "none", opacity: 0, width: 100, height: 100, borderRadius: 50, boxShadow: "5px 5px 5px #00000020", textShadow: "2px 2px 2px #00000020", transition: "0.15s" }}>
-                    {props.sector.number}
-                </Button>
-                */}
             </div>
         )
     }
@@ -322,7 +316,7 @@ export default function Game() {
                     r={props.size === "s" ? "14" : "18"}
                     stroke={props.crewmate.color !== "BLACK" ? "black" : "white"} strokeWidth="1" fill={props.crewmate.color}>
                 </circle>
-                {(gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).id === props.crewmate.player.id || (spying && spiedCrewmates.includes(props.crewmate))) && // condicion incompleta, solo debe enseñar los crewmate de un pod o refugio conreto
+                {(gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).id === props.crewmate.player.id || (spying && spiedCrewmates.includes(props.crewmate))) &&
                     <foreignObject
                         x={props.size === "s" ? "6.5" : "10"}
                         y={props.size === "s" ? "1.5" : "5"}
