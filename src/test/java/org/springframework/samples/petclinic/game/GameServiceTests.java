@@ -89,7 +89,6 @@ class GameServiceTests {
     }
 
     @Test
-    //TODO quitar la segunda parte del test(la de crearGame con id 1 y el resto de comprobaciones)
     void getGameNotFoundTest() {
         Integer gameId = 1;
         Integer falseGameId= 20;
@@ -110,11 +109,10 @@ class GameServiceTests {
     
     @Test
     void saveGameTest() {
-        List<Player> players = List.of(new Player()) ;
+        List<Player> players = List.of(new Player());
         Game expectedGame = new Game();
         expectedGame.setPlayers(players);
         when(gameRepository.save(any(Game.class))).thenAnswer(i ->
-
         i.getArguments()[0]);
 
         Game actualGame = gameService.save(expectedGame);

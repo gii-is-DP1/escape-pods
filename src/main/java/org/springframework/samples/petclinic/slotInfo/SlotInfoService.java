@@ -11,42 +11,41 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class SlotInfoService {
 
-   private  SlotInfoRepository si;
-    
+    private SlotInfoRepository si;
+
     @Autowired
-    public SlotInfoService(SlotInfoRepository si){
-        this.si=si;
+    public SlotInfoService(SlotInfoRepository si) {
+        this.si = si;
     }
 
-    @Transactional(readOnly=true)
-    public List<SlotInfo> getAllSlotInfos() throws DataAccessException{
+    @Transactional(readOnly = true)
+    public List<SlotInfo> getAllSlotInfos() throws DataAccessException {
         return si.findAll();
     }
-    
-    @Transactional(readOnly=true)
-    public Optional<SlotInfo> getSlotInfoById(Integer id)throws DataAccessException{
+
+    @Transactional(readOnly = true)
+    public Optional<SlotInfo> getSlotInfoById(Integer id) throws DataAccessException {
         return si.findById(id);
     }
 
     @Transactional
-    public SlotInfo save(SlotInfo g) throws DataAccessException{
+    public SlotInfo save(SlotInfo g) throws DataAccessException {
         si.save(g);
         return g;
     }
 
-    @Transactional(readOnly=true)
-    public List<SlotInfo> getSlotInfoByPosition(Integer postion)throws DataAccessException{
+    @Transactional(readOnly = true)
+    public List<SlotInfo> getSlotInfoByPosition(Integer postion) throws DataAccessException {
         return si.findByPosition(postion);
     }
 
-    @Transactional(readOnly=true)
-    public List<SlotInfo> getSlotInfoByGameId(Integer id)throws DataAccessException{
+    @Transactional(readOnly = true)
+    public List<SlotInfo> getSlotInfoByGameId(Integer id) throws DataAccessException {
         return si.findByGameId(id);
     }
 
-
     @Transactional
-    public void delete(Integer id) throws DataAccessException{
+    public void delete(Integer id) throws DataAccessException {
         si.deleteById(id);
     }
 }

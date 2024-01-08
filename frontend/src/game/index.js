@@ -1300,7 +1300,33 @@ export default function Game() {
                                 }}>
                                     Cancelar accion
                                 </Button>
+
                             }
+
+                            <Button className="button" style={{
+                                backgroundColor: "#CFFF68",
+                                border: "none",
+                                width: 200,
+                                fontSize: 20,
+                                borderRadius: 20,
+                                height: 60,
+                                boxShadow: "5px 5px 5px #00000020",
+                                textShadow: "2px 2px 2px #00000020",
+                                transition: "0.15s",
+                                alignSelf: "center",
+                                marginBottom: 20
+                            }} onClick={() => {
+                                fetch(`/api/v1/crewmates?gameid=` + game.id, {
+                                    headers: {
+                                        "Authorization": `Bearer ${ jwt }`,
+                                        'Accept': 'application/json',
+                                        'Content-Type': 'application/json'
+                                    },
+                                    method: 'DELETE'
+                                })
+                            }}>
+                                borrar crewmates d juego
+                            </Button>
                         </div>
                         <UnusedBeacons />
                         {!emptyChecker("array", crewmates) &&

@@ -39,6 +39,11 @@ public class LineService {
         lr.deleteById(id);
     }
 
+    @Transactional()
+    public void deleteByGameId(Integer id) throws DataAccessException{
+        lr.deleteByGameId(id);
+    }
+
     @Transactional(readOnly = true)
     public List<Line> getAllLinesByGameId(Integer gameId) throws DataAccessException {
         return lr.findByGameId(gameId);

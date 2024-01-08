@@ -76,9 +76,16 @@ public class BeaconRestController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteGame(@PathVariable("id") Integer id) {
+    public ResponseEntity<Void> deleteBeacon(@PathVariable("id") Integer id) {
         if (getBeaconById(id) != null)
             bs.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping()
+    public ResponseEntity<Void> deleteBeaconsById(
+            @ParameterObject @RequestParam(value = "gameid", required = false) Integer gameid) {
+        bs.deleteByGameId(gameid);
         return ResponseEntity.noContent().build();
     }
 

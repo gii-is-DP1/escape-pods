@@ -39,8 +39,13 @@ public class CrewmateService {
     }
 
     @Transactional
-    public void delete() throws DataAccessException {
-        cr.deleteAll();
+    public void deleteById(Integer id) throws DataAccessException {
+        cr.deleteById(id);
+    }
+
+    @Transactional
+    public void deleteByGameId(Integer id) throws DataAccessException {
+        cr.deleteByGameId(id);
     }
 
 }

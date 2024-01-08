@@ -50,4 +50,9 @@ public class BeaconService {
         br.deleteById(id);
     }
 
+    @Transactional
+    public void deleteByGameId(Integer id) throws DataAccessException {
+        br.deleteByGameId(id);
+    }
+
 }

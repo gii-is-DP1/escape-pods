@@ -50,4 +50,9 @@ public class GamePlayerService {
         pr.deleteById(id);
     }
 
+    @Transactional
+    public void deleteByGameId(Integer id) throws DataAccessException {
+        pr.deleteByGameId(id);
+    }
+
 }

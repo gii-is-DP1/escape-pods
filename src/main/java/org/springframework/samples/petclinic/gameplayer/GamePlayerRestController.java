@@ -80,4 +80,11 @@ public class GamePlayerRestController {
         return ResponseEntity.noContent().build();
     }
 
+    @DeleteMapping()
+    public ResponseEntity<Void> deleteGamePlayersByGameId(
+            @ParameterObject() @RequestParam(value = "gameid", required = false) Integer gameid) {
+        ps.deleteByGameId(gameid);
+        return ResponseEntity.noContent().build();
+    }
+
 }
