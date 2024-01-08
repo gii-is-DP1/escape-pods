@@ -16,6 +16,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.samples.petclinic.game.Game;
 
+
 class CrewmateServiceTest {
 
     @Mock
@@ -58,10 +59,8 @@ class CrewmateServiceTest {
 
     @Test
     void getCrewmateByIdNotFoundTest(){
-        Integer crewmateId= 2;
         Integer falseCrewmateId= 3;
-        Crewmate expectedCrewmate= new Crewmate();
-        expectedCrewmate.setId(crewmateId);
+
 
         when(crewmateRepository.findById(falseCrewmateId)).thenReturn(Optional.empty());
         Crewmate actualCrewmate= crewmateService.getCrewmateById(falseCrewmateId).orElse(null);
@@ -110,6 +109,18 @@ class CrewmateServiceTest {
         assertNull(actualCrewmates);
         verify(crewmateRepository, times(1)).findByGameId(nonExistentGameId);
 
+    }
+
+    @Test
+    void saveCrewmateTest(){
+        Crewmate expectedCrewmate = new Crewmate();
+        when(crewmateRepository.save(any(Crewmate.class))).thenAnswer(i ->
+        i.getArguments()[0]);
+
+        Crewmate actualCrewmate = crewmateService.save(expectedCrewmate);
+
+        assertEquals(expectedCrewmate.getId(), actualCrewmate.getId());
+        verify(crewmateRepository, times(1)).save(any(Crewmate.class));
     }
 
 

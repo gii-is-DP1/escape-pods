@@ -38,9 +38,8 @@ public class GamePlayerRestController {
 
     @GetMapping
     public List<GamePlayer> getAllGamePlayers(
-            @ParameterObject() @RequestParam(value = "color", required = false) Color color,
             @ParameterObject() @RequestParam(value = "gameid", required = false) Integer gameid) {
-        if (color == null && gameid != null) {
+        if (gameid != null) {
             return ps.getGamePlayersByGameId(gameid);
         } else
             return ps.getAllGamePlayers();

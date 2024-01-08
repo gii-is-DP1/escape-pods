@@ -12,11 +12,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface GamePlayerRepository extends CrudRepository<GamePlayer, Integer> {
 
-    List<GamePlayer> findByColor(String pattern);
-
     List<GamePlayer> findAll();
 
-    Optional<GamePlayer> findByPlayerId(Integer playerId);
+    Optional<GamePlayer> findById(Integer id);
 
     @Query("SELECT g FROM GamePlayer g WHERE g.game.id = :gameId")
     List<GamePlayer> findByGameId(Integer gameId);

@@ -39,11 +39,6 @@ public class GamePlayerService {
         return pr.findByGameId(id);
     }
 
-    @Transactional(readOnly = true)
-    public GamePlayer getGamePlayerByColor(String code) throws DataAccessException {
-        List<GamePlayer> players = pr.findByColor(code);
-        return players.isEmpty() ? null : players.get(0);
-    }
 
     @Transactional
     public void delete(Integer id) throws DataAccessException {
