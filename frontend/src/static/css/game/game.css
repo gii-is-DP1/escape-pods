@@ -37,15 +37,15 @@
 }
 
 .pod3 {
-    background-image: url('../../images/pod3.png');
+    background-image: url('../../images/pods/pod3.png');
 }
 
 .pod2 {
-    background-image: url('../../images/pod2.png');
+    background-image: url('../../images/pods/pod2.png');
 }
 
 .pod1 {
-    background-image: url('../../images/pod1.png');
+    background-image: url('../../images/pods/pod1.png');
 }
 
 .shelter-pink, .shelter-blue, .shelter-yellow, .shelter-green, .shelter-orange {
@@ -59,19 +59,19 @@
 }
 
 .shelter-pink {
-    background-image: url('../../images/pink-shelter.png');
+    background-image: url('../../images/shelters/pink-shelter.png');
 }
 .shelter-blue {
-    background-image: url('../../images/blue-shelter.png');
+    background-image: url('../../images/shelters/blue-shelter.png');
 }
 .shelter-yellow {
-    background-image: url('../../images/yellow-shelter.png');
+    background-image: url('../../images/shelters/yellow-shelter.png');
 }
 .shelter-green {
-    background-image: url('../../images/green-shelter.png');
+    background-image: url('../../images/shelters/green-shelter.png');
 }
 .shelter-orange {
-    background-image: url('../../images/orange-shelter.png');
+    background-image: url('../../images/shelters/orange-shelter.png');
 }
 
 .black-action-card, .black-special-action-card, .blue-action-card, .blue-special-action-card, .yellow-action-card, 
@@ -86,43 +86,43 @@
 }
 
 .black-action-card {
-    background-image: url('../../images/blackActionCard.png');
+    background-image: url('../../images/actionCards/blackActionCard.png');
 }
 
 .black-special-action-card {
-    background-image: url('../../images/blackSpecialActionCard.png');
+    background-image: url('../../images/actionCards/blackSpecialActionCard.png');
 }
 
 .blue-action-card {
-    background-image: url('../../images/blueActionCard.png');
+    background-image: url('../../images/actionCards/blueActionCard.png');
 }
 
 .blue-special-action-card {
-    background-image: url('../../images/blueSpecialActionCard.png');
+    background-image: url('../../images/actionCards/blueSpecialActionCard.png');
 }
 
 .yellow-action-card {
-    background-image: url('../../images/yellowActionCard.png');
+    background-image: url('../../images/actionCards/yellowActionCard.png');
 }
 
 .yellow-special-action-card {
-    background-image: url('../../images/yellowSpecialActionCard.png');
+    background-image: url('../../images/actionCards/yellowSpecialActionCard.png');
 }
 
 .pink-action-card {
-    background-image: url('../../images/pinkActionCard.png');
+    background-image: url('../../images/actionCards/pinkActionCard.png');
 }
 
 .pink-special-action-card {
-    background-image: url('../../images/pinkSpecialActionCard.png');
+    background-image: url('../../images/actionCards/pinkSpecialActionCard.png');
 }
 
 .white-action-card {
-    background-image: url('../../images/whiteActionCard.png');
+    background-image: url('../../images/actionCards/whiteActionCard.png');
 }
 
 .white-special-action-card {
-    background-image: url('../../images/whiteSpecialActionCard.png');
+    background-image: url('../../images/actionCards/whiteSpecialActionCard.png');
 }
 
 .black-yellow-beacon, .black-blue-beacon, .black-pink-beacon, .black-white-beacon, .pink-blue-beacon, .white-blue-beacon,
@@ -165,4 +165,26 @@
 }
 .yellow-pink-beacon {
     background-image: url('../../images/beacons/yellow-pink-beacon.png');
+}
+
+.explosion-card {
+    position: absolute;
+    background-size: cover;
+    display: flex;
+    max-width: 140px;
+    max-height: 196px;
+    height: 100%;
+    width: 100%;
+    background-image: url('../../images/explosionCard.png');
+}
+
+.explosion {
+    position: absolute;
+    background-size: cover;
+    display: flex;
+    max-width: 28px;
+    max-height: 28px;
+    height: 100%;
+    width: 100%;
+    background-image: url('../../images/explosion.png');
 }
