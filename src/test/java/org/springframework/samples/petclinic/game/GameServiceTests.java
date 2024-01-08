@@ -1,7 +1,6 @@
 package org.springframework.samples.petclinic.game;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -9,6 +8,7 @@ import static org.mockito.Mockito.*;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -21,19 +21,16 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.samples.petclinic.player.Player;
 
-import org.springframework.samples.petclinic.player.PlayerRepository;
-import org.springframework.samples.petclinic.player.PlayerService;
-
 class GameServiceTests {
 
     @Mock
     private GameRepository gameRepository;
 
-    //@Mock
-   // private PlayerRepository playerRepository;
+    // @Mock
+    // private PlayerRepository playerRepository;
 
-    //@Mock
-    //private PlayerService playerService;
+    // @Mock
+    // private PlayerService playerService;
 
     @InjectMocks
     private GameService gameService;
@@ -91,29 +88,22 @@ class GameServiceTests {
     @Test
     void getGameNotFoundTest() {
         Integer gameId = 1;
-        Integer falseGameId= 20;
-        Game expectedGame= new Game();
+        Integer falseGameId = 20;
+        Game expectedGame = new Game();
         expectedGame.setId(gameId);
 
         when(gameRepository.findById(gameId)).thenReturn(Optional.of(expectedGame));
-        when(gameRepository.findById(falseGameId)).thenReturn(Optional.empty());
 
-        Game actualGame = gameService.getGameById(falseGameId).orElse(null);
-
-        assertFalse(gameService.getGameById(gameId).orElse(null).getId() == null);
-        assertEquals(expectedGame.getId(), gameService.getGameById(gameId).orElse(null).getId());
-        assertNull(actualGame);
-        verify(gameRepository, times(2)).findById(gameId);
+        assertThrows(NoSuchElementException.class, () -> gameService.getGameById(falseGameId).get());
+        verify(gameRepository, times(1)).findById(gameId);
     }
 
-    
     @Test
     void saveGameTest() {
         List<Player> players = List.of(new Player());
         Game expectedGame = new Game();
         expectedGame.setPlayers(players);
-        when(gameRepository.save(any(Game.class))).thenAnswer(i ->
-        i.getArguments()[0]);
+        when(gameRepository.save(any(Game.class))).thenAnswer(i -> i.getArguments()[0]);
 
         Game actualGame = gameService.save(expectedGame);
 

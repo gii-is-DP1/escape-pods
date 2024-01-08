@@ -67,9 +67,10 @@ public class GamePlayerServiceTest {
         Game game = new Game();
         game.setId(id);
         Integer nonExistentGamePlayerId = 1;
+
         GamePlayer expectedGamePlayer = new GamePlayer();
         expectedGamePlayer.setGame(game);
-
+        
         when(gamePlayerRepository.findById(id)).thenReturn(Optional.of(expectedGamePlayer));
 
         assertThrows(NoSuchElementException.class,
@@ -113,6 +114,7 @@ public class GamePlayerServiceTest {
         when(gamePlayerRepository.findByGameId(gameId)).thenReturn(List.of(gamePlayer1, gamePlayer2));
 
         assertTrue(gamePlayerService.getGamePlayersByGameId(nonExistentGameId).isEmpty());
+
         verify(gamePlayerRepository, times(1)).findByGameId(nonExistentGameId);
 
     }
