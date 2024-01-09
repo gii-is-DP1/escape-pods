@@ -135,8 +135,6 @@ public class GameControllerTest {
                 .content(game3JsonString)
                 .with(csrf());
 
-        // comprobamos que el Game creado sea correcto en base a todo lo que hemos
-        // declarado
         MvcResult result = mockMvc.perform(requestBuilder)
                 .andExpect(status().isCreated())
                 .andReturn();
