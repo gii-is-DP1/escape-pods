@@ -18,6 +18,6 @@ public interface BeaconRepository extends CrudRepository<Beacon, Integer> {
     List<Beacon> findByGameId(Integer id);
 
     @Modifying
-    @Query("DELETE FROM Beacon b WHERE b.game.d=:id")
+    @Query("DELETE FROM Beacon b WHERE b.game.id=:id")
     void deleteByGameId(@Param("id") Integer id);
 }

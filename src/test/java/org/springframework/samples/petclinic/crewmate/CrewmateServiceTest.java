@@ -101,8 +101,7 @@ class CrewmateServiceTest {
         Crewmate crewmate2 = new Crewmate();
         crewmate1.setGame(game1);
         crewmate2.setGame(game1);
-
-        //List<Crewmate> expectedCrewmates= List.of(crewmate1,crewmate2);
+        
         when(crewmateRepository.findByGameId(nonExistentGameId)).thenReturn(null);
 
         List<Crewmate> actualCrewmates = crewmateService.getAllCrewmatesByGameId(nonExistentGameId);

@@ -52,7 +52,7 @@ public class GameControllerSocialTest {
         testGame.setStart(LocalDateTime.of(2024, 1, 2, 12, 20));
         List<Integer> exps = List.of(3, 4, 3, 5);
         testGame.setExplosions(exps);
-        List<Player> players= null;
+        List<Player> players = null;
         testGame.setPlayers(players);
 
         mockMvc = MockMvcBuilders
@@ -60,8 +60,6 @@ public class GameControllerSocialTest {
                 .apply(SecurityMockMvcConfigurers.springSecurity())
                 .build();
     }
-
-    
 
     @Test
     @Transactional
@@ -75,7 +73,7 @@ public class GameControllerSocialTest {
         testGame.setStart(LocalDateTime.of(2024, 1, 2, 10, 20, 24));
         List<Integer> exps = List.of(3, 4, 3, 5);
         testGame.setExplosions(exps);
-        List<Player> players=null;
+        List<Player> players = null;
         testGame.setPlayers(players);
 
         // Game value= gs.getGameById(g.getId()).get();
