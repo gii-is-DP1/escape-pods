@@ -53,9 +53,12 @@ class UserRestController {
 	}
 
 	@GetMapping
-	public ResponseEntity<List<User>> findAll(@RequestParam(required = false) String auth) {
+	public ResponseEntity<List<User>> findAll(@RequestParam(required = false) String auth,
+			@RequestParam(required = false) String username) {
 		List<User> res;
-		if (auth != null) {
+		if (username != null) {
+			res = (List<User>) userService.findUserToList(username);
+		} else if (auth != null) {
 			res = (List<User>) userService.findAllByAuthority(auth);
 		} else
 			res = (List<User>) userService.findAll();
@@ -72,12 +75,6 @@ class UserRestController {
 	public ResponseEntity<User> findById(@PathVariable("id") Integer id) {
 		return new ResponseEntity<>(userService.findUser(id), HttpStatus.OK);
 	}
-
-	@GetMapping(value = "{username}")
-	public ResponseEntity<User> findByUsername(@PathVariable("username") String username) {
-		return new ResponseEntity<>(userService.findUser(username), HttpStatus.OK);
-	}
-
 
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
@@ -97,11 +94,12 @@ class UserRestController {
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<MessageResponse> delete(@PathVariable("userId") int id) {
 		RestPreconditions.checkNotNull(userService.findUser(id), "User", "ID", id);
-		if (userService.findCurrentUser().getId() != id) {
-			userService.deleteUser(id);
-			return new ResponseEntity<>(new MessageResponse("User deleted!"), HttpStatus.OK);
-		} else
-			throw new AccessDeniedException("You can't delete yourself!");
+		userService.deleteUser(id);
+		return new ResponseEntity<>(new MessageResponse("User deleted!"), HttpStatus.OK);
+		/*
+		 * else
+		 * throw new AccessDeniedException("You can't delete yourself!");
+		 */
 	}
 
 }

@@ -48,7 +48,7 @@ export default function Profile() {
     }
 
     function GetCurrentUser() {
-        fetch(`/api/v1/${myUsername}`, {
+        fetch("/api/v1/users?username="+ myUsername, {
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${jwt}`,
@@ -71,16 +71,7 @@ export default function Profile() {
     }
 
     function DeleteCurrentAccount() {
-        /*fetch(`/api/v1/players/${myPlayer.id}`, {
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${jwt}`,
-            },
-            method: "DELETE"
-        })
-            .then(response => response.json())
-            .then(response => { setMyPlayer(response[0]) })
-*/
+
         fetch(`/api/v1/users/${myUser.id}`, {
             headers: {
                 "Content-Type": "application/json",
@@ -90,7 +81,6 @@ export default function Profile() {
         })
             .then(response => response.json())
             .then(response => { setMyUser(response[0]) })
-
     }
 
 
@@ -115,9 +105,8 @@ export default function Profile() {
                             <Button className="done-button" style={{
                                 backgroundColor: "#21FF1E", border: "none", boxShadow: "5px 5px 5px #00000020", textShadow: "2px 2px 2px #00000020", transition: "0.15s",
                             }} onClick={() => {
+                                sendLogoutRequest();
                                 DeleteCurrentAccount();
-                                setDeleteAccountVisible(false);
-
                             }}>
                                 Done
                             </Button>
@@ -168,7 +157,7 @@ export default function Profile() {
                             marginLeft: 30
                         }} onClick={() => {
                             setDeleteAccountVisible(true);
-                            console.log(myUsername)
+
 
                         }}>DELETE ACCOUNT
 

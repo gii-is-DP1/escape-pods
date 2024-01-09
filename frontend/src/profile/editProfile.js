@@ -14,7 +14,7 @@ export default function EditProfile() {
     const myUsername = jwt_decode(jwt).sub;
 
     function GetCurrentUser() {
-        fetch(`/api/v1/users/${myUsername}`, {
+        fetch("/api/v1/users?username=" + myUsername, {
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${jwt}`,
@@ -36,18 +36,37 @@ export default function EditProfile() {
             .then(response => response.json())
             .then(response => { setMyPlayer(response[0]) })
     }
+    useEffect(() => {
+        if (jwt) {
+            GetCurrentPlayer();
+            GetCurrentUser();
+            console.log(myPlayer, myUser);
+        }
+    }, [jwt])
 
+    function sendLogoutRequest() {
+        const jwt = window.localStorage.getItem("jwt");
+        if (jwt || typeof jwt === "undefined") {
+            tokenService.removeUser();
+            window.location.href = "/";
+        } else {
+            alert("There is no user logged in");
+        }
+
+    }
 
     function ActualizarUsuario(event) {
-        fetch(`/api/v1/users/${myUsername}`, {
+        event.preventDefault();
+        fetch(`/api/v1/users/${myUser.id}`, {
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${jwt}`,
             },
             method: "PUT",
-            body: JSON.stringify(myUsername)
+            body: JSON.stringify(myUser)
         })
-        fetch(`/api/v1/players/${myPlayer}`, {
+
+        fetch(`/api/v1/players/${myPlayer.id}`, {
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${jwt}`,
@@ -55,32 +74,47 @@ export default function EditProfile() {
             method: "PUT",
             body: JSON.stringify(myPlayer)
         })
-        window.location.href = "/profile";
-
+        //sendLogoutRequest();
     }
 
-
-    useEffect(() => {
-        if (jwt) {
-            GetCurrentPlayer();
-            GetCurrentUser();
+    function handleChangeUsername(event) {
+        const target = event.target;
+        const value = target.value;
+        const changedUser = {
+            id: myUser.id,
+            username: value,
+            password: myUser.password,
+            authority: myUser.authority,
         }
-    }, [jwt])
-
-    
-    function handleChangeUser(event) {
-        const target = event.target;
-        const value = target.value;
-        const name = target.name;
-        setMyUser({ ...myUser, [name]: value });
+        setMyUser(changedUser);
     }
 
-    function handleChangePlayer(event) {
+    function handleChangePlayerDescription(event) {
         const target = event.target;
         const value = target.value;
-        const name = target.name;
-        setMyPlayer({ ...myPlayer, [name]: value });
+        const changedPlayer = {
+            id: myPlayer.id,
+            profileDescription: value,
+            profilePicture: myPlayer.profilePicture,
+            user: myUser,
+        }
+        setMyPlayer(changedPlayer);
     }
+
+    function handleChangePlayerPicture(event) {
+        const target = event.target;
+        const value = target.value;
+        const changedPlayer = {
+            id: myPlayer.id,
+            profileDescription: myPlayer.profileDescription,
+            profilePicture: value,
+            user: myUser,
+        }
+        console.log(changedPlayer)
+        //setMyPlayer(changedPlayer);
+    }
+
+
 
     return (
         <div className="auth-page-container">
@@ -98,25 +132,12 @@ export default function EditProfile() {
                             required
                             name="name"
                             id="name"
-                            value={myUsername || ""}
-                            onChange={handleChangeUser}
+                            value={myUser.username || ""}
+                            onChange={handleChangeUsername}
                             className="custom-input"
                         />
                     </div>
-                    <div className="custom-form-input">
-                        <Label for="description" className="custom-form-input-label-not-mandatory">
-                            Password:
-                        </Label>
-                        <Input
-                            type="text"
-                            required
-                            name="description"
-                            id="descripction"
-                            value={"********" || ""}
-                            onChange={handleChangeUser}
-                            className="custom-input"
-                        />
-                    </div>
+
                     <div className="custom-form-input">
                         <Label for="badgeImage" className="custom-form-input-label-not-mandatory">
                             Profile descripction:
@@ -127,10 +148,11 @@ export default function EditProfile() {
                             name="badgeImage"
                             id="badgeImage"
                             value={myPlayer.profileDescription || ""}
-                            onChange={handleChangePlayer}
+                            onChange={handleChangePlayerDescription}
                             className="custom-input"
                         />
                     </div>
+
                     <div className="custom-form-input">
                         <FormGenerator
                             inputs={[
@@ -138,15 +160,20 @@ export default function EditProfile() {
                                     tag: "Profile Picture",
                                     name: "profilePicture",
                                     type: "files",
-                                    isRequired: true, type: "files"
-                                }]}
-                            onSubmit={handleChangePlayer}
+                                    isRequired: true,
+                                }
+                            ]}
+                            //el problema es el handleChangePlayerPicture que el onsubmit el evento no que produce al darle. 
+                            onSubmit={handleChangePlayerPicture}
                             numberOfColumns={1}
                             listenEnterKey
                             buttonText="Save"
                             buttonClassName="auth-button"
                         />
                     </div>
+
+
+
                     <div className="custom-button-row">
                         <button className="auth-button">Save
                         </button>
