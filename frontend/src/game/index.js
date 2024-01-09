@@ -193,6 +193,18 @@ export default function Game() {
         return crewmates.filter(crewmate => crewmate.shelterCard && (crewmate.shelterCard.id === shelterCard.id))
     }
 
+    function hasPossibleMoves(pod) {
+        let possibleMoves = adjacencyList[pod.sector.number].length
+        for (let i = 0; i < adjacencyList[pod.sector.number].length; i++) {
+            let sector = sectors.find(sector => sector.number === adjacencyList[pod.sector.number][i])
+            if (sector.scrap || (pods.find(pod => pod.sector && pod.sector.number === sector.number) &&
+                (pods.find(pod => pod.sector && pod.sector.number === sector.number).capacity >= pod.capacity))) {
+                possibleMoves--
+            }
+        }
+        return possibleMoves > 0
+    }
+
     function GetUnusedBeacons() {
         let usedBeacons = []
         for (let i = 0; i < lines.length; i++) {
@@ -865,17 +877,23 @@ export default function Game() {
                         setCrashSector1(null)
                         setCrasher2(null)
                         setCrashSector2(null)
-                    } else {
+                        setSelectingSector(false)
+                        setSelectingPod(false)
+                        setPiloting(false)
+                        setRemotePiloting(false)
+                    } else if (!hasPossibleMoves(selectedPod)) {
                         await movePod(crasher1, null)
                         await movePod(selectedPod, sector)
                         await movePod(crasher1, crashSector1)
                         setCrasher1(null)
                         setCrashSector1(null)
+                        setSelectingSector(false)
+                        setSelectingPod(false)
+                        setPiloting(false)
+                        setRemotePiloting(false)
+                    } else {
+                        ShowAlert("You cannot move the crashed pod to that sector unless you have no other possible moves")
                     }
-                    setSelectingSector(false)
-                    setSelectingPod(false)
-                    setPiloting(false)
-                    setRemotePiloting(false)
                 } else if (pods.find(pod => pod.sector && (pod.sector.id === sector.id)) && (pods.find(pod => pod.sector && (pod.sector.id === sector.id)).capacity >= selectedPod.capacity)) {
                     ShowAlert("You cannot crash with a larger pod")
                 } else if (!pods.find(pod => pod.sector && (pod.sector.id === sector.id))) {
@@ -1358,6 +1376,7 @@ export default function Game() {
                                 ShowAlert("Troncos lanzados")
                                 //                                checkActionsState()
                                 console.log(game.explosions)
+                                console.log(hasPossibleMoves(pods.find(pod => pod.number === 2)))
                             }}>
                                 troncos
                             </Button>
