@@ -308,7 +308,10 @@ export default function Game() {
         }
         return (
             <svg height="37" width="37" onClick={() => {
-                if (selectingCrewmate && !props.crewmate.shelter) {
+                if ([...Object.values(actionSlots), ...Object.values(specialActionSlots)]
+                    .flat().map(actionCrewmate => actionCrewmate ? actionCrewmate.id : null).includes(props.crewmate.id)) {
+                    ShowAlert("You cannot use a crewmate that is already in an action slot")
+                } else if (selectingCrewmate && !props.crewmate.shelter) {
                     crewmateClickHandler(props.crewmate)
                 }
             }}>
@@ -478,12 +481,12 @@ export default function Game() {
                 <div className={gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).color.toLowerCase() + "-action-card"}>
                     <div style={{ position: "absolute", left: 92, top: 20, width: 40, height: 40 }}
                         onClick={() => {
-                            if (!actionSlots.embark[0]) {
+                            if (!actionSlots.embark) {
                                 setEmbarking(true);
                                 setSelectingCrewmate(true);
                                 setSelectingAction(true);
                                 ShowAlert("Click on any of your reserve crewmates to spend it in this action")
-                            } else {
+                            } else if (!selectingCrewmate) {
                                 ShowAlert("The slot is not empty")
                             }
                         }}
@@ -492,12 +495,12 @@ export default function Game() {
                     </div>
                     <div style={{ position: "absolute", left: 138, top: 20, width: 40, height: 40 }}
                         onClick={() => {
-                            if (!actionSlots.embark[1]) {
+                            if (actionSlots.embark && actionSlots.embark.length === 1) {
                                 setEmbarking(true);
                                 setSelectingCrewmate(true);
                                 setSelectingAction(true);
                                 ShowAlert("Click on any of your reserve crewmates to spend it in this action")
-                            } else {
+                            } else if (!selectingCrewmate) {
                                 ShowAlert("The slot is not empty")
                             }
                         }}
@@ -512,7 +515,7 @@ export default function Game() {
                                 setSelectingAction(true);
                                 setSelectingCrewmate(true);
                                 ShowAlert("Click on any of your reserve crewmates to spend it in this action")
-                            } else {
+                            } else if (!selectingCrewmate) {
                                 ShowAlert("The slot is not empty")
                             }
                         }}
@@ -528,7 +531,7 @@ export default function Game() {
                                 setSelectingAction(true);
                                 setSelectingCrewmate(true);
                                 ShowAlert("Click on any of your reserve crewmates to spend it in this action")
-                            } else {
+                            } else if (!selectingCrewmate) {
                                 ShowAlert("The slot is not empty")
                             }
                         }}
@@ -542,7 +545,7 @@ export default function Game() {
                                 setSelectingCrewmate(true);
                                 setSelectingAction(true);
                                 ShowAlert("Click on any of your reserve crewmates to spend it in this action")
-                            } else {
+                            } else if (!selectingCrewmate) {
                                 ShowAlert("The slot is not empty")
                             }
                         }}
@@ -559,7 +562,7 @@ export default function Game() {
                                 setSelectingCrewmate(true);
                                 setSelectingAction(true);
                                 ShowAlert("Click on any of your reserve crewmates to spend it in this action")
-                            } else {
+                            } else if (!selectingCrewmate) {
                                 ShowAlert("The slot is not empty")
                             }
                         }}
@@ -574,7 +577,7 @@ export default function Game() {
                                 setSelectingAction(true);
                                 setSelectingCrewmate(true);
                                 ShowAlert("Click on any of your reserve crewmates to spend it in this action")
-                            } else {
+                            } else if (!selectingCrewmate) {
                                 ShowAlert("The slot is not empty")
                             }
                         }}
@@ -589,7 +592,7 @@ export default function Game() {
                                 setSelectingAction(true);
                                 setSelectingCrewmate(true);
                                 ShowAlert("Click on any of your reserve crewmates to spend it in this action")
-                            } else {
+                            } else if (!selectingCrewmate) {
                                 ShowAlert("The slot is not empty")
                             }
                         }}
@@ -602,7 +605,7 @@ export default function Game() {
                                 setSelectingCrewmate(true);
                                 setSelectingAction(true);
                                 ShowAlert("Click on any of your reserve crewmates to spend it in this action")
-                            } else {
+                            } else if (!selectingCrewmate) {
                                 ShowAlert("The slot is not empty")
                             }
                         }}
@@ -966,10 +969,6 @@ export default function Game() {
                     ShowAlert("You cannot move your crewmate to a one-manned pod if there are empty slots in the larger pods")
                 } else {
                     moveCrewmate(selectedCrewmate, pod, null)
-                    setSelectingCrewmate(false)
-                    setSelectingPod(false)
-                    setSelectingShelterCard(false)
-                    setSelectedCrewmate(null)
                     ShowAlert("The crewmate was moved to the selected pod")
                     if (!pod.sector) {
                         if (pod.number === 1 && (pods.filter(pod => pod.sector && pod.sector.number === 2).length === 0)) {
@@ -981,11 +980,18 @@ export default function Game() {
                         } else if (pod.number === 3 && (pods.filter(pod => pod.sector && pod.sector.number === 3).length === 0)) {
                             movePod(pod, sectors.find(sector => sector.number === 3));
                             setEmbarking(false)
+                        } else if (pods.filter(pod => pod.sector && embarkSectorsNumbers.includes(pod.sector.number)).length === 3) {
+                            ShowAlert("There are no available sectors next to the hangar")
+                            moveCrewmate(selectedCrewmate, null, null)
                         } else {
                             ShowAlert("Select one of the adjacent sectors to the hangar")
                             setSelectingSector(true);
                         }
                     }
+                    setSelectingCrewmate(false)
+                    setSelectingPod(false)
+                    setSelectingShelterCard(false)
+                    setSelectedCrewmate(null)
                 }
             } else if ((selectedCrewmate.pod && adjacencyList[selectedCrewmate.pod.sector.number].includes(pod.sector.number)) && (pod && GetCrewmatesFromPod(pod).length < pod.capacity)) {
                 moveCrewmate(selectedCrewmate, pod, null)
@@ -995,9 +1001,6 @@ export default function Game() {
                 setSelectedCrewmate(null)
                 ShowAlert("The crewmate was moved to the selected pod")
             } else {
-                setSelectingCrewmate(false)
-                setSelectingPod(false)
-                setEmbarking(false)
                 ShowAlert(`You cannot move your ${selectedCrewmate.role.toLowerCase()} to that pod`)
             }
         } else if (remotePiloting) {
@@ -1117,21 +1120,16 @@ export default function Game() {
         if (embarking) {
             console.log(selectedCrewmate.pod.sector.number)
             console.log(shelterCard.sector.number)
-            if (selectedCrewmate.pod && selectedCrewmate.pod.sector.number === 11 && shelterCard.sector.number === 11) {
+            if (selectedCrewmate.pod && (selectedCrewmate.pod.sector.number === shelterCard.sector.number)) {
                 moveCrewmate(selectedCrewmate, null, shelterCard)
-            } else if (selectedCrewmate.pod && selectedCrewmate.pod.sector.number === 12 && shelterCard.sector.number === 12) {
-                moveCrewmate(selectedCrewmate, null, shelterCard)
-            } else if (selectedCrewmate.pod && selectedCrewmate.pod.sector.number === 13 && shelterCard.sector.number === 13) {
-                moveCrewmate(selectedCrewmate, null, shelterCard)
+                setSelectingPod(false)
+                setSelectingCrewmate(false)
+                setSelectingShelterCard(false)
+                setEmbarking(false)
+                setSelectedCrewmate(null)
             } else {
                 ShowAlert("You can only disembark a crewmate in a shelter adjacent to your pod")
             }
-            setSelectingPod(false)
-            setSelectingCrewmate(false)
-            setSelectingShelterCard(false)
-            setEmbarking(false)
-            setSelectedCrewmate(null)
-
         } else if (spying) {
             setSelectingPod(false)
             setSelectingShelterCard(false)
@@ -1185,13 +1183,8 @@ export default function Game() {
                 moveBeacon(selectedBeacon, line)
                 moveBeacon(selectedLineBeacon, selectedBeaconLine)
 
-
                 setSelectingLine(false)
                 setProgramming(false)
-
-                //esta aerta nunca deberia salir
-            } else {
-                alert('ESTAS INTENTANDO HACER UN MOVIMIENTO INVALIDO HACIA UNA LINEA, SELECCIONA A OTRA')
             }
         }
     }
