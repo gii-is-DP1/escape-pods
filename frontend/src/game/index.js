@@ -701,7 +701,7 @@ export default function Game() {
         }
         await fetch(`/api/v1/pods/${pod.id}`, {
             headers: {
-                "Authorization": ' Bearer ${ jwt }',
+                "Authorization": ` Bearer ${ jwt }`,
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
@@ -724,7 +724,7 @@ export default function Game() {
         }
         await fetch(`/api/v1/crewmates/${crewmate.id}`, {
             headers: {
-                "Authorization": ' Bearer ${ jwt }',
+                "Authorization": ` Bearer ${ jwt }`,
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
@@ -839,7 +839,7 @@ export default function Game() {
         }
         await fetch(`/api/v1/lines/${line.id}`, {
             headers: {
-                "Authorization": ' Bearer ${ jwt }',
+                "Authorization": `Bearer ${ jwt }`,
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },

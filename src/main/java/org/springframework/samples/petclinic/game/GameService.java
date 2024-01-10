@@ -8,6 +8,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Pageable;
+import org.springframework.samples.petclinic.player.Player;
 
 @Service
 public class GameService {
@@ -22,6 +23,11 @@ public class GameService {
     @Transactional(readOnly = true)
     public List<Game> getAllGames(Pageable pageable) throws DataAccessException {
         return gr.findAll(pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Game> getGamesByPlayerId(Pageable paging, Integer playerId) throws DataAccessException {
+        return gr.findByPlayerId(paging, playerId);
     }
 
     @Transactional(readOnly = true)
@@ -47,7 +53,7 @@ public class GameService {
 
     @Transactional(readOnly = true)
     public List<Game> getFinishedGames(Pageable pageable) throws DataAccessException {
-        return gr.findByFinishIsNotNull(pageable);
+        return gr.findByStatus(GameStatus.FINISHED, pageable);
     }
 
     @Transactional(readOnly = true)

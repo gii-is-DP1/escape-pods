@@ -75,7 +75,6 @@ export default function Lobby() {
         return fetchedGame
     }
 
-
     async function removePlayerFromGame() {
         const currentGame = await fetchCurrentGame()
         const updatedPlayers = currentGame.players
@@ -90,7 +89,7 @@ export default function Lobby() {
         }
         await fetch(`/api/v1/games/${game.id}`, {
             headers: {
-                "Authorization": ' Bearer ${ jwt }',
+                "Authorization": `Bearer ${jwt}`,
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
@@ -102,7 +101,7 @@ export default function Lobby() {
     async function deleteGame() {
         await fetch(`/api/v1/games/${game.id}`, {
             headers: {
-                "Authorization": ' Bearer ${ jwt }',
+                "Authorization": `Bearer ${jwt}`,
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
@@ -120,7 +119,7 @@ export default function Lobby() {
         }
         await fetch(`/api/v1/games/${game.id}`, {
             headers: {
-                "Authorization": ' Bearer ${ jwt }',
+                "Authorization": `Bearer ${jwt}`,
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
@@ -141,11 +140,10 @@ export default function Lobby() {
         }
     }
 
-
     const playerList = JSON.stringify(game) === "{}" ? null : game.players.map(player =>   //se está comprobando si game es un objeto vacío para que no de problemas al leer undefined de game.players antes de que el estado adquiera valor
         <li key={player.id}>
             <div className="list-item-container" style={{ marginBottom: "20" }}>
-                <img className="profile-picture" src={player.profilePicture.startsWith("http") ? player.profilePicture : `data:image/png;base64,${player.profilePicture}` } />
+                <img className="profile-picture" src={player.profilePicture.startsWith("http") ? player.profilePicture : `data:image/png;base64,${player.profilePicture}`} />
                 <div className="list-player-name">
                     {player.user.username} {player === game.players[0] ? "(owner)" : ""}
                 </div>

@@ -20,6 +20,9 @@ import java.util.List;
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.samples.petclinic.auth.payload.response.MessageResponse;
@@ -53,15 +56,30 @@ class UserRestController {
 	}
 
 	@GetMapping
-	public ResponseEntity<List<User>> findAll(@RequestParam(required = false) String auth) {
+	public ResponseEntity<List<User>> findAll(@RequestParam(required = false) String auth,
+			@RequestParam(required = false) String order,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "7") int size) {
+		Pageable paging;
 		List<User> res;
+
+		if (order != null) {
+            if (order.startsWith("-"))
+                paging = PageRequest.of(page, size, Sort.by(order.substring(1)).descending());
+            else
+                paging = PageRequest.of(page, size, Sort.by(order).ascending());
+        }
+        else{
+            paging = PageRequest.of(page, size);
+        }
+
 		if (auth != null) {
-			res = (List<User>) userService.findAllByAuthority(auth);
+			res = userService.findAllByAuthority(auth, paging).getContent();
 		} else
-			res = (List<User>) userService.findAll();
+			res =  userService.findAll(paging).getContent();
 		return new ResponseEntity<>(res, HttpStatus.OK);
 	}
-
+	
 	@GetMapping("authorities")
 	public ResponseEntity<List<Authorities>> findAllAuths() {
 		List<Authorities> res = (List<Authorities>) authService.findAll();
