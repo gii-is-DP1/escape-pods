@@ -5,7 +5,7 @@ import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import tokenService from "../services/token.service";
 import jwt_decode from "jwt-decode";
 import { Link } from 'react-router-dom';
-import { FaLessThanEqual } from 'react-icons/fa';
+
 
 
 function HowToPlayButton() {
@@ -31,9 +31,11 @@ function HowToPlayButton() {
 
 export default function Home() {
     const [joinLobbyvisible, setJoinLobbyVisible] = useState(false);
+    const [verUsersVisible, setVerUsersVisible] = useState(false);
     const [numPlayersVisible, setNumPlayersVisible] = useState(false)
     const [roles, setRoles] = useState([]);
     const [waitingGames, setWaitingGames] = useState([])
+    const [users, setUsers] = useState([])
     const [myPlayer, setMyPlayer] = useState({});
     const [numPlayers, setNumPlayers] = useState(2);
     const jwt = tokenService.getLocalAccessToken();
@@ -109,23 +111,48 @@ export default function Home() {
         }
     }
 
+    async function getUsers(page) {
+        try {
+            const fetchedUsers = await fetchUsers(page);
+            setUsers(fetchedUsers);
+        } catch (error) {
+            console.error("Failed to fetch games: ", error);
+        }
+    }
+
     async function fetchWaitingGames(page) {
         const response = await fetch(`/api/v1/games?status=WAITING&page=${page}`, {
             headers: {
-                "Authorization": ' Bearer ${ jwt }',
+                "Authorization": `Bearer ${jwt}`,
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             }
         });
 
         if (!response.ok) {
-            throw new Error('http error with status: ${ response.status }');
+            throw new Error(`http error with status: ${response.status}`);
         }
 
         const games = await response.json();
         return games;
     }
 
+    async function fetchUsers(page) {
+        const response = await fetch(`/api/v1/users?auth=PLAYER&page=${page}`, {
+            headers: {
+                "Authorization": `Bearer ${jwt}`,
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`http error with status: ${response.status}`);
+        }
+
+        const users = await response.json();
+        return users;
+    }
 
     async function addPlayerToGame(id) {
 
@@ -141,7 +168,7 @@ export default function Home() {
         }
         await fetch(`/api/v1/games/${id}`, {
             headers: {
-                "Authorization": ' Bearer ${ jwt }',
+                "Authorization": ` Bearer ${jwt}`,
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
@@ -150,7 +177,6 @@ export default function Home() {
         });
         window.location.href = `/lobby/${id}`
     }
-
 
     const waitingGamesList = waitingGames.map(game =>
         <li key={game.id} className='list-games-name' style={{ display: "flex", justifyContent: 'space-between', marginBottom: 10, marginRight: 10 }}>
@@ -172,7 +198,28 @@ export default function Home() {
             </Button>
         </li>)
 
-
+    const usersList = users.map(user =>
+        <li key={user.username} className='list-games-name' style={{ display: "flex", justifyContent: 'space-between', marginBottom: 10, marginRight: 10 }}>
+            <span style={{ fontFamily: 'monospace', color: '#00FF66' }}>
+                {user.username}
+            </span>
+            <Button className="done-button" style={{
+                backgroundColor: "#00ff6658",
+                border: "none",
+                borderRadius: 0,
+                boxShadow: "5px 5px 5px #00000020",
+                textShadow: "2px 2px 2px #00000020",
+                transition: "0.15s",
+                fontFamily: 'monospace',
+                color: '#00FF66'
+            }}
+                onClick={() => {
+                    setVerUsersVisible(false)
+                    window.location.href = `/players/${user.username}`
+                }}>
+                DETAILS
+            </Button>
+        </li>)
 
     function CreateLobbyButton() {
         return (
@@ -212,10 +259,39 @@ export default function Home() {
                 onClick={() => {
                     setJoinLobbyVisible(true)
                     getGames(0)
+                    console.log(getGames(0))
                 }}
             >
 
                 JOIN LOBBY
+            </Button >
+        );
+    }
+
+    function verUsersButton() {
+        return (
+            <Button className="button" style={{
+                transition: "0.15s",
+                backgroundColor: "#00ff6658",
+                width: 350,
+                height: 150,
+                fontWeight: 10,
+                borderRadius: 30,
+                border: "none",
+                fontSize: 35,
+                boxShadow: "10px 10px 5px #00000020",
+                textShadow: "2px 2px 2px #00000020",
+                fontFamily: 'monospace',
+                color: '#00FF66'
+
+            }}
+                onClick={() => {
+                    setVerUsersVisible(true)
+                    getUsers(0)
+                }}
+            >
+
+                VER USERS
             </Button >
         );
     }
@@ -304,83 +380,219 @@ export default function Home() {
                     <ModalBody style={{ flexDirection: "row" }}>
                         {waitingGames.length !== 0 &&
                             < ul className="ul-games">
-                        {waitingGamesList}
-                        </ul>
+                                {waitingGamesList}
+                            </ul>
                         }
                         {waitingGames.length === 0 &&
-                            <p style={{color:'white', height:310}}> No games found to show. </p>
+                            <p style={{ color: 'white', height: 310 }}> No games found to show. </p>
                         }
-                </ModalBody>
-                <ModalFooter>
-                    <div style={{ flexDirection: "row", alignItems: 'center' }}>
-                        <div class="pagination">
-                            <a style={{ color: 'white' }} onClick={() => {
-                                if (pages[0] != 0) {
-                                    setPages(newPages('down'))
-                                }
-
-                            }}>&laquo;</a>
-                            {pages.map((page, index) => (
+                    </ModalBody>
+                    <ModalFooter>
+                        <div style={{ flexDirection: "row", alignItems: 'center' }}>
+                            <div class="pagination">
                                 <a style={{ color: 'white' }} onClick={() => {
-                                    getGames(page)
+                                    if (pages[0] != 0) {
+                                        setPages(newPages('down'))
+                                    }
+
+                                }}>&laquo;</a>
+                                {pages.map((page, index) => (
+                                    <a style={{ color: 'white' }} onClick={() => {
+                                        getGames(page)
+                                    }}
+                                    >
+                                        {pages[index] + 1}
+                                    </a>))}
+                                <a style={{ color: 'white' }} onClick={() => {
+                                    setPages(newPages('up'))
                                 }}
+
                                 >
-                                    {pages[index] + 1}
-                                </a>))}
-                            <a style={{ color: 'white' }} onClick={() => {
-                                setPages(newPages('up'))
-                            }}
+                                    &raquo;
+                                </a>
+                            </div>
 
-                            >
-                                &raquo;
-                            </a>
+                            <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                <Button className="done-button" style={{
+                                    backgroundColor: "#ffa952", border: "none", boxShadow: "5px 5px 5px #00000020",
+                                    textShadow: "2px 2px 2px #00000020", transition: "0.15s", marginTop: 10, flexDirection: 'column', alignSelf: 'center', alignContent: 'center', alignItems: 'center'
+                                }}
+
+                                    onClick={() => {
+                                        setJoinLobbyVisible(false)
+                                        console.log(waitingGames);
+                                    }}>
+                                    Close
+                                </Button>
+                            </div>
                         </div>
-
-                        <div style={{ display: 'flex', flexDirection: 'column' }}>
-                            <Button className="done-button" style={{
-                                backgroundColor: "#ffa952", border: "none", boxShadow: "5px 5px 5px #00000020",
-                                textShadow: "2px 2px 2px #00000020", transition: "0.15s", marginTop: 10, flexDirection: 'column', alignSelf: 'center', alignContent: 'center', alignItems: 'center'
-                            }}
-
-                                onClick={() => {
-                                    setJoinLobbyVisible(false)
-                                    console.log(waitingGames);
-                                }}>
-                                Close
-                            </Button>
-                        </div>
-                    </div>
-                </ModalFooter>
-            </Modal>
-        </div>
-
+                    </ModalFooter>
+                </Modal>
+            </div>
 
             {
-        roles.includes("PLAYER") &&
-            <div className="home-page-container">
-                <div style={{ marginBottom: 25 }}>
-                    <CreateLobbyButton>
-                    </CreateLobbyButton>
+                roles.includes("PLAYER") &&
+                <div className="home-page-container">
+                    <div style={{ marginBottom: 25 }}>
+                        <CreateLobbyButton>
+                        </CreateLobbyButton>
+                    </div>
+                    <div style={{ marginBottom: 25 }}>
+                        <JoinLobbyButton>
+                        </JoinLobbyButton>
+                    </div>
+                    <div>
+                        <HowToPlayButton>
+                        </HowToPlayButton>
+                    </div>
                 </div>
-                <div style={{ marginBottom: 25 }}>
-                    <JoinLobbyButton>
-                    </JoinLobbyButton>
+            }
+
+            {
+                !roles.includes("PLAYER") && !roles.includes("ADMIN") &&
+                <div className="home-page-container">
+                    <img src={"/escape-pods-logo.png"} alt="Logo" width={400} height={266} />
+                    <div style={{ color: "white", fontSize: 35, marginTop: 50, textShadow: "2px 2px 2px #00000020" }}>
+                        REGISTER OR LOG IN TO START PLAYING
+                    </div>
                 </div>
-                <div>
-                    <HowToPlayButton>
-                    </HowToPlayButton>
+            }
+
+            {
+                roles.includes("ADMIN") &&
+                <div className="home-page-container-retro">
+
+                    <div style={{ marginBottom: 25 }}>
+                        <verUsersButton>
+                        </verUsersButton>
+                    </div>
+
+                    <div style={{ fontSize: 35, marginTop: 50, textShadow: "2px 2px 2px #00000020", display: 'flex', flexDirection: 'row' }}>
+
+                        <Button className="button" style={{
+                            transition: "0.15s",
+                            backgroundColor: "#00ff6658",
+                            border: "none",
+                            borderRadius: 0,
+                            textAlign: "center",
+                            fontSize: 35,
+                            boxShadow: "3px 3px 5px #00000020",
+                            textShadow: "2px 2px 2px #00000020",
+                            height: 90,
+                            width: 300,
+                            marginTop: 460,
+                            marginRight: 50,
+                            justifyContent: 'center',
+                        }} onClick={() => {
+                            window.location.href = `/createUser`
+                        }}>
+                            <p style={{ color: '#00FF66', fontFamily: 'monospace' }}>Create user</p>
+                        </Button>
+
+                        <Button className="button" style={{
+                            transition: "0.15s",
+                            backgroundColor: "#00ff6658",
+                            border: "none",
+                            borderRadius: 0,
+                            textAlign: "center",
+                            fontSize: 35,
+                            boxShadow: "3px 3px 5px #00000020",
+                            textShadow: "2px 2px 2px #00000020",
+                            height: 90,
+                            width: 300,
+                            marginTop: 460,
+                            marginRight: 50,
+                            justifyContent: 'center',
+                        }} onClick={() => {
+                            window.location.href = `/gameList`
+                        }}>
+                            <p style={{ color: '#00FF66', fontFamily: 'monospace' }}>List Games</p>
+                        </Button>
+
+                        <Button style={{
+                            transition: "0.15s",
+                            backgroundColor: "#00ff6658",
+                            border: "none",
+                            borderRadius: 0,
+                            textAlign: "center",
+                            fontSize: 35,
+                            boxShadow: "3px 3px 5px #00000020",
+                            textShadow: "2px 2px 2px #00000020",
+                            height: 90,
+                            width: 300,
+                            marginTop: 460,
+                            justifyContent: 'center',
+
+                        }} onClick={() => {
+                            setVerUsersVisible(true)
+                            getUsers(0)
+                        }}
+                        >
+                            <p style={{ color: '#00FF66', fontFamily: 'monospace' }}>Users List</p>
+                        </Button>
+                    </div>
+                    <div>
+                        <Modal isOpen={verUsersVisible} className="modal-join-lobby" >
+                            <ModalHeader style={{ color: '#00FF66', textShadow: "2px 2px 2px #00000020" }}>
+                                <div style={{ display: 'flex', flexDirection: 'row', alignContent: 'right', alignSelf: 'right', alignItems: 'right' }}>
+                                    <p style={{ fontFamily: 'monospace' }}>Users</p>
+                                </div>
+                            </ModalHeader>
+                            <ModalBody style={{ flexDirection: "row", fontFamily: 'monospace', color: '#00FF66' }}>
+                                {users.length !== 0 &&
+                                    < ul className="ul-games" style={{ fontFamily: 'monospace', color: '#00FF66' }}>
+                                        {usersList}
+                                    </ul>
+                                }
+                                {users.length === 0 &&
+                                    <p style={{ height: 310, fontFamily: 'monospace', color: '#00FF66' }}> No users found to show. </p>
+                                }
+                            </ModalBody>
+                            <ModalFooter>
+                                <div style={{ flexDirection: "row", alignItems: 'center' }}>
+                                    <div class="pagination">
+                                        <a style={{ fontFamily: 'monospace', color: '#00FF66' }} onClick={() => {
+                                            if (pages[0] != 0) {
+                                                setPages(newPages('down'))
+                                            }
+
+                                        }}>&laquo;</a>
+                                        {pages.map((page, index) => (
+                                            <a style={{ fontFamily: 'monospace', color: '#00FF66' }} onClick={() => {
+                                                getUsers(page)
+                                            }}
+                                            >
+                                                {pages[index] + 1}
+                                            </a>))}
+                                        <a style={{ fontFamily: 'monospace', color: '#00FF66' }} onClick={() => {
+                                            setPages(newPages('up'))
+                                        }}
+
+                                        >
+                                            &raquo;
+                                        </a>
+                                    </div>
+
+                                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                        <Button className="done-button" style={{
+                                            backgroundColor: "#00ff6658", fontFamily: 'monospace', border: "none", boxShadow: "5px 5px 5px #00000020",
+                                            textShadow: "2px 2px 2px #00000020", transition: "0.15s", marginTop: 10, flexDirection: 'column', alignSelf: 'center',
+                                            alignContent: 'center', alignItems: 'center', borderRadius: 0, color: '#00FF66'
+                                        }}
+
+                                            onClick={() => {
+                                                setVerUsersVisible(false)
+                                                console.log(users);
+                                            }}>
+                                            Close
+                                        </Button>
+                                    </div>
+                                </div>
+                            </ModalFooter>
+                        </Modal>
+                    </div>
                 </div>
-            </div>
-    }
-    {
-        !roles.includes("PLAYER") && !roles.includes("ADMIN") &&
-            <div className="home-page-container">
-                <img src={"/escape-pods-logo.png"} alt="Logo" width={400} height={266} />
-                <div style={{ color: "white", fontSize: 35, marginTop: 50, textShadow: "2px 2px 2px #00000020" }}>
-                    REGISTER OR LOG IN TO START PLAYING
-                </div>
-            </div>
-    }
+            }
         </div >
     );
 }

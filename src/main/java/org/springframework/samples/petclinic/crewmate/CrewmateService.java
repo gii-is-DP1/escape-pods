@@ -19,6 +19,9 @@ public class CrewmateService {
 
     @Transactional
     public Crewmate save(Crewmate c) throws DataAccessException {
+        if (c.getShelterCard() != null && c.getArrivalOrder() == null) {
+            c.setArrivalOrder(cr.countByShelterCardId(c.getShelterCard().getId()));
+        }
         cr.save(c);
         return c;
     }
@@ -39,8 +42,13 @@ public class CrewmateService {
     }
 
     @Transactional
-    public void delete() throws DataAccessException {
-        cr.deleteAll();
+    public void deleteById(Integer id) throws DataAccessException {
+        cr.deleteById(id);
+    }
+
+    @Transactional
+    public void deleteByGameId(Integer id) throws DataAccessException {
+        cr.deleteByGameId(id);
     }
 
 }

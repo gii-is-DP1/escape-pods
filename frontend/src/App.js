@@ -51,9 +51,14 @@ import VetEditClinicOwner from "./clinicOwner/vets/VetEditClinicOwner";
 
 import AchievementList from "./achievements/achievementList";
 import Lobby from "./lobby";
+import Players from "./admin/players";
 import Game from "./game"
 import Profile from "./profile"
-import EditProfile from "./profile/editProfile"
+import GameLists from "./admin/gameList"
+import CreateUser from "./admin/createUser"
+import EditProfile from "./profile/editProfile";
+
+
 function ErrorFallback({ error, resetErrorBoundary }) {
   return (
     <div role="alert">
@@ -105,6 +110,9 @@ function App() {
           <Route path="/consultations" exact={true} element={<PrivateRoute><ConsultationListAdmin /></PrivateRoute>} />
           <Route path="/consultations/:consultationId" exact={true} element={<PrivateRoute><ConsultationEditAdmin /></PrivateRoute>} />
           <Route path="/consultations/:consultationId/tickets" exact={true} element={<PrivateRoute><TicketListAdmin /></PrivateRoute>} />
+          <Route path="/players/:username" exact={true} element={<PrivateRoute><Players /></PrivateRoute>} />
+          <Route path="/gameList" exact={true} element={<PrivateRoute><GameLists /></PrivateRoute>} />
+          <Route path="/createUser" exact={true} element={<PrivateRoute><CreateUser /></PrivateRoute>} />
         </>)
     }
     if (role === "OWNER") {
@@ -120,6 +128,7 @@ function App() {
           <Route path="/consultations/:consultationId/tickets" exact={true} element={<PrivateRoute><OwnerConsultationTickets /></PrivateRoute>} />
           <Route path="/achievements/" exact={true} element={<PrivateRoute><AchievementList /></PrivateRoute>} />
           <Route path="/lobby" element={<PrivateRoute><Lobby /></PrivateRoute>} />
+          
         </>)
     }
     if (role === "VET") {

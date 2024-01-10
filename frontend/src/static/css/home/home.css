@@ -27,6 +27,22 @@
     flex-direction: column;
 }
 
+.home-page-container-retro {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+    background-image: url('../../images/first-retro-Background.png');
+    background-size: cover;
+    background-size: 100% 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
 .hero-div {
     background-color: rgba(0, 0, 0, 0.5);
     padding: 2rem;
@@ -97,4 +113,9 @@
     list-style-type: none;
     width: 350px;
     height: 310px;
+}
+
+.tabla {
+    background-color: #00ff6658;
+    margin-top: 4px;
 }

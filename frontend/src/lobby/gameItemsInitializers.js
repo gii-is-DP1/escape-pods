@@ -390,13 +390,37 @@ class GameItemsInitializers {
     }
 
     async createShelters(game, jwt) {
+        let explosionSides;
+        let explosionCentrals;
+        switch(game.numPlayers){
+            case 2:
+                explosionSides=3;
+                explosionCentrals=2;
+                break;
+            case 3:
+                explosionSides=3;
+                explosionCentrals=3;
+                break;
+            case 4:
+                explosionSides=4;
+                explosionCentrals=3;
+                break;
+            case 5:
+                explosionSides=4;
+                explosionCentrals=4;
+                break;
+            default:
+                explosionSides=1;
+                explosionCentrals=1
+                break;
+        }
         var shelters = []
         const types = this.shuffle(["YELLOW", "PINK", "BLUE", "GREEN", "ORANGE"])
         const sectors = await this.getSectors(game, jwt)
         console.log(sectors)
 
         const shelter1 = {
-            explosion: 3,
+            explosion: explosionSides,
             type: types[0],
             game: game,
             sector: sectors.find(sector => sector.number === 11)
@@ -404,7 +428,7 @@ class GameItemsInitializers {
         shelters.push(shelter1)
 
         const shelter2 = {
-            explosion: 4,
+            explosion: explosionCentrals,
             type: types[0],
             game: game,
             sector: sectors.find(sector => sector.number === 12)
@@ -412,7 +436,7 @@ class GameItemsInitializers {
         shelters.push(shelter2)
 
         const shelter3 = {
-            explosion: 3,
+            explosion: explosionCentrals,
             type: types[0],
             game: game,
             sector: sectors.find(sector => sector.number === 12)
@@ -420,7 +444,7 @@ class GameItemsInitializers {
         shelters.push(shelter3)
 
         const shelter4 = {
-            explosion: 4,
+            explosion: explosionSides,
             type: types[0],
             game: game,
             sector: sectors.find(sector => sector.number === 13)

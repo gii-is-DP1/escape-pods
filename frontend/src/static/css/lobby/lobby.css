@@ -13,6 +13,22 @@
     flex-direction: row;
 }
 
+.lobby-page-container-retro {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), url('../../images/second-retro-Background.png');
+    background-size: cover;
+    background-size: 100% 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+}
+
 .lobby-loading {
     position: absolute;
     top: 0;
@@ -66,6 +82,7 @@
     margin-bottom: 10px;
     background-color: #2f324f;
     border: none;
+    border-radius: 10px;
 }
 
 .modal-dialog.modal-join-lobby {
@@ -73,12 +90,13 @@
     flex-direction: column;
     margin-top: 20px;
     margin-bottom: 40px;
-    background-color: #2f324f;
+    background-color:  #2f324f;
     border: none;
     border-radius: 20px;
     margin-top: 7.5%;
     align-self: center;
 }
+
 
 .modal-dialog {
     margin: 0px;

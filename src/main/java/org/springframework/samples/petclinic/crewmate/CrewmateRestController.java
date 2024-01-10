@@ -75,9 +75,17 @@ public class CrewmateRestController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCrewmate() {
-        cs.delete();
+    public ResponseEntity<Void> deleteCrewmate(Integer id) {
+        cs.deleteById(id);
         return ResponseEntity.noContent().build();
     }
+
+    @DeleteMapping()
+    public ResponseEntity<Void> deleteCrewmatesByGameId(@ParameterObject @RequestParam(value = "gameid", required = true) Integer gameid){
+        cs.deleteByGameId(gameid);
+        return ResponseEntity.noContent().build();
+    }
+    
+
 
 }

@@ -23,6 +23,8 @@ import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
 import org.springframework.samples.petclinic.owner.Owner;
 import org.springframework.samples.petclinic.vet.Vet;
@@ -93,12 +95,12 @@ public class UserService {
 	}
 
 	@Transactional(readOnly = true)
-	public Iterable<User> findAll() {
-		return userRepository.findAll();
+	public Page<User> findAll(Pageable paging) {
+		return userRepository.findAll(paging);
 	}
 
-	public Iterable<User> findAllByAuthority(String auth) {
-		return userRepository.findAllByAuthority(auth);
+	public Page<User> findAllByAuthority(String auth, Pageable paging) {
+		return userRepository.findAllByAuthority(auth, paging);
 	}
 
 	@Transactional

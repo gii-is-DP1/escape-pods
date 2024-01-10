@@ -5,20 +5,22 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.util.Collection;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
 import org.springframework.samples.petclinic.owner.Owner;
 import org.springframework.samples.petclinic.owner.OwnerService;
 import org.springframework.samples.petclinic.vet.VetService;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.transaction.annotation.Transactional;
+
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 //@DataJpaTest(includeFilters = @ComponentScan.Filter(Service.class))
 @SpringBootTest
@@ -57,7 +59,8 @@ class UserServiceTests {
 
 	@Test
 	void shouldFindAllUsers() {
-		List<User> users = (List<User>) this.userService.findAll();
+		Pageable paging = PageRequest.of(0, 0,Sort.by("-").ascending());
+		List<User> users = (List<User>) this.userService.findAll(paging).getContent();
 		assertEquals(19, users.size());
 	}
 
@@ -69,13 +72,14 @@ class UserServiceTests {
 
 	@Test
 	void shouldFindUsersByAuthority() {
-		List<User> owners = (List<User>) this.userService.findAllByAuthority("OWNER");
+		Pageable paging = PageRequest.of(0, 0,Sort.by("-").ascending());
+		List<User> owners = (List<User>) this.userService.findAllByAuthority("OWNER", paging).getContent();
 		assertEquals(10, owners.size());
 
-		List<User> admins = (List<User>) this.userService.findAllByAuthority("ADMIN");
+		List<User> admins = (List<User>) this.userService.findAllByAuthority("ADMIN", paging).getContent();
 		assertEquals(1, admins.size());
 
-		List<User> vets = (List<User>) this.userService.findAllByAuthority("VET");
+		List<User> vets = (List<User>) this.userService.findAllByAuthority("VET", paging).getContent();
 		assertEquals(6, vets.size());
 	}
 
@@ -140,7 +144,8 @@ class UserServiceTests {
 	@Test
 	@Transactional
 	void shouldInsertUser() {
-		int count = ((Collection<User>) this.userService.findAll()).size();
+		Pageable paging = PageRequest.of(0, 0,Sort.by("-").ascending());
+		int count = ( this.userService.findAll(paging)).getSize();
 
 		User user = new User();
 		user.setUsername("Sam");
@@ -151,7 +156,7 @@ class UserServiceTests {
 		assertNotEquals(0, user.getId().longValue());
 		assertNotNull(user.getId());
 
-		int finalCount = ((Collection<User>) this.userService.findAll()).size();
+		int finalCount = ( this.userService.findAll(paging)).getSize();
 		assertEquals(count + 1, finalCount);
 	}
 	
@@ -159,7 +164,8 @@ class UserServiceTests {
 	@Test
 	@Transactional
 	void shouldDeleteUserWithoutOwner() {
-		Integer firstCount = ((Collection<User>) userService.findAll()).size();
+		Pageable paging = PageRequest.of(0, 0,Sort.by("-").ascending());
+		Integer firstCount = ( userService.findAll(paging)).getSize();
 		User user = new User();
 		user.setUsername("Sam");
 		user.setPassword("password");
@@ -167,10 +173,10 @@ class UserServiceTests {
 		user.setAuthority(auth);
 		this.userService.saveUser(user);
 
-		Integer secondCount = ((Collection<User>) userService.findAll()).size();
+		Integer secondCount = ( userService.findAll(paging)).getSize();
 		assertEquals(firstCount + 1, secondCount);
 		userService.deleteUser(user.getId());
-		Integer lastCount = ((Collection<User>) userService.findAll()).size();
+		Integer lastCount = ( userService.findAll(paging)).getSize();
 		assertEquals(firstCount, lastCount);
 	}
 
@@ -203,7 +209,8 @@ class UserServiceTests {
 	@Test
 	@Transactional
 	void shouldDeleteUserWithoutVet() {
-		Integer firstCount = ((Collection<User>) userService.findAll()).size();
+		Pageable paging = PageRequest.of(0, 0,Sort.by("-").ascending());
+		Integer firstCount = ( userService.findAll(paging)).getSize();
 		User user = new User();
 		user.setUsername("Sam");
 		user.setPassword("password");
@@ -211,10 +218,10 @@ class UserServiceTests {
 		user.setAuthority(auth);
 		this.userService.saveUser(user);
 
-		Integer secondCount = ((Collection<User>) userService.findAll()).size();
+		Integer secondCount = ( userService.findAll(paging)).getSize();
 		assertEquals(firstCount + 1, secondCount);
 		userService.deleteUser(user.getId());
-		Integer lastCount = ((Collection<User>) userService.findAll()).size();
+		Integer lastCount = ( userService.findAll(paging)).getSize();
 		assertEquals(firstCount, lastCount);
 	}
 

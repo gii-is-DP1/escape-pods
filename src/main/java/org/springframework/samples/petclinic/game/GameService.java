@@ -12,7 +12,7 @@ import org.springframework.data.domain.Pageable;
 @Service
 public class GameService {
 
-     private GameRepository gr;
+    private GameRepository gr;
 
     @Autowired
     public GameService(GameRepository gr) throws DataAccessException {
@@ -22,6 +22,11 @@ public class GameService {
     @Transactional(readOnly = true)
     public List<Game> getAllGames(Pageable pageable) throws DataAccessException {
         return gr.findAll(pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Game> getGamesByPlayerId(Pageable paging, Integer playerId) throws DataAccessException {
+        return gr.findByPlayerId(paging, playerId);
     }
 
     @Transactional(readOnly = true)
@@ -47,7 +52,7 @@ public class GameService {
 
     @Transactional(readOnly = true)
     public List<Game> getFinishedGames(Pageable pageable) throws DataAccessException {
-        return gr.findByFinishIsNotNull(pageable);
+        return gr.findByStatus(GameStatus.FINISHED, pageable);
     }
 
     @Transactional(readOnly = true)
