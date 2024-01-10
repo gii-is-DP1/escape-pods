@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
-import org.springframework.samples.petclinic.player.Player;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -96,6 +95,7 @@ public class GameRestController {
     @PutMapping("/{id}")
     public ResponseEntity<Void> updateGame(@Valid @RequestBody Game g, @PathVariable("id") Integer id) {
         Game gToUpdate = getGameById(id);
+
         BeanUtils.copyProperties(g, gToUpdate, "id");
         gs.save(gToUpdate);
         return ResponseEntity.noContent().build();

@@ -93,4 +93,11 @@ public class ShelterCardController {
         return ResponseEntity.noContent().build();
     }
 
+    @DeleteMapping()
+    public ResponseEntity<Void> deleteShelterCardsByGameId(
+            @ParameterObject @RequestParam(value = "gameid", required = false) Integer gameid) {
+        scs.deleteByGameId(gameid);
+        return ResponseEntity.noContent().build();
+    }
+
 }

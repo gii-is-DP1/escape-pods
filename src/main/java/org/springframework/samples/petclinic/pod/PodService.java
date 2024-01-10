@@ -53,4 +53,9 @@ public class PodService {
     public void delete(Integer id) throws DataAccessException {
         p.deleteById(id);
     }
+
+    @Transactional
+    public void deleteByGameId(Integer id) throws DataAccessException {
+        p.deleteByGameId(id);
+    }
 }
