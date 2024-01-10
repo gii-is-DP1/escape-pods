@@ -99,17 +99,6 @@ export default function Profile() {
         }
         return out;
     }
-    function GetCurrentUser() {
-        fetch("/api/v1/users?username="+ myUsername, {
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${jwt}`,
-            },
-            method: "GET"
-        })
-            .then(response => response.json())
-            .then(response => { setMyUser(response[0]) })
-    }
 
         function sendLogoutRequest() {
           const jwt = window.localStorage.getItem("jwt");
