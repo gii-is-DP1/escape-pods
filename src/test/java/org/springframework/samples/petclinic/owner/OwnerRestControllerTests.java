@@ -216,8 +216,8 @@ class OwnerRestControllerTests {
 	@WithMockUser("admin")
 	void shouldDeleteOwner() throws Exception {
 		when(this.ownerService.findOwnerById(TEST_OWNER_ID)).thenReturn(george);
-
 		doNothing().when(this.ownerService).deleteOwner(TEST_OWNER_ID);
+
 		mockMvc.perform(delete(BASE_URL + "/{id}", TEST_OWNER_ID).with(csrf()))
 				.andExpect(status().isOk());
 	}

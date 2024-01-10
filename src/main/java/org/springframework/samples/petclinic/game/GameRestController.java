@@ -94,6 +94,7 @@ public class GameRestController {
     @PutMapping("/{id}")
     public ResponseEntity<Void> updateGame(@Valid @RequestBody Game g, @PathVariable("id") Integer id) {
         Game gToUpdate = getGameById(id);
+
         BeanUtils.copyProperties(g, gToUpdate, "id");
         gs.save(gToUpdate);
         return ResponseEntity.noContent().build();
