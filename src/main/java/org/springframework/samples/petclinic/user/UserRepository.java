@@ -37,10 +37,7 @@ public interface UserRepository extends  CrudRepository<User, String>{
 	
 	@Query("SELECT u FROM User u WHERE u.authority.authority = :auth")
 	Page<User> findAllByAuthority(String auth, Pageable paging);
-	
-	@Query("SELECT u FROM User u WHERE u.authority.authority = :auth")
-	Iterable<User> findAllByAuthority(String auth);
-	
+		
 	@Query("DELETE FROM Owner o WHERE o.user.id = :userId")
 	@Modifying
 	void deleteOwnerRelation(int userId);

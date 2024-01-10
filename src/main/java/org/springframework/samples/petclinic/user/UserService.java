@@ -98,17 +98,8 @@ public class UserService {
 		return userRepository.findAll(paging);
 	}
 
-	@Transactional(readOnly = true)
-	public Iterable<User> findAll() {
-		return userRepository.findAll();
-	}
-
 	public Page<User> findAllByAuthority(String auth, Pageable paging) {
 		return userRepository.findAllByAuthority(auth, paging);
-	}
-
-	public Iterable<User> findAllByAuthority(String auth) {
-		return userRepository.findAllByAuthority(auth);
 	}
 
 	@Transactional
