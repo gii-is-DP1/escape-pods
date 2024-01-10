@@ -34,10 +34,6 @@ public class SlotInfo extends BaseEntity{
     @Max(5)
     Integer slotScore;
     
-    @NotNull
-    Boolean roleNeeded;
-
-    
     @ManyToOne
     @NotNull
     //TODO establecer el cascade que borre todos los slotInfo cuando se borre un shelter
