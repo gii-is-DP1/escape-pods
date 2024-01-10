@@ -1000,11 +1000,14 @@ export default function Game() {
                             setEmbarking(false)
                         } else if (pods.filter(pod => pod.sector && embarkSectorsNumbers.includes(pod.sector.number)).length === 3) {
                             ShowAlert("There are no available sectors next to the hangar")
+                            setEmbarking(false)
                             moveCrewmate(selectedCrewmate, null, null)
                         } else {
                             ShowAlert("Select one of the adjacent sectors to the hangar")
                             setSelectingSector(true);
                         }
+                    } else {
+                        setEmbarking(false)
                     }
                     setSelectingCrewmate(false)
                     setSelectingPod(false)
@@ -1145,6 +1148,7 @@ export default function Game() {
                 setSelectingShelterCard(false)
                 setEmbarking(false)
                 setSelectedCrewmate(null)
+                ShowAlert("The crewmate was moved to the selected shelter")
             } else {
                 ShowAlert("You can only disembark a crewmate in a shelter adjacent to your pod")
             }
@@ -1374,7 +1378,7 @@ export default function Game() {
                                 console.log(actionSlots)
                                 console.log(shelterCards.find(shelterCard => shelterCard.sector.number === 11))
                                 ShowAlert("Troncos lanzados")
-                                //                                checkActionsState()
+                                                                checkActionsState()
                                 console.log(game.explosions)
                                 console.log(hasPossibleMoves(pods.find(pod => pod.number === 2)))
                             }}>

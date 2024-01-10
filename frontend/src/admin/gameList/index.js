@@ -122,6 +122,7 @@ export default function GameLists() {
     const GamesList = listedGames.map(game =>
         <tr key={game.id} style={{ fontFamily: 'monospace', fontSize: 20, backgroundColor: "#078a3b00" }}>
             <td style={{ color: '#00FF66', backgroundColor: '#078a3b00', fontFamily: 'monospace', }}>{game.id}</td>
+            <td style={{ color: '#00FF66', backgroundColor: '#078a3b00', fontFamily: 'monospace', }}>{game.players[0].user.username}</td>
             <td style={{ color: '#00FF66', backgroundColor: '#078a3b00', fontFamily: 'monospace', }}>{game.status}</td>
             <td style={{ color: '#00FF66', backgroundColor: '#078a3b00', fontFamily: 'monospace', }}>{JSON.stringify(game) === "{}" ? null : game.players.map((player, index, array) => player.user.username + (index < array.length - 1 ? ", " : ""))}</td>
         </tr>)
@@ -142,6 +143,7 @@ export default function GameLists() {
                         <thead className="tabla" style={{ fontFamily: 'monospace', fontSize: 20, backgroundColor: "#078a3b00" }}>
                             <tr>
                                 <th style={{ fontFamily: 'monospace', color: '#00FF66', backgroundColor: '#078a3b58' }}>Id <FaGalacticRepublic style={{ fontSize: 25 }} /></th>
+                                <th style={{ fontFamily: 'monospace', color: '#00FF66', backgroundColor: '#078a3b58' }}>Owner <FaFulcrum /></th>
                                 <th style={{ fontFamily: 'monospace', color: '#00FF66', backgroundColor: '#078a3b58' }}>Status <BiSolidInvader /> </th>
                                 <th style={{ fontFamily: 'monospace', color: '#00FF66', backgroundColor: '#078a3b58' }}>Players <FaSpaceAwesome /></th>
                             </tr>
@@ -194,7 +196,7 @@ export default function GameLists() {
                         textShadow: "2px 2px 2px #00000020",
                         height: 100,
                         width: 300,
-                        marginTop: 100,
+                        marginTop: 40,
                         marginRight: 50,
                         justifyContent: 'center',
                     }} onClick={() => {
@@ -214,7 +216,7 @@ export default function GameLists() {
                         textShadow: "2px 2px 2px #00000020",
                         height: 100,
                         width: 300,
-                        marginTop: 100,
+                        marginTop: 40,
                         marginRight: 50,
                         justifyContent: 'center',
                     }} onClick={() => {
@@ -234,7 +236,7 @@ export default function GameLists() {
                         textShadow: "2px 2px 2px #00000020",
                         height: 100,
                         width: 300,
-                        marginTop: 100,
+                        marginTop: 40,
                         marginRight: 50,
                         justifyContent: 'center',
                     }} onClick={() => {

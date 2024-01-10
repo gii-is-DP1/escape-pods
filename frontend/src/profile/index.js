@@ -86,7 +86,7 @@ export default function Profile() {
     const GamesList = playerGames.map(game =>
         <tr key={game.id} style={{ fontSize: 20, backgroundColor: "rgba(0, 0, 0, 0)" }}>
             <td style={{ color: '#ffffff', backgroundColor: 'rgba(0, 0, 0, 0)' }}>{game.id}</td>
-            <td style={{ color: '#ffffff', backgroundColor: 'rgba(0, 0, 0, 0)' }}>-</td>
+            <td style={{ color: '#ffffff', backgroundColor: 'rgba(0, 0, 0, 0)' }}>{game.players[0].user.username}</td>
             <td style={{ color: '#ffffff', backgroundColor: 'rgba(0, 0, 0, 0)', }}>{JSON.stringify(game) === "{}" ? null : game.players.map((player, index, array) => player.user.username + (index < array.length - 1 ? ", " : ""))}</td>
         </tr>)                                                
 
@@ -139,7 +139,7 @@ export default function Profile() {
                             <thead className="tabla" style={{ fontSize: 20, backgroundColor: "rgba(0, 0, 0, 0)" }}>
                                 <tr>
                                     <th style={{ color: '#ffffff', backgroundColor: 'rgba(0, 0, 0, 0)' }}>Id <FaFulcrum style={{ fontSize: 25 }} /></th>
-                                    <th style={{ color: '#ffffff', backgroundColor: 'rgba(0, 0, 0, 0)' }}>Creador <BiSolidInvader /></th>
+                                    <th style={{ color: '#ffffff', backgroundColor: 'rgba(0, 0, 0, 0)' }}>Owner <BiSolidInvader /></th>
                                     <th style={{ color: '#ffffff', backgroundColor: 'rgba(0, 0, 0, 0)' }}>Players <FaSpaceAwesome /></th>
                                 </tr>
                             </thead>

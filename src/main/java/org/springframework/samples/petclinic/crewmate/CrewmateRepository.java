@@ -17,4 +17,7 @@ public interface CrewmateRepository extends CrudRepository<Crewmate, Integer> {
     @Query("SELECT c FROM Crewmate c WHERE c.game.id= :id")
     List<Crewmate> findByGameId(Integer id);
 
+    @Query("SELECT COUNT(c) FROM Crewmate c WHERE c.shelterCard.id= :id")
+    Integer countByShelterCardId(Integer id);
+
 }
