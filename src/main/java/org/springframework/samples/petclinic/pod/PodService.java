@@ -40,11 +40,6 @@ public class PodService {
     }
 
     @Transactional(readOnly = true)
-    public List<Pod> getPodsByEmptySlots(Integer emptySlots) throws DataAccessException {
-        return p.findByEmptySlots(emptySlots);
-    }
-
-    @Transactional(readOnly = true)
     public List<Pod> getPodsByGameId(Integer id) throws DataAccessException {
         return p.findByGameId(id);
     }

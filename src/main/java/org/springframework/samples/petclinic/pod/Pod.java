@@ -17,10 +17,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Pod extends BaseEntity {
-    @NotNull
-    @Max(3)
-    @Min(0)
-    Integer emptySlots;
 
     @NotNull
     @Max(3)
@@ -32,9 +28,9 @@ public class Pod extends BaseEntity {
     @Max(6)
     Integer number;
     /*
-     * representa al pod dentro de cada partida: 1 para pod de capacidad 3, 2 y 3
-     * para capacidad 2,
-     * resto para capacidad 1
+     representa al pod dentro de cada partida: 1 para pod de capacidad 3, 
+     2 y 3 para capacidad 2,
+     resto para capacidad 1
      */
 
     @OneToOne
