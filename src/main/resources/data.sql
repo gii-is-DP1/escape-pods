@@ -170,7 +170,7 @@ INSERT INTO games_players(game_id, players_id) VALUES (3, 3);
 INSERT INTO games_players(game_id, players_id) VALUES (3, 4);
 INSERT INTO games_players(game_id, players_id) VALUES (3, 5);
 
-INSERT INTO games_players(game_id, players_id) VALUES (4, 1);
 INSERT INTO games_players(game_id, players_id) VALUES (4, 2);
+INSERT INTO games_players(game_id, players_id) VALUES (4, 1);
 INSERT INTO games_players(game_id, players_id) VALUES (4, 3);
 INSERT INTO games_players(game_id, players_id) VALUES (4, 4);

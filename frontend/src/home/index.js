@@ -485,7 +485,7 @@ export default function Home() {
                                 textShadow: "2px 2px 2px #00000020",
                                 height: 90,
                                 width: 300,
-                                marginTop: 550,
+                                marginTop: 460,
                                 marginRight: 50,
                                 justifyContent: 'center',
                             }}>
@@ -508,7 +508,7 @@ export default function Home() {
                                 textShadow: "2px 2px 2px #00000020",
                                 height: 90,
                                 width: 300,
-                                marginTop: 550,
+                                marginTop: 460,
                                 marginRight: 50,
                                 justifyContent: 'center',
                             }}>
@@ -527,7 +527,7 @@ export default function Home() {
                             textShadow: "2px 2px 2px #00000020",
                             height: 90,
                             width: 300,
-                            marginTop: 550,
+                            marginTop: 460,
                             justifyContent: 'center',
 
                         }} onClick={() => {
