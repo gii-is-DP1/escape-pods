@@ -16,4 +16,6 @@ public interface ShelterCardRepository extends CrudRepository<ShelterCard,Intege
     
     @Query("SELECT sc FROM ShelterCard sc WHERE sc.game.id=:id")
     List<ShelterCard> findByGameId(Integer id);
+
+    Integer countById(Integer id);
 }

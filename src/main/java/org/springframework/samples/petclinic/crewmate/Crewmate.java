@@ -10,6 +10,7 @@ import org.springframework.samples.petclinic.shelterCard.ShelterCard;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.criteria.CriteriaBuilder.In;
 import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -25,6 +26,8 @@ public class Crewmate extends BaseEntity {
 
     @NotNull
     Role role;
+
+    Integer arrivalOrder;
 
     @ManyToOne
     @NotNull
