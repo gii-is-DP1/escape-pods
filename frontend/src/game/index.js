@@ -20,7 +20,6 @@ export default function Game() {
     const [roles, setRoles] = useState([]);
     const [myPlayer, setMyPlayer] = useState({})
     const [game, setGame] = useState({});
-    const [players, setPlayers] = useState([]);
 
     //entidades de la partida
     const [sectors, setSectors] = useState([]);
@@ -33,25 +32,26 @@ export default function Game() {
     const [slotInfos, setSlotInfos] = useState([]);
 
     //acciones
-    const [piloting, setPiloting] = useState(false);
+    const [accelerating, setAccelerating] = useState(false);
     const [embarking, setEmbarking] = useState(false);
-    const [selectingSector, setSelectingSector] = useState(false);
-    const [selectedSector, setSelectedSector] = useState({});
-    const [selectedPod, setSelectedPod] = useState({});
-    const [selectingPod, setSelectingPod] = useState(false);
-    const [selectedCrewmate, setSelectedCrewmate] = useState(null);
-    const [selectingCrewmate, setSelectingCrewmate] = useState(false);
-    const [selectingShelterCard, setSelectingShelterCard] = useState(false);
-    const [selectedShelterCard, setSelectedShelterCard] = useState({});
     const [spying, setSpying] = useState(false);
     const [boarding, setBoarding] = useState(false)
-
     const [programming, setProgramming] = useState(false)
-    const [remotePiloting, setRemotePiloting] = useState(false)
+    const [piloting, setPiloting] = useState(false)
     const [minipodSpawning, setMinipodSpawning] = useState(false)
+
+    const [selectingSector, setSelectingSector] = useState(false);
+    const [selectingPod, setSelectingPod] = useState(false);
+    const [selectingCrewmate, setSelectingCrewmate] = useState(false);
+    const [selectingShelterCard, setSelectingShelterCard] = useState(false);
     const [selectingBeacon, setSelectingBeacon] = useState(false);
-    const [selectedBeacon, setSelectedBeacon] = useState({});
     const [selectingLine, setSelectingLine] = useState(false);
+
+    const [selectedSector, setSelectedSector] = useState({});
+    const [selectedPod, setSelectedPod] = useState({});
+    const [selectedCrewmate, setSelectedCrewmate] = useState(null);
+    const [selectedShelterCard, setSelectedShelterCard] = useState({});
+    const [selectedBeacon, setSelectedBeacon] = useState({});
     const [selectedLine, setSelectedLine] = useState({});
 
     const [crasher1, setCrasher1] = useState(null)
@@ -61,7 +61,11 @@ export default function Game() {
 
     const [spiedCrewmates, setSpiedCrewmates] = useState([])
 
-    const [selecingAction, setSelectingAction] = useState(false)
+    const [gameOver, setGameOver] = useState(false)
+    const [playableSectorsNumbers, setPlayableSectorsNumbers] = useState(null)
+
+    const [selectingAction, setSelectingAction] = useState(false)
+    const [selectedAction, setSelectedAction] = useState(null)
     const [actionSlots, setActionSlots] = useState({
         embark: null,
         accelerate: null,
@@ -77,7 +81,7 @@ export default function Game() {
 
     const jwt = tokenService.getLocalAccessToken();
     const myUsername = jwt_decode(jwt).sub;
-    const gameId = parseInt(window.location.href.split("/")[4]) 
+    const gameId = parseInt(window.location.href.split("/")[4])
 
     const adjacencyList = [
         [1, 2, 3], //para el valor de 'sector' null
@@ -215,6 +219,29 @@ export default function Game() {
         return beacons.filter(beacon => !usedBeacons.includes(beacon.id))
     }
 
+    function isGameOver(sectors) {
+        let scrappedSectorsNumbers = sectors.filter(sector => sector.scrap).map(sector => sector.number);
+        if ((scrappedSectorsNumbers.includes(4) && scrappedSectorsNumbers.includes(5) && scrappedSectorsNumbers.includes(6))) {
+            setGameOver(true)
+            setPlayableSectorsNumbers([7, 8, 9, 10, 11, 12, 13])
+        } else if (scrappedSectorsNumbers.includes(4) && scrappedSectorsNumbers.includes(8) && scrappedSectorsNumbers.includes(6)) {
+            setGameOver(true)
+            setPlayableSectorsNumbers([7, 9, 10, 11, 12, 13])
+        } else if (scrappedSectorsNumbers.includes(4) && scrappedSectorsNumbers.includes(8) && scrappedSectorsNumbers.includes(9)) {
+            setGameOver(true)
+            setPlayableSectorsNumbers([7, 10, 11, 12, 13])
+        } else if (scrappedSectorsNumbers.includes(6) && scrappedSectorsNumbers.includes(8) && scrappedSectorsNumbers.includes(7)) {
+            setGameOver(true)
+            setPlayableSectorsNumbers([9, 10, 11, 12, 13])
+        } else if (scrappedSectorsNumbers.includes(7) && scrappedSectorsNumbers.includes(8) && scrappedSectorsNumbers.includes(9)) {
+            setGameOver(true)
+            setPlayableSectorsNumbers([10, 11, 12, 13])
+        } else if (scrappedSectorsNumbers.includes(7) && scrappedSectorsNumbers.includes(10) && scrappedSectorsNumbers.includes(9)) {
+            setGameOver(true)
+            setPlayableSectorsNumbers([11, 12, 13])
+        }
+    }
+
     async function fetchCurrentGame() {
         const response = await fetch(`/api/v1/games/${gameId}`, {
             headers: {
@@ -296,7 +323,9 @@ export default function Game() {
             <div className={props.pod.capacity === 3 ? "pod3" : props.pod.capacity === 2 ? "pod2" : "pod1"} style={props.pod.sector === null ? { left: hangarX[props.pod.number - 1], top: hangarY[props.pod.number - 1] } : null}
                 onClick={() => {
                     console.log(props.pod)
-                    if (selectingPod) {
+                    if (gameOver && !playableSectorsNumbers.includes(props.pod.sector ? props.pod.sector.number : null)) {
+                        ShowAlert("There is an impassible barrier, so you cannot use this pod")
+                    } else if (selectingPod) {
                         podClickHandler(props.pod)
                     }
                 }}
@@ -323,6 +352,8 @@ export default function Game() {
                 if ([...Object.values(actionSlots), ...Object.values(specialActionSlots)]
                     .flat().map(actionCrewmate => actionCrewmate ? actionCrewmate.id : null).includes(props.crewmate.id)) {
                     ShowAlert("You cannot use a crewmate that is already in an action slot")
+                } else if (gameOver && !playableSectorsNumbers.includes(props.crewmate.pod ? props.crewmate.pod.sector.number : null) && !selectingAction) {
+                    ShowAlert("There is an impassible barrier, so you cannot use this crewmate")
                 } else if (selectingCrewmate && !props.crewmate.shelter) {
                     crewmateClickHandler(props.crewmate)
                 }
@@ -494,9 +525,9 @@ export default function Game() {
                     <div style={{ position: "absolute", left: 92, top: 20, width: 40, height: 40 }}
                         onClick={() => {
                             if (!actionSlots.embark) {
-                                setEmbarking(true);
                                 setSelectingCrewmate(true);
                                 setSelectingAction(true);
+                                setSelectedAction("embark");
                                 ShowAlert("Click on any of your reserve crewmates to spend it in this action")
                             } else if (!selectingCrewmate) {
                                 ShowAlert("The slot is not empty")
@@ -508,9 +539,9 @@ export default function Game() {
                     <div style={{ position: "absolute", left: 138, top: 20, width: 40, height: 40 }}
                         onClick={() => {
                             if (actionSlots.embark && actionSlots.embark.length === 1) {
-                                setEmbarking(true);
                                 setSelectingCrewmate(true);
                                 setSelectingAction(true);
+                                setSelectedAction("embark");
                                 ShowAlert("Click on any of your reserve crewmates to spend it in this action")
                             } else if (!selectingCrewmate) {
                                 ShowAlert("The slot is not empty")
@@ -522,8 +553,7 @@ export default function Game() {
                     <div style={{ position: "absolute", left: 33, top: 95.5, width: 40, height: 40 }}
                         onClick={() => {
                             if (!actionSlots.accelerate) {
-                                setPiloting(true);
-                                setSelectingPod(true);
+                                setSelectedAction("accelerate");
                                 setSelectingAction(true);
                                 setSelectingCrewmate(true);
                                 ShowAlert("Click on any of your reserve crewmates to spend it in this action")
@@ -537,9 +567,7 @@ export default function Game() {
                     <div style={{ position: "absolute", left: 96, top: 95.5, width: 40, height: 40 }}
                         onClick={() => {
                             if (!actionSlots.spy) {
-                                setSpying(true);
-                                setSelectingPod(true);
-                                setSelectingShelterCard(true);
+                                setSelectedAction("spy");
                                 setSelectingAction(true);
                                 setSelectingCrewmate(true);
                                 ShowAlert("Click on any of your reserve crewmates to spend it in this action")
@@ -553,7 +581,7 @@ export default function Game() {
                     <div style={{ position: "absolute", left: 159, top: 95.5, width: 40, height: 40 }}
                         onClick={() => {
                             if (!actionSlots.minipod) {
-                                setMinipodSpawning(true);
+                                setSelectedAction("minipod");
                                 setSelectingCrewmate(true);
                                 setSelectingAction(true);
                                 ShowAlert("Click on any of your reserve crewmates to spend it in this action")
@@ -570,7 +598,7 @@ export default function Game() {
                     <div style={{ position: "absolute", left: 65.5, top: 26, width: 40, height: 40 }}
                         onClick={() => {
                             if (!specialActionSlots.board) {
-                                setBoarding(true);
+                                setSelectedAction("board");
                                 setSelectingCrewmate(true);
                                 setSelectingAction(true);
                                 ShowAlert("Click on any of your reserve crewmates to spend it in this action")
@@ -584,8 +612,7 @@ export default function Game() {
                     <div style={{ position: "absolute", left: 160.5, top: 26, width: 40, height: 40 }}
                         onClick={() => {
                             if (!specialActionSlots.program) {
-                                setProgramming(true);
-                                setSelectingBeacon(true);
+                                setSelectedAction("program");
                                 setSelectingAction(true);
                                 setSelectingCrewmate(true);
                                 ShowAlert("Click on any of your reserve crewmates to spend it in this action")
@@ -599,8 +626,7 @@ export default function Game() {
                     <div style={{ position: "absolute", left: 65, top: 89.5, width: 40, height: 40 }}
                         onClick={() => {
                             if (!specialActionSlots.pilot) {
-                                setRemotePiloting(true);
-                                setSelectingPod(true);
+                                setSelectedAction("pilot");
                                 setSelectingAction(true);
                                 setSelectingCrewmate(true);
                                 ShowAlert("Click on any of your reserve crewmates to spend it in this action")
@@ -613,6 +639,7 @@ export default function Game() {
                     </div>
                     <div style={{ position: "absolute", left: 160.5, top: 89.5, width: 40, height: 40 }}
                         onClick={() => {
+                            /*
                             if (!specialActionSlots.refresh) {
                                 setSelectingCrewmate(true);
                                 setSelectingAction(true);
@@ -620,6 +647,8 @@ export default function Game() {
                             } else if (!selectingCrewmate) {
                                 ShowAlert("The slot is not empty")
                             }
+                            */
+                            Explode(shelterCards.find(shelterCard => shelterCard.sector.number === 11))
                         }}
                     >
                         <Crewmate crewmate={specialActionSlots.refresh}></Crewmate>
@@ -649,34 +678,46 @@ export default function Game() {
     }
 
     function actionSlotSetter(crewmate) {
-        if (embarking) {
+        if (selectedAction === "embark") {
             if (!actionSlots.embark) {
                 setActionSlots({ ...actionSlots, embark: [crewmate] })
             } else {
                 setActionSlots({ ...actionSlots, embark: [...actionSlots.embark, crewmate] })
             }
+            setEmbarking(true);
             ShowAlert("Click on any of your crewmates")
-        } else if (piloting) {
+        } else if (selectedAction === "accelerate") {
             setActionSlots({ ...actionSlots, accelerate: crewmate })
             setSelectingCrewmate(false);
+            setAccelerating(true);
+            setSelectingPod(true);
             ShowAlert("Click on any pod where you have at least one of your crewmates to accelerate")
-        } else if (spying) {
+        } else if (selectedAction === "spy") {
             setActionSlots({ ...actionSlots, spy: crewmate })
             setSelectingCrewmate(false);
+            setSpying(true);
+            setSelectingPod(true);
+            setSelectingShelterCard(true);
             ShowAlert("Click on the pod or shelter you want to spy")
-        } else if (minipodSpawning) {
+        } else if (selectedAction === "minipod") {
             setActionSlots({ ...actionSlots, minipod: crewmate })
+            setMinipodSpawning(true);
             ShowAlert("Click on any of your crewmates")
-        } else if (remotePiloting) {
+        } else if (selectedAction === "pilot") {
             setSpecialActionSlots({ ...specialActionSlots, pilot: crewmate })
             setSelectingCrewmate(false);
+            setPiloting(true);
+            setSelectingPod(true);
             ShowAlert("Click on any pod to pilot it")
-        } else if (boarding) {
+        } else if (selectedAction === "board") {
             setSpecialActionSlots({ ...specialActionSlots, board: crewmate })
+            setBoarding(true);
             ShowAlert("Click on any of your crewmates")
-        } else if (programming) {
+        } else if (selectedAction === "program") {
             setSpecialActionSlots({ ...specialActionSlots, program: crewmate })
             setSelectingCrewmate(false);
+            setProgramming(true);
+            setSelectingBeacon(true);
             ShowAlert("Click on any beacon or click the explosion card to place it at the end of the deck")
         } else {
             setSelectingCrewmate(false);
@@ -685,6 +726,7 @@ export default function Game() {
             ShowAlert("Special action card refreshed")
         }
         setSelectingAction(false)
+        setSelectedAction(null)
         setSelectedCrewmate(null)
     }
 
@@ -701,7 +743,7 @@ export default function Game() {
         }
         await fetch(`/api/v1/pods/${pod.id}`, {
             headers: {
-                "Authorization": ` Bearer ${ jwt }`,
+                "Authorization": ` Bearer ${jwt}`,
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
@@ -724,7 +766,7 @@ export default function Game() {
         }
         await fetch(`/api/v1/crewmates/${crewmate.id}`, {
             headers: {
-                "Authorization": ` Bearer ${ jwt }`,
+                "Authorization": ` Bearer ${jwt}`,
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
@@ -805,6 +847,8 @@ export default function Game() {
             }
             movePod(pods.find(pod => pod.sector && pod.sector.number === sectorToModify.number), null)
         }
+
+        isGameOver(await itemGetters.fetchSectors(gameId, jwt))
     }
 
     async function ProgramExplosionCard() {
@@ -839,7 +883,7 @@ export default function Game() {
         }
         await fetch(`/api/v1/lines/${line.id}`, {
             headers: {
-                "Authorization": `Bearer ${ jwt }`,
+                "Authorization": `Bearer ${jwt}`,
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
@@ -863,7 +907,7 @@ export default function Game() {
 
     async function sectorClickHandler(sector) {
         setSelectedSector(sector)
-        if ((piloting || remotePiloting) && selectingSector) {
+        if ((accelerating || piloting) && selectingSector) {
             if ((!selectedPod.sector && adjacencyList[0].includes(sector.number)) || (selectedPod.sector && adjacencyList[selectedPod.sector.number].includes(sector.number))) {
                 if (sector.scrap) {
                     ShowAlert("You cannot move the pod to a sector with scrap in it")
@@ -879,8 +923,8 @@ export default function Game() {
                         setCrashSector2(null)
                         setSelectingSector(false)
                         setSelectingPod(false)
+                        setAccelerating(false)
                         setPiloting(false)
-                        setRemotePiloting(false)
                     } else if (!hasPossibleMoves(selectedPod)) {
                         await movePod(crasher1, null)
                         await movePod(selectedPod, sector)
@@ -889,8 +933,8 @@ export default function Game() {
                         setCrashSector1(null)
                         setSelectingSector(false)
                         setSelectingPod(false)
+                        setAccelerating(false)
                         setPiloting(false)
-                        setRemotePiloting(false)
                     } else {
                         ShowAlert("You cannot move the crashed pod to that sector unless you have no other possible moves")
                     }
@@ -918,8 +962,8 @@ export default function Game() {
                     setSelectingSector(false)
                     setSelectingPod(false)
 
+                    setAccelerating(false)
                     setPiloting(false)
-                    setRemotePiloting(false)
 
 
 
@@ -971,7 +1015,7 @@ export default function Game() {
     function podClickHandler(pod) {
         setSelectedPod(pod)
 
-        if (piloting) {
+        if (accelerating) {
 
             if (GetCrewmatesFromPod(pod).find(crewmate => crewmate.player.id === gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).id)) {
                 setSelectingPod(false)
@@ -1024,7 +1068,7 @@ export default function Game() {
             } else {
                 ShowAlert(`You cannot move your ${selectedCrewmate.role.toLowerCase()} to that pod`)
             }
-        } else if (remotePiloting) {
+        } else if (piloting) {
             if (GetCrewmatesFromPod(pod).length !== 0) {
                 setSelectingPod(false)
                 setSelectingSector(true)
@@ -1042,8 +1086,12 @@ export default function Game() {
     }
 
     async function crewmateClickHandler(crewmate) {
-        if (selecingAction) {
-            actionSlotSetter(crewmate)
+        if (selectingAction) {
+            if (!crewmate.pod && !crewmate.shelterCard) {
+                actionSlotSetter(crewmate)
+            } else {
+                ShowAlert("You must use a crewmate from your reserve")
+            }
         } else if (embarking) {
             setSelectedCrewmate(crewmate)
             if (crewmate.player.id === gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).id) {
@@ -1218,24 +1266,24 @@ export default function Game() {
             } else {
                 setActionSlots({ ...actionSlots, embark: null })
             }
-        } else if (piloting) {
+        } else if (accelerating) {
             setActionSlots({ ...actionSlots, accelerate: null })
         } else if (spying) {
             setActionSlots({ ...actionSlots, spy: null })
         } else if (minipodSpawning) {
             setActionSlots({ ...actionSlots, minipod: null })
-        } else if (remotePiloting) {
+        } else if (piloting) {
             setSpecialActionSlots({ ...specialActionSlots, pilot: null })
         } else if (boarding) {
             setSpecialActionSlots({ ...specialActionSlots, board: null })
         } else if (programming) {
             setSpecialActionSlots({ ...specialActionSlots, program: null })
         }
-        setPiloting(false)
+        setAccelerating(false)
         setEmbarking(false)
         setSpying(false)
         setMinipodSpawning(false)
-        setRemotePiloting(false)
+        setPiloting(false)
         setBoarding(false)
         setSelectedSector(null)
         setSelectedPod(null)
@@ -1256,11 +1304,11 @@ export default function Game() {
     }
 
     function checkActionsState() {
-        console.log("piloting " + piloting)
+        console.log("accelerating " + accelerating)
         console.log("embarking " + embarking)
         console.log("spying " + spying)
         console.log("minipodSpawning " + minipodSpawning)
-        console.log("remotePiloting " + remotePiloting)
+        console.log("piloting " + piloting)
         console.log("boarding " + boarding)
         console.log("selectingPod " + selectingPod)
         console.log("selectingCrewmate " + selectingCrewmate)
@@ -1367,6 +1415,24 @@ export default function Game() {
                                 alignSelf: "center",
                                 marginBottom: 20
                             }} onClick={() => {
+                                setActionSlots({ embark: null, accelerate: null, spy: null, minipod: null })
+                                setSpecialActionSlots({ pilot: null, board: null, program: null, refresh: null })
+                            }}>
+                                vaciar tarjetas
+                            </Button>
+                            <Button className="button" style={{
+                                backgroundColor: "#CFFF68",
+                                border: "none",
+                                width: 200,
+                                fontSize: 20,
+                                borderRadius: 20,
+                                height: 60,
+                                boxShadow: "5px 5px 5px #00000020",
+                                textShadow: "2px 2px 2px #00000020",
+                                transition: "0.15s",
+                                alignSelf: "center",
+                                marginBottom: 20
+                            }} onClick={() => {
                                 console.log(sectors)
                                 console.log(beacons)
                                 console.log(lines)
@@ -1378,14 +1444,15 @@ export default function Game() {
                                 console.log(actionSlots)
                                 console.log(shelterCards.find(shelterCard => shelterCard.sector.number === 11))
                                 ShowAlert("Troncos lanzados")
-                                                                checkActionsState()
+                                checkActionsState()
                                 console.log(game.explosions)
-                                console.log(hasPossibleMoves(pods.find(pod => pod.number === 2)))
+                                console.log(gameOver)
+                                console.log(sectors.filter(sector => sector.scrap).map(sector => sector.number))
                             }}>
                                 troncos
                             </Button>
                             {(selectingBeacon || selectingCrewmate || selectingPod || selectingSector || selectingLine ||
-                                selectingShelterCard || piloting || embarking || spying || minipodSpawning || remotePiloting ||
+                                selectingShelterCard || accelerating || embarking || spying || minipodSpawning || piloting ||
                                 boarding) &&
                                 <Button className="button" style={{
                                     backgroundColor: "#ff8368",
