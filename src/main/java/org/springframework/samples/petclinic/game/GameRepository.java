@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -20,4 +21,8 @@ public interface GameRepository extends CrudRepository<Game, Integer> {
     List<Game> findByFinishIsNotNull(Pageable pageable);
 
     List<Game> findByFinishIsNullAndStartIsNotNull(Pageable pageable);
+
+    @Query("SELECT g FROM Game g JOIN g.players p WHERE p.id = :playerId")
+    List<Game> findByPlayerId(Pageable pageable, Integer playerId);
+
 }
