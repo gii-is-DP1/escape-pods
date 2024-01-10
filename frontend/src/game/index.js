@@ -75,7 +75,7 @@ export default function Game() {
 
     const jwt = tokenService.getLocalAccessToken();
     const myUsername = jwt_decode(jwt).sub;
-    const gameId = parseInt(window.location.href.split("/")[4]) // extrae la id de la partida desde la ruta spliteandola por las / en un array, cuidado que el indice del array que devuelve el split no empieza en [0] sino en [1] por algu motivo ([-1] tampoco funciona)
+    const gameId = parseInt(window.location.href.split("/")[4]) 
 
     const adjacencyList = [
         [1, 2, 3], //para el valor de 'sector' null
