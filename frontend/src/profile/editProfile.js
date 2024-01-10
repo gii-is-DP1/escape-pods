@@ -1,7 +1,7 @@
 import tokenService from "../services/token.service";
 import React, { useEffect, useState } from 'react';
 import { Link } from "react-router-dom";
-import { Form, Input, Label } from "reactstrap";
+import { Form, Input, Label, Button } from "reactstrap";
 import jwt_decode from "jwt-decode";
 import FormGenerator from "../components/formGenerator/formGenerator";
 
@@ -74,7 +74,7 @@ export default function EditProfile() {
             method: "PUT",
             body: JSON.stringify(myPlayer)
         })
-        //sendLogoutRequest();
+        sendLogoutRequest();
     }
 
     function handleChangeUsername(event) {
@@ -111,7 +111,7 @@ export default function EditProfile() {
             user: myUser,
         }
         console.log(changedPlayer)
-        //setMyPlayer(changedPlayer);
+        setMyPlayer(changedPlayer);
     }
 
 
@@ -154,29 +154,24 @@ export default function EditProfile() {
                     </div>
 
                     <div className="custom-form-input">
-                        <FormGenerator
-                            inputs={[
-                                {
-                                    tag: "Profile Picture",
-                                    name: "profilePicture",
-                                    type: "files",
-                                    isRequired: true,
-                                }
-                            ]}
-                            //el problema es el handleChangePlayerPicture que el onsubmit el evento no que produce al darle. 
-                            onSubmit={handleChangePlayerPicture}
-                            numberOfColumns={1}
-                            listenEnterKey
-                            buttonText="Save"
-                            buttonClassName="auth-button"
+                        <Label for="badgeImage" className="custom-form-input-label-not-mandatory">
+                            Profile picture:
+                        </Label>
+                        <Input
+                            type="text"
+                            required
+                            name="profilePicture"
+                            id="profilePicture"
+                            value={myPlayer.profilePicture || ""}
+                            onChange={handleChangePlayerPicture}
+                            className="custom-input"
                         />
                     </div>
-
-
 
                     <div className="custom-button-row">
                         <button className="auth-button">Save
                         </button>
+                        
                         <Link
                             to={`/profile`}
                             className="auth-button"
