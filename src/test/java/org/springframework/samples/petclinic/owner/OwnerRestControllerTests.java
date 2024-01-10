@@ -154,7 +154,7 @@ class OwnerRestControllerTests {
 	@WithMockUser("admin")
 	void shouldReturnOwner() throws Exception {
 		when(this.ownerService.findOwnerById(TEST_OWNER_ID)).thenReturn(george);
-		mockMvc.perform(get(BASE_URL +"/{id}", TEST_OWNER_ID)).andExpect(status().isOk())
+		mockMvc.perform(get(BASE_URL + "/{id}", TEST_OWNER_ID)).andExpect(status().isOk())
 				.andExpect(jsonPath("$.id").value(TEST_OWNER_ID))
 				.andExpect(jsonPath("$.firstName").value(george.getFirstName()))
 				.andExpect(jsonPath("$.lastName").value(george.getLastName()))
@@ -176,7 +176,7 @@ class OwnerRestControllerTests {
 		owner.setLastName("Prueba");
 		owner.setCity("Llerena");
 		owner.setAddress("Calle Reina,3");
-		//owner.setPlan(PricingPlan.BASIC);
+		// owner.setPlan(PricingPlan.BASIC);
 		owner.setTelephone("999999999");
 		owner.setUser(user);
 
@@ -214,20 +214,20 @@ class OwnerRestControllerTests {
 
 	@Test
 	@WithMockUser("admin")
-	  void shouldDeleteOwner() throws Exception {
+	void shouldDeleteOwner() throws Exception {
 		when(this.ownerService.findOwnerById(TEST_OWNER_ID)).thenReturn(george);
-		
-	    doNothing().when(this.ownerService).deleteOwner(TEST_OWNER_ID);
-	    mockMvc.perform(delete(BASE_URL + "/{id}", TEST_OWNER_ID).with(csrf()))
-	         .andExpect(status().isOk());
-	  }
+		doNothing().when(this.ownerService).deleteOwner(TEST_OWNER_ID);
+
+		mockMvc.perform(delete(BASE_URL + "/{id}", TEST_OWNER_ID).with(csrf()))
+				.andExpect(status().isOk());
+	}
 
 	@Test
 	@WithMockUser("owner")
 	void shouldReturnPlan() throws Exception {
 		when(this.userService.findCurrentUser()).thenReturn(user);
 		when(this.userService.findOwnerByUser(any(Integer.class))).thenReturn(george);
-		
+
 		mockMvc.perform(get("/api/v1/plan")).andExpect(status().isOk())
 				.andExpect(jsonPath("$.id").value(TEST_OWNER_ID))
 				.andExpect(jsonPath("$.firstName").value(george.getFirstName()))

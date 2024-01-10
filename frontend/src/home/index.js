@@ -259,6 +259,7 @@ export default function Home() {
                 onClick={() => {
                     setJoinLobbyVisible(true)
                     getGames(0)
+                    console.log(getGames(0))
                 }}
             >
 

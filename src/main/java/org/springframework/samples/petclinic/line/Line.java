@@ -14,11 +14,11 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-public class Line extends BaseEntity{
+public class Line extends BaseEntity {
 
     @NotNull
     Integer number;
-    
+
     @OneToOne(optional = true)
     Beacon beacon;
 
@@ -26,5 +26,4 @@ public class Line extends BaseEntity{
     @NotNull
     Game game;
 
-    
 }

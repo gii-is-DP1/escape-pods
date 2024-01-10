@@ -38,9 +38,8 @@ public class GamePlayerRestController {
 
     @GetMapping
     public List<GamePlayer> getAllGamePlayers(
-            @ParameterObject() @RequestParam(value = "color", required = false) Color color,
             @ParameterObject() @RequestParam(value = "gameid", required = false) Integer gameid) {
-        if (color == null && gameid != null) {
+        if (gameid != null) {
             return ps.getGamePlayersByGameId(gameid);
         } else
             return ps.getAllGamePlayers();
@@ -77,6 +76,13 @@ public class GamePlayerRestController {
     public ResponseEntity<Void> deleteGamePlayer(@PathVariable("id") Integer id) {
         if (getGamePlayerById(id) != null)
             ps.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping()
+    public ResponseEntity<Void> deleteGamePlayersByGameId(
+            @ParameterObject() @RequestParam(value = "gameid", required = false) Integer gameid) {
+        ps.deleteByGameId(gameid);
         return ResponseEntity.noContent().build();
     }
 
