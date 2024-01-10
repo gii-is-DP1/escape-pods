@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
-
+import org.springframework.samples.petclinic.player.Player;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -45,7 +45,7 @@ public class GameRestController {
     @GetMapping
     public ResponseEntity<List<Game>> getAllGames(
             @ParameterObject @RequestParam(value = "status", required = false) GameStatus status,
-            @RequestParam(required = false) String name,
+            @ParameterObject @RequestParam(value = "playerId", required = false) Integer playerId,
             @RequestParam(required = false) String order,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "7") int size) {
@@ -68,6 +68,8 @@ public class GameRestController {
                 default:
                     return new ResponseEntity<>((List<Game>) gs.getFinishedGames(paging), HttpStatus.OK);
             }
+        } else if (status == null && playerId != null) {
+            return new ResponseEntity<>((List<Game>) gs.getGamesByPlayerId(paging, playerId), HttpStatus.OK);
         } else
             return new ResponseEntity<>((List<Game>) gs.getAllGames(paging), HttpStatus.OK);
     }

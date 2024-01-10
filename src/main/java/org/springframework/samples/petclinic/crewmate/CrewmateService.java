@@ -19,6 +19,9 @@ public class CrewmateService {
 
     @Transactional
     public Crewmate save(Crewmate c) throws DataAccessException {
+        if (c.getShelterCard() != null && c.getArrivalOrder() == null) {
+            c.setArrivalOrder(cr.countByShelterCardId(c.getShelterCard().getId()));
+        }
         cr.save(c);
         return c;
     }

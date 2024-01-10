@@ -155,9 +155,7 @@ function AppNavbar() {
     } else {
         userLinks = (
             <>
-                <NavItem>
-                    <NavLink style={{ color: "white" }} tag={Link} to="/dashboard">Dashboard</NavLink>
-                </NavItem>
+                
             </>
         )
         userLogout = (
@@ -200,9 +198,9 @@ function AppNavbar() {
                         {userLogout}
                     </Nav>
                 </Collapse>
-                {!emptyChecker('object', myPlayer) &&
+                {!emptyChecker('object', myPlayer)&& roles.includes("PLAYER") &&
                     <NavbarBrand href="/profile">
-                        <img src={!emptyChecker("object",myPlayer) ? myPlayer.profilePicture : fotoP2} style={{ height: 45, width: 45, marginLeft: 10, borderRadius: '50%' }} />
+                        <img src={!emptyChecker("object",myPlayer) && myPlayer!= undefined ? myPlayer.profilePicture : fotoP2} style={{ height: 45, width: 45, marginLeft: 10, borderRadius: '50%' }} />
                     </NavbarBrand>
                 }
             </Navbar>

@@ -34,6 +34,10 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+
 /**
  * Test class for the {@link VetController}
  */
@@ -94,6 +98,7 @@ class UserControllerTests {
 	@Test
 	@WithMockUser("admin")
 	void shouldFindAll() throws Exception {
+		Pageable paging = PageRequest.of(0, 0,Sort.by("-").ascending());
 		User sara = new User();
 		sara.setId(2);
 		sara.setUsername("Sara");
@@ -102,7 +107,7 @@ class UserControllerTests {
 		juan.setId(3);
 		juan.setUsername("Juan");
 
-		when(this.userService.findAll()).thenReturn(List.of(user, sara, juan));
+		when(this.userService.findAll(paging).getContent()).thenReturn(List.of(user, sara, juan));
 
 		mockMvc.perform(get(BASE_URL)).andExpect(status().isOk()).andExpect(jsonPath("$.size()").value(3))
 				.andExpect(jsonPath("$[?(@.id == 1)].username").value("user"))
@@ -113,6 +118,7 @@ class UserControllerTests {
 	@Test
 	@WithMockUser("admin")
 	void shouldFindAllWithAuthority() throws Exception {
+		Pageable paging = PageRequest.of(0, 0,Sort.by("-").ascending());
 		Authorities aux = new Authorities();
 		aux.setId(2);
 		aux.setAuthority("AUX");
@@ -127,7 +133,7 @@ class UserControllerTests {
 		juan.setUsername("Juan");
 		juan.setAuthority(auth);
 
-		when(this.userService.findAllByAuthority(auth.getAuthority())).thenReturn(List.of(user, juan));
+		when(this.userService.findAllByAuthority(auth.getAuthority(), paging).getContent()).thenReturn(List.of(user, juan));
 
 		mockMvc.perform(get(BASE_URL).param("auth", "VET")).andExpect(status().isOk())
 				.andExpect(jsonPath("$.size()").value(2)).andExpect(jsonPath("$[?(@.id == 1)].username").value("user"))

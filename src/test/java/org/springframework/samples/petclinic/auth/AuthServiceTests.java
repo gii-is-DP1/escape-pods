@@ -21,6 +21,10 @@ import org.springframework.samples.petclinic.user.UserService;
 import org.springframework.samples.petclinic.vet.Vet;
 import org.springframework.samples.petclinic.vet.VetService;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+
 
 @SpringBootTest
 public class AuthServiceTests {
@@ -43,21 +47,23 @@ public class AuthServiceTests {
 	@Test
 	@Transactional
 	public void shouldCreateAdminUser() {
+		Pageable paging = PageRequest.of(0, 0,Sort.by("-").ascending());
 		SignupRequest request = createRequest("ADMIN", "admin2");
-		int userFirstCount = ((Collection<User>) this.userService.findAll()).size();
+		int userFirstCount = ( this.userService.findAll(paging)).getSize();
 		this.authService.createUser(request);
-		int userLastCount = ((Collection<User>) this.userService.findAll()).size();
+		int userLastCount = ( this.userService.findAll(paging)).getSize();
 		assertEquals(userFirstCount + 1, userLastCount);
 	}
 	
 	@Test
 	@Transactional
 	public void shouldCreateVetUser() {
+		Pageable paging = PageRequest.of(0, 0,Sort.by("-").ascending());
 		SignupRequest request = createRequest("VET", "vettest");
-		int userFirstCount = ((Collection<User>) this.userService.findAll()).size();
+		int userFirstCount = (userService.findAll(paging)).getSize();
 		int vetFirstCount = ((Collection<Vet>) this.vetService.findAll()).size();
 		this.authService.createUser(request);
-		int userLastCount = ((Collection<User>) this.userService.findAll()).size();
+		int userLastCount = (userService.findAll(paging)).getSize();
 		int vetLastCount = ((Collection<Vet>) this.vetService.findAll()).size();
 		assertEquals(userFirstCount + 1, userLastCount);
 		assertEquals(vetFirstCount + 1, vetLastCount);
@@ -66,11 +72,12 @@ public class AuthServiceTests {
 	@Test
 	@Transactional
 	public void shouldCreateOwnerUser() {
+		Pageable paging = PageRequest.of(0, 0,Sort.by("-").ascending());
 		SignupRequest request = createRequest("OWNER", "ownertest");
-		int userFirstCount = ((Collection<User>) this.userService.findAll()).size();
+		int userFirstCount = (userService.findAll(paging)).getSize();
 		int ownerFirstCount = ((Collection<Owner>) this.ownerService.findAll()).size();
 		this.authService.createUser(request);
-		int userLastCount = ((Collection<User>) this.userService.findAll()).size();
+		int userLastCount = (userService.findAll(paging)).getSize();
 		int ownerLastCount = ((Collection<Owner>) this.ownerService.findAll()).size();
 		assertEquals(userFirstCount + 1, userLastCount);
 		assertEquals(ownerFirstCount + 1, ownerLastCount);
