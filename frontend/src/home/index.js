@@ -5,8 +5,6 @@ import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import tokenService from "../services/token.service";
 import jwt_decode from "jwt-decode";
 import { Link } from 'react-router-dom';
-import { PiMagnifyingGlassBold } from "react-icons/pi";
-import { BiSolidInvader } from "react-icons/bi";
 
 
 
@@ -544,7 +542,6 @@ export default function Home() {
                             <ModalHeader style={{ color: '#00FF66', textShadow: "2px 2px 2px #00000020" }}>
                                 <div style={{ display: 'flex', flexDirection: 'row', alignContent: 'right', alignSelf: 'right', alignItems: 'right' }}>
                                     <p style={{ fontFamily: 'monospace' }}>Users</p>
-                                    <p style={{ marginLeft: 100, fontFamily: 'monospace' }}><PiMagnifyingGlassBold style={{ marginRight: 5, fontSize: 22, fontFamily: 'monospace' }} />Username</p>
                                 </div>
                             </ModalHeader>
                             <ModalBody style={{ flexDirection: "row", fontFamily: 'monospace', color: '#00FF66' }}>
