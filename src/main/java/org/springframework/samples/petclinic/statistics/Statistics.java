@@ -11,15 +11,14 @@ import jakarta.validation.constraints.NotNull;
 public class Statistics extends BaseEntity {
     @NotNull
     String name;
-    
-    /* 
-    @OneToMany
-    @NotNull    
-    StatValue statValue;
-    */
-    /* 
-    no esta definida en el uml la relacin, ademas de que no esta creada la clase gamestats
-    GameStats gameStats;
-*/
-    
+
+    /*
+     * TODO COMENZAR DESARROLLO DEL MODULO EXTRA
+     * 
+     * @OneToMany
+     * 
+     * @NotNull
+     * StatValue statValue;
+     */
+
 }

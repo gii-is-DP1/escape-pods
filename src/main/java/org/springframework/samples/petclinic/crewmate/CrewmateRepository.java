@@ -7,13 +7,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-
 @Repository
-public interface CrewmateRepository extends CrudRepository<Crewmate,Integer>{
-    // AQUI NO SE REALMENTE QUE HAY QUE PONER
-
+public interface CrewmateRepository extends CrudRepository<Crewmate, Integer> {
+   
     List<Crewmate> findAll();
+
     Optional<Crewmate> findById(Integer id);
+
     @Query("SELECT c FROM Crewmate c WHERE c.game.id= :id")
     List<Crewmate> findByGameId(Integer id);
 

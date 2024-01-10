@@ -10,8 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
-import org.springframework.samples.petclinic.game.Game;
-import org.springframework.samples.petclinic.game.GameService;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,56 +33,51 @@ public class LineRestController {
     LineService ls;
 
     @Autowired
-    public LineRestController(LineService ls){
-        this.ls=ls;
-        
+    public LineRestController(LineService ls) {
+        this.ls = ls;
+
     }
-    
-    
 
     @GetMapping
-    public ResponseEntity<List<Line>> getAllLines(@ParameterObject @RequestParam(value="gameid",required= false) Integer gameid){
-        if(gameid != null){
+    public ResponseEntity<List<Line>> getAllLines(
+            @ParameterObject @RequestParam(value = "gameid", required = false) Integer gameid) {
+        if (gameid != null) {
             return new ResponseEntity<>((List<Line>) ls.getAllLinesByGameId(gameid), HttpStatus.OK);
-        }else
-        return new ResponseEntity<>((List<Line>) ls.getAllLines(), HttpStatus.OK);
-        
-        
+        } else
+            return new ResponseEntity<>((List<Line>) ls.getAllLines(), HttpStatus.OK);
+
     }
 
-
-    
-
     @GetMapping("/{id}")
-    public Line getLineById(@PathVariable("id")Integer id){
-        Optional<Line> l=ls.getLineById(id);
-        if(!l.isPresent())
+    public Line getLineById(@PathVariable("id") Integer id) {
+        Optional<Line> l = ls.getLineById(id);
+        if (!l.isPresent())
             throw new ResourceNotFoundException("Line", "id", id);
         return l.get();
     }
 
     @PostMapping()
-        public ResponseEntity<Line> createLine(@Valid @RequestBody Line l){
-            l=ls.save(l);
-            URI location = ServletUriComponentsBuilder
-                        .fromCurrentRequest()
-                        .path("/{id}")
-                        .buildAndExpand(l.getId())
-                        .toUri();
-            return ResponseEntity.created(location).body(l);
-        }
-    
+    public ResponseEntity<Line> createLine(@Valid @RequestBody Line l) {
+        l = ls.save(l);
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(l.getId())
+                .toUri();
+        return ResponseEntity.created(location).body(l);
+    }
+
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateGame(@Valid @RequestBody Game l,@PathVariable("id")Integer id){
-        Line lToUpdate=getLineById(id);
-        BeanUtils.copyProperties(l,lToUpdate, "id");
+    public ResponseEntity<Void> updateLine(@Valid @RequestBody Line l, @PathVariable("id") Integer id) {
+        Line lToUpdate = getLineById(id);
+        BeanUtils.copyProperties(l, lToUpdate, "id");
         ls.save(lToUpdate);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteLine(@PathVariable("id")Integer id){
-        if(getLineById(id)!=null)
+    public ResponseEntity<Void> deleteLine(@PathVariable("id") Integer id) {
+        if (getLineById(id) != null)
             ls.delete(id);
         return ResponseEntity.noContent().build();
     }

@@ -119,9 +119,11 @@ export default function Profile() {
                             style={{ rotate: '-90deg', height: 300, width: 300 }} />
                     </div>
                     <div style={{ position: 'absolute', marginTop: 104.5, marginLeft: 100 }}>
-                        <img className="profile-picture" src={myPlayer.profilePicture}
-                            style={{ height: 100, width: 100 }} />
-                        <p style={{ marginTop: 60, alignSelf: 'center', fontSize: 30, textTransform: 'uppercase' }}>{myUsername}</p>
+                        {myPlayer.profilePicture !== undefined &&
+                            <img className="profile-picture" src={myPlayer.profilePicture.startsWith("http") ? myPlayer.profilePicture : `data:image/png;base64,${myPlayer.profilePicture}`}
+                                style={{ height: 100, width: 100 }} />
+                        }
+                        <p style={{ marginTop: 60, alignSelf: 'center', fontSize: 30 }}>{myUsername}</p>
                     </div>
                     <div>
                         <Link to="/logout">

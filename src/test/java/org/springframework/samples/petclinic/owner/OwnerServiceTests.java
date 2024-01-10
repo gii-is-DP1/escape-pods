@@ -63,7 +63,8 @@ public class OwnerServiceTests {
 	@Test
 	void shouldFindAllOwners() {
 		List<Owner> owners = (List<Owner>) this.ownerService.findAll();
-		assertEquals(10, owners.size());
+		// se ha cambiado el testeo debido a que se actualizo el numero de owners en lab
+		assertEquals(15, owners.size());
 	}
 
 	@Test

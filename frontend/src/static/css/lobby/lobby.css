@@ -159,14 +159,6 @@
     list-style-type: none;
 }
 
-.ul-games {
-    list-style-type: none;
-    width: 350px;
-    height: 350px;
-    overflow: hidden;
-    overflow-y: scroll;
-}
-
 .button-separed {
     flex-direction: column;
     margin-left: 2000;

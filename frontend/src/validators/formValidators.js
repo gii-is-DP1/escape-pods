@@ -35,8 +35,10 @@ export const formValidators = {
         validate: (value) => {
             if(!value.toString().trim().length > 0) { 
                 alert("Please, upload a picture");
+            } else if (value.toString().trim().length > 54000) {
+                alert("Picture size too big (max 40KB)");
             }
-            return value.toString().trim().length > 0;
+            return value.toString().trim().length > 0 && value.toString().trim().length <= 54000;
         },
         message: "Please, upload a picture"
     },
