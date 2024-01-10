@@ -8,12 +8,11 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Pageable;
-import org.springframework.samples.petclinic.player.Player;
 
 @Service
 public class GameService {
 
-     private GameRepository gr;
+    private GameRepository gr;
 
     @Autowired
     public GameService(GameRepository gr) throws DataAccessException {

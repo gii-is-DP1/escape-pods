@@ -83,7 +83,8 @@ public class LineRestController {
     }
 
     @DeleteMapping()
-    public ResponseEntity<Void> deleteLinesByGameId(@ParameterObject @RequestParam(value = "gameid", required = true) Integer gameid){
+    public ResponseEntity<Void> deleteLinesByGameId(
+            @ParameterObject @RequestParam(value = "gameid", required = true) Integer gameid) {
         ls.deleteByGameId(gameid);
         return ResponseEntity.noContent().build();
     }

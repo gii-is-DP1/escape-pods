@@ -2,7 +2,6 @@ package org.springframework.samples.petclinic.game;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -293,8 +292,8 @@ public class GameControllerTest {
     @WithMockUser("PLAYER")
     void cantDeleteGame_NotFound() throws Exception {
         Integer game1Id = 1;
-        Integer nonExistenGameId= 12;
-
+        Integer nonExistenGameId  = 12;
+ 
         game1.setStatus(GameStatus.FINISHED);
         game1.setFinish(LocalDateTime.of(2024, 1, 4, 12, 10));
 

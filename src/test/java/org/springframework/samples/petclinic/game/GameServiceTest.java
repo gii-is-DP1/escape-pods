@@ -95,7 +95,7 @@ class GameServiceTest {
         when(gameRepository.findById(gameId)).thenReturn(Optional.of(expectedGame));
 
         assertThrows(NoSuchElementException.class, () -> gameService.getGameById(falseGameId).get());
-        verify(gameRepository, times(1)).findById(gameId);
+        verify(gameRepository, times(1)).findById(falseGameId);
     }
 
     @Test

@@ -40,7 +40,7 @@ public class LineService {
     }
 
     @Transactional()
-    public void deleteByGameId(Integer id) throws DataAccessException{
+    public void deleteByGameId(Integer id) throws DataAccessException {
         lr.deleteByGameId(id);
     }
 
