@@ -5,8 +5,6 @@ import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import tokenService from "../services/token.service";
 import jwt_decode from "jwt-decode";
 import { Link } from 'react-router-dom';
-import { PiMagnifyingGlassBold } from "react-icons/pi";
-import { BiSolidInvader } from "react-icons/bi";
 
 
 
@@ -261,6 +259,7 @@ export default function Home() {
                 onClick={() => {
                     setJoinLobbyVisible(true)
                     getGames(0)
+                    console.log(getGames(0))
                 }}
             >
 
@@ -470,51 +469,45 @@ export default function Home() {
 
                     <div style={{ fontSize: 35, marginTop: 50, textShadow: "2px 2px 2px #00000020", display: 'flex', flexDirection: 'row' }}>
 
-                        <Link to="/createUser" style={{
+                        <Button className="button" style={{
+                            transition: "0.15s",
+                            backgroundColor: "#00ff6658",
+                            border: "none",
+                            borderRadius: 0,
+                            textAlign: "center",
+                            fontSize: 35,
+                            boxShadow: "3px 3px 5px #00000020",
+                            textShadow: "2px 2px 2px #00000020",
                             height: 90,
-                            width: 300, marginRight: 40
+                            width: 300,
+                            marginTop: 460,
+                            marginRight: 50,
+                            justifyContent: 'center',
+                        }} onClick={() => {
+                            window.location.href = `/createUser`
                         }}>
-                            <Button className="button" style={{
-                                transition: "0.15s",
-                                backgroundColor: "#00ff6658",
-                                border: "none",
-                                borderRadius: 0,
-                                textAlign: "center",
-                                fontSize: 35,
-                                boxShadow: "3px 3px 5px #00000020",
-                                textShadow: "2px 2px 2px #00000020",
-                                height: 90,
-                                width: 300,
-                                marginTop: 460,
-                                marginRight: 50,
-                                justifyContent: 'center',
-                            }}>
-                                <p style={{ color: '#00FF66', fontFamily: 'monospace' }}>Create user</p>
-                            </Button>
-                        </Link>
+                            <p style={{ color: '#00FF66', fontFamily: 'monospace' }}>Create user</p>
+                        </Button>
 
-                        <Link to="/gameList" style={{
+                        <Button className="button" style={{
+                            transition: "0.15s",
+                            backgroundColor: "#00ff6658",
+                            border: "none",
+                            borderRadius: 0,
+                            textAlign: "center",
+                            fontSize: 35,
+                            boxShadow: "3px 3px 5px #00000020",
+                            textShadow: "2px 2px 2px #00000020",
                             height: 90,
-                            width: 300, marginRight: 40
+                            width: 300,
+                            marginTop: 460,
+                            marginRight: 50,
+                            justifyContent: 'center',
+                        }} onClick={() => {
+                            window.location.href = `/gameList`
                         }}>
-                            <Button className="button" style={{
-                                transition: "0.15s",
-                                backgroundColor: "#00ff6658",
-                                border: "none",
-                                borderRadius: 0,
-                                textAlign: "center",
-                                fontSize: 35,
-                                boxShadow: "3px 3px 5px #00000020",
-                                textShadow: "2px 2px 2px #00000020",
-                                height: 90,
-                                width: 300,
-                                marginTop: 460,
-                                marginRight: 50,
-                                justifyContent: 'center',
-                            }}>
-                                <p style={{ color: '#00FF66', fontFamily: 'monospace' }}>List Games</p>
-                            </Button>
-                        </Link>
+                            <p style={{ color: '#00FF66', fontFamily: 'monospace' }}>List Games</p>
+                        </Button>
 
                         <Button style={{
                             transition: "0.15s",
@@ -543,7 +536,6 @@ export default function Home() {
                             <ModalHeader style={{ color: '#00FF66', textShadow: "2px 2px 2px #00000020" }}>
                                 <div style={{ display: 'flex', flexDirection: 'row', alignContent: 'right', alignSelf: 'right', alignItems: 'right' }}>
                                     <p style={{ fontFamily: 'monospace' }}>Users</p>
-                                    <p style={{ marginLeft: 100, fontFamily: 'monospace' }}><PiMagnifyingGlassBold style={{ marginRight: 5, fontSize: 22, fontFamily: 'monospace' }} />Username</p>
                                 </div>
                             </ModalHeader>
                             <ModalBody style={{ flexDirection: "row", fontFamily: 'monospace', color: '#00FF66' }}>

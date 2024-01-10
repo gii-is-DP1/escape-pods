@@ -40,6 +40,7 @@ public class SlotInfo extends BaseEntity{
     
     @ManyToOne
     @NotNull
+    //TODO establecer el cascade que borre todos los slotInfo cuando se borre un shelter
     ShelterCard shelter;
 
     @ManyToOne

@@ -48,4 +48,9 @@ public class ShelterCardService {
     public void delete(Integer id) throws DataAccessException {
         sc.deleteById(id);
     }
+
+    @Transactional
+    public void deleteByGameId(Integer id) throws DataAccessException {
+        sc.deleteByGameId(id);
+    }
 }

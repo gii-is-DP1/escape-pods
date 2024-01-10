@@ -48,4 +48,9 @@ public class SectorService {
     public void delete(Integer id) throws DataAccessException {
         s.deleteById(id);
     }
+
+    @Transactional
+    public void deleteByGameId(Integer id) throws DataAccessException {
+        s.deleteById(id);
+    }
 }
