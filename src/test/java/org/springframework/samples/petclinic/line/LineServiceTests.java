@@ -19,7 +19,7 @@ import org.springframework.samples.petclinic.game.Game;
 import org.springframework.samples.petclinic.game.GameRepository;
 import org.springframework.samples.petclinic.game.GameService;
 
-public class LineServiceTest {
+public class LineServiceTests {
 
     @Mock
     private LineRepository lineRepository;
