@@ -276,7 +276,6 @@ class GameItemsInitializers {
 
         for (let i = 0; i < 2; i++) {
             pods.push({
-                emptySlots: 2,
                 capacity: 2,
                 number: i === 0 ? 2 : 3,     // para que los pods de capacidad 2 sean los pods 2 y 3
                 game: game,
@@ -285,7 +284,6 @@ class GameItemsInitializers {
         }
         for (let i = 0; i < 3; i++) {
             pods.push({
-                emptySlots: 1,
                 capacity: 1,
                 number: i === 0 ? 4 : i === 1 ? 5 : 6, // para que los pods de capacidad 1 sean los pods 4, 5, 6
                 game: game,
@@ -293,7 +291,6 @@ class GameItemsInitializers {
             })
         }
         pods.push({
-            emptySlots: 3,
             capacity: 3,
             number: 1,
             game: game,
@@ -500,7 +497,6 @@ class GameItemsInitializers {
                     slotScore: score,
                     role: randomRole[0],
                     shelter: shelterI,
-                    roleNeeded: true,
                     game: game
                 }
                 slotInfos.push(slotInfo)

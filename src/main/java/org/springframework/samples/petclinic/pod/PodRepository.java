@@ -14,9 +14,7 @@ public interface PodRepository extends CrudRepository<Pod, Integer> {
     List<Pod> findAll();
 
     List<Pod> findByCapacity(Integer capacity);
-
-    List<Pod> findByEmptySlots(Integer emptySlots);
-
+    
     Optional<Pod> findById(Integer id);
 
     @Query("SELECT p FROM Pod p WHERE p.game.id= :id")
