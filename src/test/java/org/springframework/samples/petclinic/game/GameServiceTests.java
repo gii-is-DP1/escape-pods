@@ -22,7 +22,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.samples.petclinic.player.Player;
 
-class GameServiceTest {
+class GameServiceTests {
 
     @Mock
     private GameRepository gameRepository;

@@ -33,7 +33,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @WebMvcTest(BeaconRestController.class)
-public class BeaconControllerTest {
+public class BeaconRestControllerTests {
 
         @MockBean
         private BeaconService beaconService;
@@ -170,7 +170,7 @@ public class BeaconControllerTest {
                 Integer nonExistendBeaconId = 33;
 
                 ObjectMapper objectMapper = new ObjectMapper();
-                
+
                 when(beaconService.getBeaconById(nonExistendBeaconId)).thenThrow(ResourceNotFoundException.class);
                 doNothing().when(beaconService).delete(beacon1Id);
 

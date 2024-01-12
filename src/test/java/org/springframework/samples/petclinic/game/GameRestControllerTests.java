@@ -40,7 +40,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 @WebMvcTest(GameRestController.class)
-public class GameControllerTest {
+public class GameRestControllerTests {
 
     @MockBean
     private GameService gameService;

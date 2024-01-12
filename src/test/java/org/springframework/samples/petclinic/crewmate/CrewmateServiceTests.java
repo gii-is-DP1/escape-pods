@@ -17,7 +17,7 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.samples.petclinic.game.Game;
 
 
-class CrewmateServiceTest {
+class CrewmateServiceTests {
 
     @Mock
     private CrewmateRepository crewmateRepository;

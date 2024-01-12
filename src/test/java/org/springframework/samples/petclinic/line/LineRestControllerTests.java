@@ -45,7 +45,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.With;
 
 @WebMvcTest(LineRestController.class)
-public class LineControllerTest {
+public class LineRestControllerTests {
 
     @MockBean
     private LineService lineService;
