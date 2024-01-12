@@ -9,7 +9,6 @@ import PricingPlan from "./owner/plan";
 import Register from "./auth/register";
 import Login from "./auth/login";
 import Logout from "./auth/logout";
-//TODO cambiar imports a lo que esta hecho
 import OwnerPetList from "./owner/pets/petList";
 import OwnerPetEdit from "./owner/pets/petEdit";
 import OwnerVisitEdit from "./owner/visits/visitEdit";
@@ -56,6 +55,7 @@ import Game from "./game"
 import Profile from "./profile"
 import GameLists from "./admin/gameList"
 import CreateUser from "./admin/createUser"
+import Scores from "./scores";
 
 
 function ErrorFallback({ error, resetErrorBoundary }) {
@@ -161,6 +161,7 @@ function App() {
           <Route path="/lobby/:gameId" element={<PrivateRoute><Lobby /></PrivateRoute>} />
           <Route path="game/:gameId" element={<PrivateRoute><Game /></PrivateRoute>} />
           <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
+          <Route path="game/:gameId/scores" element={<PrivateRoute><Scores /></PrivateRoute>} />
         </>)
     }
   })
