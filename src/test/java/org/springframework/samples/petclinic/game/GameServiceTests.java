@@ -27,12 +27,6 @@ class GameServiceTests {
     @Mock
     private GameRepository gameRepository;
 
-    // @Mock
-    // private PlayerRepository playerRepository;
-
-    // @Mock
-    // private PlayerService playerService;
-
     @InjectMocks
     private GameService gameService;
 

@@ -16,7 +16,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.samples.petclinic.game.Game;
 
-
 class CrewmateServiceTests {
 
     @Mock
@@ -38,50 +37,48 @@ class CrewmateServiceTests {
         when(crewmateRepository.findAll()).thenReturn(expectedCrewmates);
 
         List<Crewmate> actualCrewmates = crewmateService.getAllCrewmates();
-        System.out.println(actualCrewmates+","+ expectedCrewmates);
-        
+        System.out.println(actualCrewmates + "," + expectedCrewmates);
+
         assertIterableEquals(expectedCrewmates, actualCrewmates);
         verify(crewmateRepository, times(1)).findAll();
     }
 
     @Test
-    void getCrewmateByIdFoundTest(){
-        Integer crewmateId= 2;
-        Crewmate expectedCrewmate= new Crewmate();
+    void getCrewmateByIdFoundTest() {
+        Integer crewmateId = 2;
+        Crewmate expectedCrewmate = new Crewmate();
         expectedCrewmate.setId(crewmateId);
 
         when(crewmateRepository.findById(crewmateId)).thenReturn(Optional.of(expectedCrewmate));
-        Crewmate actualCrewmate= crewmateService.getCrewmateById(crewmateId).get();
+        Crewmate actualCrewmate = crewmateService.getCrewmateById(crewmateId).get();
 
-        assertTrue(actualCrewmate.getId()==crewmateId);
-        verify(crewmateRepository,times(1)).findById(crewmateId);
+        assertTrue(actualCrewmate.getId() == crewmateId);
+        verify(crewmateRepository, times(1)).findById(crewmateId);
     }
 
     @Test
-    void getCrewmateByIdNotFoundTest(){
-        Integer falseCrewmateId= 3;
-
+    void getCrewmateByIdNotFoundTest() {
+        Integer falseCrewmateId = 3;
 
         when(crewmateRepository.findById(falseCrewmateId)).thenReturn(Optional.empty());
-        Crewmate actualCrewmate= crewmateService.getCrewmateById(falseCrewmateId).orElse(null);
+        Crewmate actualCrewmate = crewmateService.getCrewmateById(falseCrewmateId).orElse(null);
 
         assertNull(actualCrewmate);
-        verify(crewmateRepository,times(1)).findById(falseCrewmateId);
+        verify(crewmateRepository, times(1)).findById(falseCrewmateId);
     }
 
-
-    @Test 
-    void getAllCrewmatesByGameIdFoundTest(){
-        Integer gameId= 1;
+    @Test
+    void getAllCrewmatesByGameIdFoundTest() {
+        Integer gameId = 1;
         Game game1 = new Game();
         game1.setId(gameId);
 
-        Crewmate crewmate1= new Crewmate();
+        Crewmate crewmate1 = new Crewmate();
         Crewmate crewmate2 = new Crewmate();
         crewmate1.setGame(game1);
         crewmate2.setGame(game1);
 
-        List<Crewmate> expectedCrewmates= List.of(crewmate1,crewmate2);
+        List<Crewmate> expectedCrewmates = List.of(crewmate1, crewmate2);
         when(crewmateRepository.findByGameId(gameId)).thenReturn(expectedCrewmates);
 
         List<Crewmate> actualCrewmates = crewmateService.getAllCrewmatesByGameId(gameId);
@@ -90,18 +87,18 @@ class CrewmateServiceTests {
 
     }
 
-    @Test 
-    void getAllCrewmatesByGameIdNotFoundTest(){
-        Integer gameId= 1;
-        Integer nonExistentGameId= 11;
+    @Test
+    void getAllCrewmatesByGameIdNotFoundTest() {
+        Integer gameId = 1;
+        Integer nonExistentGameId = 11;
         Game game1 = new Game();
         game1.setId(gameId);
 
-        Crewmate crewmate1= new Crewmate();
+        Crewmate crewmate1 = new Crewmate();
         Crewmate crewmate2 = new Crewmate();
         crewmate1.setGame(game1);
         crewmate2.setGame(game1);
-        
+
         when(crewmateRepository.findByGameId(nonExistentGameId)).thenReturn(null);
 
         List<Crewmate> actualCrewmates = crewmateService.getAllCrewmatesByGameId(nonExistentGameId);
@@ -111,16 +108,14 @@ class CrewmateServiceTests {
     }
 
     @Test
-    void saveCrewmateTest(){
+    void saveCrewmateTest() {
         Crewmate expectedCrewmate = new Crewmate();
-        when(crewmateRepository.save(any(Crewmate.class))).thenAnswer(i ->
-        i.getArguments()[0]);
+        when(crewmateRepository.save(any(Crewmate.class))).thenAnswer(i -> i.getArguments()[0]);
 
         Crewmate actualCrewmate = crewmateService.save(expectedCrewmate);
 
         assertEquals(expectedCrewmate.getId(), actualCrewmate.getId());
         verify(crewmateRepository, times(1)).save(any(Crewmate.class));
     }
-
 
 }
