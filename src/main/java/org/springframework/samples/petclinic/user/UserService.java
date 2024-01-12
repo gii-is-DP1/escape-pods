@@ -15,6 +15,7 @@
  */
 package org.springframework.samples.petclinic.user;
 
+import java.util.List;
 import java.util.Optional;
 
 import jakarta.validation.Valid;
@@ -52,9 +53,9 @@ public class UserService {
 	}
 
 	@Transactional(readOnly = true)
-	public User findUser(String username) {
-		return userRepository.findByUsername(username)
-				.orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
+	public List<User> findUserToList(String username) {
+		return List.of(userRepository.findByUsername(username)
+				.orElseThrow(() -> new ResourceNotFoundException("User", "username", username)));
 	}
 
 	@Transactional(readOnly = true)

@@ -200,8 +200,7 @@ function AppNavbar() {
                 </Collapse>
                 {!emptyChecker('object', myPlayer)&& roles.includes("PLAYER") &&
                     <NavbarBrand href="/profile">
-                        <img src={!emptyChecker("object",myPlayer) && myPlayer!= undefined ? myPlayer.profilePicture : fotoP2} style={{ height: 45, width: 45, marginLeft: 10, borderRadius: '50%' }} />
-                    </NavbarBrand>
+                        <img src={!emptyChecker("object", myPlayer) && myPlayer != undefined && myPlayer!= undefined ? myPlayer.profilePicture : fotoP2} style={{ height: 45, width: 45, marginLeft: 10, borderRadius: '50%' }} />                    </NavbarBrand>
                 }
             </Navbar>
         </div >
