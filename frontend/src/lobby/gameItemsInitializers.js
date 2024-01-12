@@ -317,21 +317,80 @@ class GameItemsInitializers {
         const colors = this.shuffle(["YELLOW", "PINK", "BLUE", "BLACK", "WHITE"])
 
         for (let i = 0; i < game.players.length; i++) {
-            fetch("/api/v1/gamePlayers", {
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${jwt}`,
-                },
-                method: "POST",
-                body: JSON.stringify({
-                    actions: 2,
-                    points: 0,
-                    color: colors[i],
-                    game: game,
-                    player: game.players[i]
 
-                })
-            })
+            if (game.players.length === 2) {
+                
+                if (i < 1) {
+                    fetch("/api/v1/gamePlayers", {
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization: `Bearer ${jwt}`,
+                        },
+                        method: "POST",
+                        body: JSON.stringify({
+                            actions: 1,
+                            points: 0,
+                            color: colors[i],
+                            game: game,
+                            player: game.players[i]
+
+                        })
+                    })
+                } else {
+                    fetch("/api/v1/gamePlayers", {
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization: `Bearer ${jwt}`,
+                        },
+                        method: "POST",
+                        body: JSON.stringify({
+                            actions: 2,
+                            points: 0,
+                            color: colors[i],
+                            game: game,
+                            player: game.players[i]
+
+                        })
+                    })
+
+                }
+
+            } else {
+                if (i < 2) {
+                    fetch("/api/v1/gamePlayers", {
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization: `Bearer ${jwt}`,
+                        },
+                        method: "POST",
+                        body: JSON.stringify({
+                            actions: 1,
+                            points: 0,
+                            color: colors[i],
+                            game: game,
+                            player: game.players[i]
+
+                        })
+                    })
+                } else {
+                    fetch("/api/v1/gamePlayers", {
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization: `Bearer ${jwt}`,
+                        },
+                        method: "POST",
+                        body: JSON.stringify({
+                            actions: 2,
+                            points: 0,
+                            color: colors[i],
+                            game: game,
+                            player: game.players[i]
+
+                        })
+                    })
+                }
+
+            }
         }
     }
 
@@ -389,36 +448,35 @@ class GameItemsInitializers {
     async createShelters(game, jwt) {
         let explosionSides;
         let explosionCentrals;
-        switch(game.numPlayers){
+        switch (game.numPlayers) {
             case 2:
-                explosionSides=3;
-                explosionCentrals=2;
+                explosionSides = 3;
+                explosionCentrals = 2;
                 break;
             case 3:
-                explosionSides=3;
-                explosionCentrals=3;
+                explosionSides = 3;
+                explosionCentrals = 3;
                 break;
             case 4:
-                explosionSides=4;
-                explosionCentrals=3;
+                explosionSides = 4;
+                explosionCentrals = 3;
                 break;
             case 5:
-                explosionSides=4;
-                explosionCentrals=4;
+                explosionSides = 4;
+                explosionCentrals = 4;
                 break;
             default:
-                explosionSides=1;
-                explosionCentrals=1
+                explosionSides = 1;
+                explosionCentrals = 1
                 break;
         }
         var shelters = []
-        const types = this.shuffle(["YELLOW", "PINK", "BLUE", "GREEN", "ORANGE"])
         const sectors = await this.getSectors(game, jwt)
         console.log(sectors)
 
         const shelter1 = {
             explosion: explosionSides,
-            type: "YELLOW",
+            type: this.shuffle(["YELLOW", "PINK", "BLUE", "GREEN", "ORANGE"])[0],
             game: game,
             sector: sectors.find(sector => sector.number === 11)
         }
@@ -426,7 +484,7 @@ class GameItemsInitializers {
 
         const shelter2 = {
             explosion: explosionCentrals,
-            type: "GREEN",
+            type: this.shuffle(["YELLOW", "PINK", "BLUE", "GREEN", "ORANGE"])[0],
             game: game,
             sector: sectors.find(sector => sector.number === 12)
         }
@@ -434,7 +492,7 @@ class GameItemsInitializers {
 
         const shelter3 = {
             explosion: explosionCentrals,
-            type: "BLUE",
+            type: this.shuffle(["YELLOW", "PINK", "BLUE", "GREEN", "ORANGE"])[0],
             game: game,
             sector: sectors.find(sector => sector.number === 12)
         }
@@ -442,7 +500,7 @@ class GameItemsInitializers {
 
         const shelter4 = {
             explosion: explosionSides,
-            type: "ORANGE",
+            type: this.shuffle(["YELLOW", "PINK", "BLUE", "GREEN", "ORANGE"])[0],
             game: game,
             sector: sectors.find(sector => sector.number === 13)
         }
