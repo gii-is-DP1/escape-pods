@@ -7,6 +7,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
+import org.springframework.samples.petclinic.game.Game;
+import org.springframework.samples.petclinic.game.GameRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,6 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class PlayerService {
 
     private PlayerRepository playerRepository;
+
+	@Autowired
+    private GameRepository gameRepository;
 
     @Autowired
 	public PlayerService(PlayerRepository playerRepository) {
@@ -51,6 +56,11 @@ public class PlayerService {
     @Transactional
 	public void deletePlayer(int id) throws DataAccessException {
 		Player toDelete = findPlayerById(id);
+
+		for (Game game : gameRepository.findPlayerGames(id)) {
+        game.removePlayer(toDelete);
+    }
+
 		playerRepository.delete(toDelete);
 	}
 
