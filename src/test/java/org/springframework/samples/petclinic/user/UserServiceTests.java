@@ -66,8 +66,8 @@ class UserServiceTests {
 
 	@Test
 	void shouldFindUsersByUsername() {
-		User user = this.userService.findUser("owner1");
-		assertEquals("owner1", user.getUsername());
+		List<User> user = this.userService.findUserToList("owner1");
+		assertEquals("owner1", user.get(0).getUsername());
 	}
 
 	@Test
@@ -85,7 +85,7 @@ class UserServiceTests {
 
 	@Test
 	void shouldNotFindUserByIncorrectUsername() {
-		assertThrows(ResourceNotFoundException.class, () -> this.userService.findUser("usernotexists"));
+		assertThrows(ResourceNotFoundException.class, () -> this.userService.findUserToList("usernotexists"));
 	}
 
 	@Test
