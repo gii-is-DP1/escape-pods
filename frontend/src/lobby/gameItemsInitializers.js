@@ -418,7 +418,7 @@ class GameItemsInitializers {
 
         const shelter1 = {
             explosion: explosionSides,
-            type: types[0],
+            type: "YELLOW",
             game: game,
             sector: sectors.find(sector => sector.number === 11)
         }
@@ -426,7 +426,7 @@ class GameItemsInitializers {
 
         const shelter2 = {
             explosion: explosionCentrals,
-            type: types[0],
+            type: "GREEN",
             game: game,
             sector: sectors.find(sector => sector.number === 12)
         }
@@ -434,7 +434,7 @@ class GameItemsInitializers {
 
         const shelter3 = {
             explosion: explosionCentrals,
-            type: types[0],
+            type: "BLUE",
             game: game,
             sector: sectors.find(sector => sector.number === 12)
         }
@@ -442,7 +442,7 @@ class GameItemsInitializers {
 
         const shelter4 = {
             explosion: explosionSides,
-            type: types[0],
+            type: "ORANGE",
             game: game,
             sector: sectors.find(sector => sector.number === 13)
         }
