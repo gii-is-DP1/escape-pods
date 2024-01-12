@@ -36,9 +36,6 @@ public class PlayerRestControllerTests {
     private UserService userService;
 
     @Autowired
-    private PlayerRestController playerRestController;
-
-    @Autowired
     private MockMvc mockMvc;
 
     @Autowired
