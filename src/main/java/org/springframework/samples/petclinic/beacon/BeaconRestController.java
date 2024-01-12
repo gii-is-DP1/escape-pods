@@ -67,6 +67,7 @@ public class BeaconRestController {
         return ResponseEntity.created(location).body(b);
     }
 
+    // Aunque esté hecho el metodo updateBeacon, esta entidad no varía nunca, por lo que no se va a usar.
     @PutMapping("/{id}")
     public ResponseEntity<Void> updateBeacon(@Valid @RequestBody Beacon b, @PathVariable("id") Integer id) {
         Beacon gToUpdate = getBeaconById(id);

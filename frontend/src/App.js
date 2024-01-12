@@ -57,6 +57,7 @@ import Profile from "./profile"
 import GameLists from "./admin/gameList"
 import CreateUser from "./admin/createUser"
 import EditProfile from "./profile/editProfile";
+import EditPlayer from "./admin/players/editPlayer" // El edit del admin
 
 
 function ErrorFallback({ error, resetErrorBoundary }) {
@@ -113,6 +114,7 @@ function App() {
           <Route path="/players/:username" exact={true} element={<PrivateRoute><Players /></PrivateRoute>} />
           <Route path="/gameList" exact={true} element={<PrivateRoute><GameLists /></PrivateRoute>} />
           <Route path="/createUser" exact={true} element={<PrivateRoute><CreateUser /></PrivateRoute>} />
+          <Route path="/editPlayer/:playerId" exact={true} element={<PrivateRoute><EditPlayer /></PrivateRoute>} />
         </>)
     }
     if (role === "OWNER") {
