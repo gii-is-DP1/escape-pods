@@ -56,6 +56,7 @@ import Game from "./game"
 import Profile from "./profile"
 import GameLists from "./admin/gameList"
 import CreateUser from "./admin/createUser"
+import EditProfile from "./profile/editProfile";
 import EditPlayer from "./admin/players/editPlayer" // El edit del admin
 
 
@@ -163,6 +164,7 @@ function App() {
           <Route path="/lobby/:gameId" element={<PrivateRoute><Lobby /></PrivateRoute>} />
           <Route path="game/:gameId" element={<PrivateRoute><Game /></PrivateRoute>} />
           <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
+          <Route path="/editProfile" element={<PrivateRoute><EditProfile/></PrivateRoute>} />
         </>)
     }
   })
