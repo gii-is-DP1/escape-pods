@@ -80,28 +80,6 @@ export default function Home() {
         window.location.href = `/lobby/${createdGame.id}`
     }
 
-
-    /*
-    async function GetWaitingGames() {
-        await fetch("/api/v1/games?status=WAITING", {
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${jwt}`,
-            },
-            method: "GET"
-        })
-            .then(response => response.json())
-            .then(data => {
-                for (const g of data) {
-                    console.log(g)
-                    waitingGames.push(g);
-                }
-                setWaitingGames(waitingGames);
-                console.log(waitingGames);
-            })
-            .then(console.log(waitingGames))
-    }*/
-
     async function getGames(page) {
         try {
             const fetchedGames = await fetchWaitingGames(page);
@@ -506,7 +484,7 @@ export default function Home() {
                         }} onClick={() => {
                             window.location.href = `/gameList`
                         }}>
-                            <p style={{ color: '#00FF66', fontFamily: 'monospace' }}>List Games</p>
+                            <p style={{ color: '#00FF66', fontFamily: 'monospace' }}>Games List</p>
                         </Button>
 
                         <Button style={{

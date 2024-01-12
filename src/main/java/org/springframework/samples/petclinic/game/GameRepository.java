@@ -25,4 +25,7 @@ public interface GameRepository extends CrudRepository<Game, Integer> {
     @Query("SELECT g FROM Game g JOIN g.players p WHERE p.id = :playerId")
     List<Game> findByPlayerId(Pageable pageable, Integer playerId);
 
+    @Query("SELECT g FROM Game g JOIN g.players p WHERE p.id = :playerId")
+    List<Game> findPlayerGames(Integer playerId);
+
 }

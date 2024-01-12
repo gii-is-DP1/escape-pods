@@ -101,6 +101,24 @@ export default function GameLists() {
         return games;
     }
 
+    async function fetchPlayingGames(page) {
+        const response = await fetch(`/api/v1/games?status=PLAYING&page=${page}`, {
+            headers: {
+                "Authorization": `Bearer ${jwt}`,
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`http error with status: ${response.status}`);
+        }
+
+        const games = await response.json();
+        setListedGames(games);
+        return games;
+    }
+
     async function fetchGames(page) {
         const response = await fetch(`/api/v1/games?page=${page}`, {
             headers: {
@@ -138,7 +156,7 @@ export default function GameLists() {
     return (
         <>
             <div className="lobby-page-container-retro" style={{ color: '#00FF66', fontFamily: 'monospace' }}>
-                <div>
+                <div style={{ display:"flex", flexDirection:'column', justifyItems:'center', alignContent:'center', alignItems:'center', justifyContent:'center'}}>
                     <Table bordered dark className="tabla" style={{ fontFamily: 'monospace', fontSize: 20, backgroundColor: "#078a3b58" }}>
                         <thead className="tabla" style={{ fontFamily: 'monospace', fontSize: 20, backgroundColor: "#078a3b00" }}>
                             <tr>
@@ -184,66 +202,87 @@ export default function GameLists() {
                             </a>
                         </div>
                     </div>
+                    <div style={{ display:"flex", flexDirection:'row', justifyItems:'center', alignContent:'center', alignItems:'center', justifyContent:'center'}}>
+                        <Button className="button" style={{
+                            transition: "0.15s",
+                            backgroundColor: "#00ff6658",
+                            border: "none",
+                            borderRadius: 0,
+                            textAlign: "center",
+                            fontSize: 30,
+                            boxShadow: "3px 3px 5px #00000020",
+                            textShadow: "2px 2px 2px #00000020",
+                            height: 100,
+                            width: 300,
+                            marginTop: 40,
+                            marginRight: 50,
+                            justifyContent: 'center',
+                        }} onClick={() => {
+                            fetchWaitingGames(0);
+                        }}>
+                            <p style={{ color: '#00FF66', fontFamily: 'monospace' }}>Filter by waiting</p>
+                        </Button>
 
-                    <Button className="button" style={{
-                        transition: "0.15s",
-                        backgroundColor: "#00ff6658",
-                        border: "none",
-                        borderRadius: 0,
-                        textAlign: "center",
-                        fontSize: 30,
-                        boxShadow: "3px 3px 5px #00000020",
-                        textShadow: "2px 2px 2px #00000020",
-                        height: 100,
-                        width: 300,
-                        marginTop: 40,
-                        marginRight: 50,
-                        justifyContent: 'center',
-                    }} onClick={() => {
-                        fetchWaitingGames(0);
-                    }}>
-                        <p style={{ color: '#00FF66', fontFamily: 'monospace' }}>Filter by waiting</p>
-                    </Button>
+                        <Button className="button" style={{
+                            transition: "0.15s",
+                            backgroundColor: "#00ff6658",
+                            border: "none",
+                            borderRadius: 0,
+                            textAlign: "center",
+                            fontSize: 30,
+                            boxShadow: "3px 3px 5px #00000020",
+                            textShadow: "2px 2px 2px #00000020",
+                            height: 100,
+                            width: 300,
+                            marginTop: 40,
+                            marginRight: 50,
+                            justifyContent: 'center',
+                        }} onClick={() => {
+                            fetchPlayingGames(0);
+                        }}>
+                            <p style={{ color: '#00FF66', fontFamily: 'monospace' }}>Filter by playing</p>
+                        </Button>
 
-                    <Button className="button" style={{
-                        transition: "0.15s",
-                        backgroundColor: "#00ff6658",
-                        border: "none",
-                        borderRadius: 0,
-                        textAlign: "center",
-                        fontSize: 30,
-                        boxShadow: "3px 3px 5px #00000020",
-                        textShadow: "2px 2px 2px #00000020",
-                        height: 100,
-                        width: 300,
-                        marginTop: 40,
-                        marginRight: 50,
-                        justifyContent: 'center',
-                    }} onClick={() => {
-                        fetchFinishedGames(0);
-                    }}>
-                        <p style={{ color: '#00FF66', fontFamily: 'monospace' }}>Filter by finished</p>
-                    </Button>
+                        <Button className="button" style={{
+                            transition: "0.15s",
+                            backgroundColor: "#00ff6658",
+                            border: "none",
+                            borderRadius: 0,
+                            textAlign: "center",
+                            fontSize: 30,
+                            boxShadow: "3px 3px 5px #00000020",
+                            textShadow: "2px 2px 2px #00000020",
+                            height: 100,
+                            width: 300,
+                            marginTop: 40,
+                            marginRight: 50,
+                            justifyContent: 'center',
+                        }} onClick={() => {
+                            fetchFinishedGames(0);
+                        }}>
+                            <p style={{ color: '#00FF66', fontFamily: 'monospace' }}>Filter by finished</p>
+                        </Button>
 
-                    <Button className="button" style={{
-                        transition: "0.15s",
-                        backgroundColor: "#00ff6658",
-                        border: "none",
-                        borderRadius: 0,
-                        textAlign: "center",
-                        fontSize: 30,
-                        boxShadow: "3px 3px 5px #00000020",
-                        textShadow: "2px 2px 2px #00000020",
-                        height: 100,
-                        width: 300,
-                        marginTop: 40,
-                        marginRight: 50,
-                        justifyContent: 'center',
-                    }} onClick={() => {
-                        fetchGames(0);
-                    }}>
-                        <p style={{ color: '#00FF66', fontFamily: 'monospace' }}>All games</p>
-                    </Button>
+                        <Button className="button" style={{
+                            transition: "0.15s",
+                            backgroundColor: "#00ff6658",
+                            border: "none",
+                            borderRadius: 0,
+                            textAlign: "center",
+                            fontSize: 30,
+                            boxShadow: "3px 3px 5px #00000020",
+                            textShadow: "2px 2px 2px #00000020",
+                            height: 100,
+                            width: 300,
+                            marginTop: 40,
+                            marginRight: 50,
+                            justifyContent: 'center',
+                        }} onClick={() => {
+                            fetchGames(0);
+                        }}>
+                            <p style={{ color: '#00FF66', fontFamily: 'monospace' }}>All games</p>
+                        </Button>
+                    </div>
                 </div>
             </div>
         </>

@@ -51,6 +51,10 @@ public class Game extends BaseEntity {
     @ManyToMany(cascade = CascadeType.MERGE)
     List<Player> players;
 
+    public void removePlayer(Player player) {
+        players.remove(player);
+    }
+
     // @OneToMany
     // @NotNull
     // private List<ExplosionCard> explosionCards;

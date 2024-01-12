@@ -1,6 +1,6 @@
 import jwt_decode from "jwt-decode";
 import React, { useEffect, useState } from 'react';
-import { Button, Badge, UncontrolledCollapse } from "reactstrap";
+import { Button, Badge, UncontrolledCollapse, Modal, ModalHeader, ModalFooter, ModalBody, } from "reactstrap";
 import '../../App.css';
 import tokenService from '../../services/token.service';
 import '../../static/css/home/home.css';
@@ -24,7 +24,8 @@ export default function Players() {
     const jwt = tokenService.getLocalAccessToken();
     const [game, setGame] = useState({});
     let userLogout = <></>;
-    const myUsername = window.location.href.split("/")[4]
+    const playerUsername = window.location.href.split("/")[4]
+    const [deleteAccountVisible, setDeleteAccountVisible] = useState(false);
 
 
     useEffect(() => {
@@ -35,7 +36,7 @@ export default function Players() {
 
 
     async function GetCurrentPlayer() {
-        const response = await fetch("/api/v1/players?username=" + myUsername, {
+        const response = await fetch("/api/v1/players?username=" + playerUsername, {
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${jwt}`,
@@ -43,7 +44,7 @@ export default function Players() {
             method: "GET"
         })
         const fetchedPlayer = await response.json();
-        console.log(fetchedPlayer[0]);
+        console.log(fetchedPlayer[0]); // devuelve el player que estamos viendo en pantalla, no el admin
         setMyPlayer(fetchedPlayer[0]);
     }
 
@@ -57,6 +58,39 @@ export default function Players() {
         }
     }
 
+    async function GetPlayerToEdit() { //llama a fetchPlayerToEdit y le pasa el player que estamos viendo en pantalla, no el admin
+        setGame(await fetchPlayerToEdit())
+    }
+
+    async function fetchPlayerToEdit() { //para editar el user que vemos en pantalla, no el admin
+        const response = await fetch(`/api/v1/players/${playerUsername}`, {
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${jwt}`,
+            },
+            method: "GET"
+        })
+        const fetchedGame = await response.json();
+        window.location.href = `/editPlayer/${playerUsername}`
+        return fetchedGame
+    }
+    console.log(myPlayer)
+
+    function DeleteCurrentAccount() { //borra la cuenta de la persona que estamos viendo no el current que tecnicamente seria el admin
+
+        
+
+        fetch(`/api/v1/players/${myPlayer.id}`, {
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${jwt}`,
+            },
+            method: "DELETE"
+        })
+            .then(response => response.json())
+            .then(response => { setMyPlayer(response[0]) })
+    }
+
     return (
         <>
             <div className="lobby-page-container-retro" >
@@ -66,7 +100,7 @@ export default function Players() {
                     height: 300, width: 200,
                     marginBottom: 300,
                     marginRight: 20,
-                    marginLeft: -300,
+                    marginLeft: 100,
                     display: 'flex',
                     flexDirection: 'row',
                     justifyContent: 'center',
@@ -88,64 +122,98 @@ export default function Players() {
                     flexDirection: 'row',
                     justifyContent: 'center',
                 }}>
-                    <div style={{ marginLeft:400, marginTop:-30,}}>
-                        <p style={{ marginTop: 20, fontSize: 30, color: '#00FF66',fontFamily: 'monospace', }}>User:</p>
-                        <div style={{display:'flex', flexDirection:'row'}}>
-                        <p style={{ fontSize: 20, color: '#00ff6600', fontFamily: 'monospace', }}>..</p>
-                        <p style={{ fontSize: 30, color: '#00FF66', fontFamily: 'monospace', }}>{myUsername}</p>
+                    <div style={{ marginLeft: 400, marginTop: -30, }}>
+                        <p style={{ marginTop: 20, fontSize: 30, color: '#00FF66', fontFamily: 'monospace', }}>User:</p>
+                        <div style={{ display: 'flex', flexDirection: 'row' }}>
+                            <p style={{ fontSize: 20, color: '#00ff6600', fontFamily: 'monospace', }}>..</p>
+                            <p style={{ fontSize: 30, color: '#00FF66', fontFamily: 'monospace', }}>{playerUsername}</p>
                         </div>
-                        <p style={{ marginTop: 20, fontSize: 30, color: '#00FF66',fontFamily: 'monospace', }}>Profile description:</p>
-                        <div style={{display:'flex', flexDirection:'row', width:500}}>
-                        <p style={{ fontSize: 20, color: '#00ff6600', fontFamily: 'monospace', }}>..</p>
-                        <p style={{ fontSize: 30, color: '#00FF66', fontFamily: 'monospace', }}>{myPlayer.profileDescription}</p>
+                        <p style={{ marginTop: 20, fontSize: 30, color: '#00FF66', fontFamily: 'monospace', }}>Profile description:</p>
+                        <div style={{ display: 'flex', flexDirection: 'row', width: 500 }}>
+                            <p style={{ fontSize: 20, color: '#00ff6600', fontFamily: 'monospace', }}>..</p>
+                            <p style={{ fontSize: 30, color: '#00FF66', fontFamily: 'monospace', }}>{myPlayer.profileDescription}</p>
                         </div>
                     </div>
                 </div>
 
-                <Link to="" style={{height: 120, width:270}}>
-                    <Button className="button" style={{
-                        backgroundColor: "#00ff6658",
-                        border: "none",
-                        width: 250,
-                        fontSize: 30,
-                        borderRadius: 0,
-                        height: 100,
-                        boxShadow: "5px 5px 5px #00000020",
-                        textShadow: "2px 2px 2px #00000020",
-                        transition: "0.15s",
-                        alignSelf: "center",
-                        marginBottom: 20,
-                        marginLeft: 10,
-                        marginTop: 200,
-                        marginRight: 400,
-                        fontFamily: 'monospace',
-                        color: '#00FF66'
 
-                    }}>EDIT ACCOUNT
-                    </Button>
-                </Link>
-                <Link to="" style={{height: 120, width:270}}>
-                    <Button className="button" style={{
-                        backgroundColor: "#830000",
-                        border: "none",
-                        width: 250,
-                        fontSize: 30,
-                        borderRadius: 0,
-                        height: 100,
-                        boxShadow: "5px 5px 5px #00000020",
-                        textShadow: "2px 2px 2px #00000020",
-                        transition: "0.15s",
-                        alignSelf: "center",
-                        marginBottom: 20,
-                        marginLeft: 10,
-                        marginTop: 200,
-                        marginRight: 350,
-                        fontFamily: 'monospace',
-                        color: '#FF0000'
+                <Button className="button" style={{
+                    backgroundColor: "#00ff6658",
+                    border: "none",
+                    width: 400,
+                    fontSize: 30,
+                    borderRadius: 0,
+                    height: 100,
+                    boxShadow: "5px 5px 5px #00000020",
+                    textShadow: "2px 2px 2px #00000020",
+                    transition: "0.15s",
+                    alignSelf: "center",
+                    marginBottom: 20,
+                    marginLeft: 10,
+                    marginTop: 300,
+                    marginRight: 40,
+                    fontFamily: 'monospace',
+                    color: '#00FF66'
 
-                    }}>DELETE ACCOUNT
-                    </Button>
-                </Link>
+                }}
+                    onClick={() => {
+
+                        GetPlayerToEdit()
+                    }
+                    }>
+                    EDIT ACCOUNT
+                </Button>
+                <Button className="button" style={{
+                    backgroundColor: "#830000",
+                    color: '#FF0000',
+                    border: "none",
+                    width: 400,
+                    fontSize: 30,
+                    borderRadius: 0,
+                    height: 100,
+                    boxShadow: "5px 5px 5px #00000020",
+                    textShadow: "2px 2px 2px #00000020",
+                    transition: "0.15s",
+                    alignSelf: "center",
+                    marginBottom: 20,
+                    marginLeft: 10,
+                    marginTop: 300,
+                    marginRight: 40,
+                    fontFamily: 'monospace',
+                    
+
+                }} onClick={() => {
+                    setDeleteAccountVisible(true);
+
+
+                }}>DELETE ACCOUNT
+                </Button>
+
+                <div>
+                    <Modal isOpen={deleteAccountVisible} centered={true} className="modal" style={{ height: "65%" }}>
+                        <ModalBody style={{ flexDirection: "row", color: "white", textAlign: "center" }}>
+                            ¿Seguro que quieres eliminar la cuenta? Esto la eliminará de forma permanente.
+                        </ModalBody>
+                        <ModalFooter>
+                            <Button className="done-button" style={{
+                                backgroundColor: "#DC2525", border: "none", boxShadow: "5px 5px 5px #00000020", textShadow: "2px 2px 2px #00000020", transition: "0.15s",
+                            }} onClick={() => {
+                                setDeleteAccountVisible(false);
+                                console.log(myPlayer)
+                            }}>
+                                Cancel
+                            </Button>
+                            <Button className="done-button" style={{
+                                backgroundColor: "#21FF1E", border: "none", boxShadow: "5px 5px 5px #00000020", textShadow: "2px 2px 2px #00000020", transition: "0.15s",
+                            }} onClick={() => {
+                                DeleteCurrentAccount();
+                                window.location.href = "/";
+                            }}>
+                                Done
+                            </Button>
+                        </ModalFooter>
+                    </Modal>
+                </div>
             </div >
         </>
     )
