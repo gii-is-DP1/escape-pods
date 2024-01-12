@@ -12,42 +12,44 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.samples.petclinic.game.Game;
 import org.springframework.samples.petclinic.game.GameRepository;
 import org.springframework.samples.petclinic.game.GameService;
+import org.springframework.test.context.junit4.SpringRunner;
 
+@RunWith(SpringRunner.class)
+//@DataJpaTest(includeFilters = {@ComponentScan.Filter(Service.class),@ComponentScan.Filter(PasswordEncoder.class)})
+@SpringBootTest
+@AutoConfigureTestDatabase
+public class LineServiceTest2 {
 
-public class LineServiceTest {
-
-    @Mock
     private LineRepository lineRepository;
 
-    @Mock
     private GameRepository gameRepository;
 
-    @Mock
     private GameService gameService;
 
-    @InjectMocks
     private LineService lineService;
 
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
+    @Autowired
+    public LineServiceTest2(LineRepository lineRepository, GameRepository gameRepository, GameService gameService, LineService lineService) {
+        this.lineRepository = lineRepository;
+        this.gameRepository = gameRepository;
+        this.gameService = gameService;
+        this.lineService = lineService;
     }
 
     @Test
     void canGetAllLines() {
-        List<Line> expectedLines = List.of(new Line(), new Line());
-
-        when(lineRepository.findAll()).thenReturn(expectedLines);
-
-        assertEquals(expectedLines, lineService.getAllLines());
-        verify(lineRepository, times(1)).findAll();
-
+      List<Line> expectedLines = (List<Line>) this.lineService.getAllLines();
+      assertEquals(0, expectedLines.size());
     }
 
     @Test
