@@ -3,18 +3,14 @@ package org.springframework.samples.petclinic.player;
 import java.net.URISyntaxException;
 import java.util.List;
 
-import org.apache.catalina.authenticator.SpnegoAuthenticator.AuthenticateAction;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties.Authentication;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.samples.petclinic.auth.payload.response.MessageResponse;
 import org.springframework.samples.petclinic.user.User;
 import org.springframework.samples.petclinic.user.UserService;
 import org.springframework.samples.petclinic.util.RestPreconditions;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -76,13 +72,16 @@ public class PlayerRestController {
 	@ResponseStatus(HttpStatus.OK)
 
 	public ResponseEntity<Player> update(@PathVariable("playerId") int playerId, @RequestBody @Valid Player player) {
+
 		RestPreconditions.checkNotNull(playerService.findPlayerById(playerId), "Player", "ID", playerId);
 
 		User user = userService.findCurrentUser();
-		Player playerUser = playerService.findPlayerByUsername(user.getUsername()).get(0);
+	
 
-		if (user.hasAuthority("PLAYER") && playerId != playerUser.getId()) {
-			return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+		if (user.hasAuthority("PLAYER")) {
+			if (playerId != playerService.findPlayerByUsername(user.getUsername()).get(0).getId()) {
+				return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+			}
 		}
 
 		return new ResponseEntity<>(this.playerService.updatePlayer(player, playerId), HttpStatus.OK);
@@ -103,9 +102,8 @@ public class PlayerRestController {
 						new MessageResponse("You can only k**l yourself!"),
 						HttpStatus.FORBIDDEN);
 			}
-		} else {
-			playerService.deletePlayer(id);
 		}
+			playerService.deletePlayer(id);
 
 		return new ResponseEntity<>(new MessageResponse("Player deleted!"), HttpStatus.OK);
 	}
