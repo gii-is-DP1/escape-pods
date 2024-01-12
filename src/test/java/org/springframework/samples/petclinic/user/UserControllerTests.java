@@ -96,9 +96,8 @@ class UserControllerTests {
 	}
 
 	@Test
-	@WithMockUser("admin")
+	@WithMockUser("ADMIN")
 	void shouldFindAll() throws Exception {
-		Pageable paging = PageRequest.of(1, 10, Sort.by("-").ascending());
 		User sara = new User();
 		sara.setId(2);
 		sara.setUsername("Sara");
@@ -107,18 +106,19 @@ class UserControllerTests {
 		juan.setId(3);
 		juan.setUsername("Juan");
 
-		when(this.userService.findAll(paging).getContent()).thenReturn(List.of(user, sara, juan));
+		when(userService.findAll(any(Pageable.class)).getContent()).thenReturn(List.of(user, sara, juan));
 
-		mockMvc.perform(get(BASE_URL)).andExpect(status().isOk()).andExpect(jsonPath("$.size()").value(3))
+		mockMvc.perform(get(BASE_URL).with(csrf())).andExpect(status().isOk())
+				.andExpect(jsonPath("$.size()").value(3))
 				.andExpect(jsonPath("$[?(@.id == 1)].username").value("user"))
 				.andExpect(jsonPath("$[?(@.id == 2)].username").value("Sara"))
 				.andExpect(jsonPath("$[?(@.id == 3)].username").value("Juan"));
 	}
 
 	@Test
-	@WithMockUser("admin")
+	@WithMockUser("ADMIN")
 	void shouldFindAllWithAuthority() throws Exception {
-		Pageable paging = PageRequest.of(1, 10, Sort.by("-").ascending());
+
 		Authorities aux = new Authorities();
 		aux.setId(2);
 		aux.setAuthority("AUX");
@@ -133,10 +133,10 @@ class UserControllerTests {
 		juan.setUsername("Juan");
 		juan.setAuthority(auth);
 
-		when(this.userService.findAllByAuthority(auth.getAuthority(), paging).getContent())
-				.thenReturn(List.of(user, juan));
+		List<User> expectedUsers = List.of(user, juan);
+		when(userService.findAllByAuthority(auth.getAuthority(), any(Pageable.class)).getContent()).thenReturn(expectedUsers);
 
-		mockMvc.perform(get(BASE_URL).param("auth", "VET")).andExpect(status().isOk())
+		mockMvc.perform(get(BASE_URL).param("auth", "VET").with(csrf())).andExpect(status().isOk())
 				.andExpect(jsonPath("$.size()").value(2)).andExpect(jsonPath("$[?(@.id == 1)].username").value("user"))
 				.andExpect(jsonPath("$[?(@.id == 3)].username").value("Juan"));
 	}
