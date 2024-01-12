@@ -55,10 +55,6 @@ public class Game extends BaseEntity {
         players.remove(player);
     }
 
-    // @OneToMany
-    // @NotNull
-    // private List<ExplosionCard> explosionCards;
-
     @ElementCollection
     private List<Integer> explosions;
 

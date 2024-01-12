@@ -76,7 +76,6 @@ public class PlayerRestController {
 		RestPreconditions.checkNotNull(playerService.findPlayerById(playerId), "Player", "ID", playerId);
 
 		User user = userService.findCurrentUser();
-	
 
 		if (user.hasAuthority("PLAYER")) {
 			if (playerId != playerService.findPlayerByUsername(user.getUsername()).get(0).getId()) {
@@ -103,7 +102,7 @@ public class PlayerRestController {
 						HttpStatus.FORBIDDEN);
 			}
 		}
-			playerService.deletePlayer(id);
+		playerService.deletePlayer(id);
 
 		return new ResponseEntity<>(new MessageResponse("Player deleted!"), HttpStatus.OK);
 	}

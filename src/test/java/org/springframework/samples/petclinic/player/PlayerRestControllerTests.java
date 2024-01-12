@@ -87,7 +87,7 @@ public class PlayerRestControllerTests {
     @Test
     @WithMockUser("ADMIN")
     void canGetAllPlayers() throws Exception {
-        List<Player> expectedPlayers= players;
+        List<Player> expectedPlayers = players;
         when(playerService.findAll()).thenReturn(expectedPlayers);
         MockHttpServletRequestBuilder requestBuilder = get("/api/v1/players")
                 .with(csrf());
@@ -101,7 +101,7 @@ public class PlayerRestControllerTests {
 
         assertEquals(expectedPlayers.size(), actualPlayers.size());
     }
-
-    
+    // GRACIAS A ESTO ES COMO HEMOS CORREGIDO PLAYERRESTCONTROLLER, EL TEMA DE LOS
+    // ROLES
 
 }
