@@ -132,7 +132,7 @@ export default function EditProfile() {
                             required
                             name="name"
                             id="name"
-                            value={myUser.username || ""}
+                            value={myUsername || ""}
                             onChange={handleChangeUsername}
                             className="custom-input"
                         />
