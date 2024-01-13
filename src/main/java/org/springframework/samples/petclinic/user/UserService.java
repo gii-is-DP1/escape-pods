@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Optional;
 
 import jakarta.validation.Valid;
+import java.util.List;
+
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,11 +97,11 @@ public class UserService {
 	}
 
 	@Transactional(readOnly = true)
-	public Page<User> findAll(Pageable paging) {
+	public List<User> findAll(Pageable paging) throws DataAccessException {
 		return userRepository.findAll(paging);
 	}
 
-	public Page<User> findAllByAuthority(String auth, Pageable paging) {
+	public List<User> findAllByAuthority(String auth, Pageable paging) {
 		return userRepository.findAllByAuthority(auth, paging);
 	}
 
