@@ -22,6 +22,18 @@
   cursor: pointer;
 }
 
+.custom-form-input-label-not-mandatory {
+  position: absolute;
+  top: 0;
+  left: 5px;
+  transition: transform 0.5s, color 0.3s;
+  transform: translateY(-15px) scale(0.7);
+  transform-origin: top left;
+  color: #23c483;
+  cursor: pointer;
+
+}
+
 .custom-form-input-label:after {
   content: "*";
   color: #cc0033 !important;

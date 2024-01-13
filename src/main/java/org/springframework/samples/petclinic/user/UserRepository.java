@@ -1,5 +1,6 @@
 package org.springframework.samples.petclinic.user;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.List;
 
@@ -12,19 +13,19 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.samples.petclinic.owner.Owner;
 import org.springframework.samples.petclinic.vet.Vet;
 
-public interface UserRepository extends  CrudRepository<User, String>{
-	
-//	@Modifying
-//	@Query("DELETE FROM Owner o WHERE o.user.username = :username")
-//	void deleteOwnerOfUser(String username);
-//	
-//	@Modifying
-//	@Query("DELETE FROM Pet p WHERE p.owner.id = :id")
-//	public void deletePetsOfOwner(@Param("id") int id);
-	
+public interface UserRepository extends CrudRepository<User, String> {
+
+	// @Modifying
+	// @Query("DELETE FROM Owner o WHERE o.user.username = :username")
+	// void deleteOwnerOfUser(String username);
+	//
+	// @Modifying
+	// @Query("DELETE FROM Pet p WHERE p.owner.id = :id")
+	// public void deletePetsOfOwner(@Param("id") int id);
+
 	@Query("SELECT o FROM Owner o WHERE o.user.username = :username")
 	Optional<Owner> findOwnerByUser(String username);
-	
+
 	@Query("SELECT o FROM Owner o WHERE o.user.id = :id")
 	Optional<Owner> findOwnerByUser(int id);
 
@@ -36,14 +37,14 @@ public interface UserRepository extends  CrudRepository<User, String>{
 	Boolean existsByUsername(String username);
 
 	Optional<User> findById(Integer id);
-	
+
 	@Query("SELECT u FROM User u WHERE u.authority.authority = :auth")
 	List<User> findAllByAuthority(String auth, Pageable paging);
 		
 	@Query("DELETE FROM Owner o WHERE o.user.id = :userId")
 	@Modifying
 	void deleteOwnerRelation(int userId);
-	
+
 	@Query("DELETE FROM Vet v WHERE v.user.id = :userId")
 	@Modifying
 	void deleteVetRelation(int userId);

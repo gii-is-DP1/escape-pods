@@ -61,19 +61,21 @@ class UserServiceTests {
 	void shouldFindAllUsers() {
 		Pageable paging = PageRequest.of(0, 0,Sort.by("-").ascending());
 		List<User> users = (List<User>) this.userService.findAll(paging);
+		Pageable paging = PageRequest.of(0, 19);
+		List<User> users = (List<User>) this.userService.findAll(paging).getContent();
 		assertEquals(19, users.size());
 	}
 
 	@Test
 	void shouldFindUsersByUsername() {
-		User user = this.userService.findUser("owner1");
-		assertEquals("owner1", user.getUsername());
+		List<User> user = this.userService.findUserToList("owner1");
+		assertEquals("owner1", user.get(0).getUsername());
 	}
 
 	@Test
 	void shouldFindUsersByAuthority() {
-		Pageable paging = PageRequest.of(0, 0,Sort.by("-").ascending());
-		List<User> owners = (List<User>) this.userService.findAllByAuthority("OWNER", paging);
+		Pageable paging = PageRequest.of(0, 10);
+		List<User> owners = (List<User>) this.userService.findAllByAuthority("OWNER", paging).getContent();
 		assertEquals(10, owners.size());
 
 		List<User> admins = (List<User>) this.userService.findAllByAuthority("ADMIN", paging);
@@ -85,7 +87,7 @@ class UserServiceTests {
 
 	@Test
 	void shouldNotFindUserByIncorrectUsername() {
-		assertThrows(ResourceNotFoundException.class, () -> this.userService.findUser("usernotexists"));
+		assertThrows(ResourceNotFoundException.class, () -> this.userService.findUserToList("usernotexists"));
 	}
 
 	@Test
@@ -144,8 +146,8 @@ class UserServiceTests {
 	@Test
 	@Transactional
 	void shouldInsertUser() {
-		Pageable paging = PageRequest.of(0, 0,Sort.by("-").ascending());
-		int count = ( this.userService.findAll(paging)).size();
+		Pageable paging = PageRequest.of(0, 10);
+		int count = ( this.userService.findAll(paging).getContent()).size();
 
 		User user = new User();
 		user.setUsername("Sam");
@@ -156,7 +158,7 @@ class UserServiceTests {
 		assertNotEquals(0, user.getId().longValue());
 		assertNotNull(user.getId());
 
-		int finalCount = ( this.userService.findAll(paging)).size();
+		int finalCount = ( userService.findAll(paging).getContent()).size();
 		assertEquals(count + 1, finalCount);
 	}
 	
@@ -164,8 +166,8 @@ class UserServiceTests {
 	@Test
 	@Transactional
 	void shouldDeleteUserWithoutOwner() {
-		Pageable paging = PageRequest.of(0, 0,Sort.by("-").ascending());
-		Integer firstCount = ( userService.findAll(paging)).size();
+		Pageable paging = PageRequest.of(0, 10);
+		Integer firstCount = ( userService.findAll(paging)).getSize();
 		User user = new User();
 		user.setUsername("Sam");
 		user.setPassword("password");
@@ -209,8 +211,8 @@ class UserServiceTests {
 	@Test
 	@Transactional
 	void shouldDeleteUserWithoutVet() {
-		Pageable paging = PageRequest.of(0, 0,Sort.by("-").ascending());
-		Integer firstCount = ( userService.findAll(paging)).size();
+		Pageable paging = PageRequest.of(0, 10);
+		Integer firstCount = ( userService.findAll(paging)).getSize();
 		User user = new User();
 		user.setUsername("Sam");
 		user.setPassword("password");

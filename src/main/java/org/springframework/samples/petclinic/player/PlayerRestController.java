@@ -70,16 +70,40 @@ public class PlayerRestController {
 
 	@PutMapping(value = "{playerId}")
 	@ResponseStatus(HttpStatus.OK)
+
 	public ResponseEntity<Player> update(@PathVariable("playerId") int playerId, @RequestBody @Valid Player player) {
+
 		RestPreconditions.checkNotNull(playerService.findPlayerById(playerId), "Player", "ID", playerId);
+
+		User user = userService.findCurrentUser();
+
+		if (user.hasAuthority("PLAYER")) {
+			if (playerId != playerService.findPlayerByUsername(user.getUsername()).get(0).getId()) {
+				return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+			}
+		}
+
 		return new ResponseEntity<>(this.playerService.updatePlayer(player, playerId), HttpStatus.OK);
+
 	}
 
 	@DeleteMapping(value = "{playerId}")
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<MessageResponse> delete(@PathVariable("playerId") int id) {
+
 		RestPreconditions.checkNotNull(playerService.findPlayerById(id), "Player", "ID", id);
+
+		User user = userService.findCurrentUser();
+
+		if (user.hasAuthority("PLAYER")) {
+			if ((id != playerService.findPlayerByUsername(user.getUsername()).get(0).getId())) {
+				return new ResponseEntity<>(
+						new MessageResponse("You can only k**l yourself!"),
+						HttpStatus.FORBIDDEN);
+			}
+		}
 		playerService.deletePlayer(id);
+
 		return new ResponseEntity<>(new MessageResponse("Player deleted!"), HttpStatus.OK);
 	}
 
