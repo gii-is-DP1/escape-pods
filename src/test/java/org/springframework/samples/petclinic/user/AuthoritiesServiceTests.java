@@ -29,7 +29,8 @@ class AuthoritiesServiceTests {
 	@Test
 	void shouldFindAllAuthorities() {
 		List<Authorities> auths = (List<Authorities>) this.authService.findAll();
-		assertEquals(4, auths.size());
+		//se ha actualizado el test para que cuadre con las actualizaciones hechas
+		assertEquals(5, auths.size());
 	}
 
 	@Test

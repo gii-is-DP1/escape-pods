@@ -1,5 +1,6 @@
 package org.springframework.samples.petclinic.user;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
@@ -12,27 +13,37 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.autoconfigure.observation.ObservationProperties.Http;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.samples.petclinic.configuration.SecurityConfiguration;
 import org.springframework.samples.petclinic.exceptions.AccessDeniedException;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
+import org.springframework.samples.petclinic.game.Game;
 import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import io.micrometer.core.ipc.http.HttpSender.Response;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -48,7 +59,6 @@ class UserControllerTests {
 	private static final int TEST_AUTH_ID = 1;
 	private static final String BASE_URL = "/api/v1/users";
 
-	@SuppressWarnings("unused")
 	@Autowired
 	private UserRestController userController;
 
@@ -59,16 +69,32 @@ class UserControllerTests {
 	private AuthoritiesService authService;
 
 	@Autowired
-	private ObjectMapper objectMapper;
-
-	@Autowired
 	private MockMvc mockMvc;
 
 	private Authorities auth;
 	private User user, logged;
 
+	private User user1 = new User();
+	private User user2 = new User();
+
+	private List<User> users = new ArrayList<User>();
+	ObjectMapper objectMapper = new ObjectMapper();
+
+
 	@BeforeEach
 	void setup() {
+
+		user1 = new User();
+		user1.setId(1);
+		user2 = new User();
+		user2.setId(2);
+
+		users = new ArrayList<User>();
+		users.add(user1);
+		users.add(user2);
+
+		objectMapper = new ObjectMapper();
+//-----------------------------------------------
 		auth = new Authorities();
 		auth.setId(TEST_AUTH_ID);
 		auth.setAuthority("VET");
@@ -96,9 +122,8 @@ class UserControllerTests {
 	}
 
 	@Test
-	@WithMockUser("admin")
+	@WithMockUser("ADMIN")
 	void shouldFindAll() throws Exception {
-		Pageable paging = PageRequest.of(1, 10, Sort.by("-").ascending());
 		User sara = new User();
 		sara.setId(2);
 		sara.setUsername("Sara");
@@ -107,18 +132,19 @@ class UserControllerTests {
 		juan.setId(3);
 		juan.setUsername("Juan");
 
-		when(this.userService.findAll(paging).getContent()).thenReturn(List.of(user, sara, juan));
+		when(userService.findAll(any(Pageable.class))).thenReturn(List.of(user, sara, juan));
 
-		mockMvc.perform(get(BASE_URL)).andExpect(status().isOk()).andExpect(jsonPath("$.size()").value(3))
+		mockMvc.perform(get(BASE_URL).with(csrf())).andExpect(status().isOk())
+				.andExpect(jsonPath("$.size()").value(3))
 				.andExpect(jsonPath("$[?(@.id == 1)].username").value("user"))
 				.andExpect(jsonPath("$[?(@.id == 2)].username").value("Sara"))
 				.andExpect(jsonPath("$[?(@.id == 3)].username").value("Juan"));
 	}
 
 	@Test
-	@WithMockUser("admin")
+	@WithMockUser("ADMIN")
 	void shouldFindAllWithAuthority() throws Exception {
-		Pageable paging = PageRequest.of(1, 10, Sort.by("-").ascending());
+
 		Authorities aux = new Authorities();
 		aux.setId(2);
 		aux.setAuthority("AUX");
@@ -133,10 +159,10 @@ class UserControllerTests {
 		juan.setUsername("Juan");
 		juan.setAuthority(auth);
 
-		when(this.userService.findAllByAuthority(auth.getAuthority(), paging).getContent())
+		when(this.userService.findAllByAuthority(auth.getAuthority(), any(Pageable.class)))
 				.thenReturn(List.of(user, juan));
 
-		mockMvc.perform(get(BASE_URL).param("auth", "VET")).andExpect(status().isOk())
+		mockMvc.perform(get(BASE_URL).param("auth", "VET").with(csrf())).andExpect(status().isOk())
 				.andExpect(jsonPath("$.size()").value(2)).andExpect(jsonPath("$[?(@.id == 1)].username").value("user"))
 				.andExpect(jsonPath("$[?(@.id == 3)].username").value("Juan"));
 	}

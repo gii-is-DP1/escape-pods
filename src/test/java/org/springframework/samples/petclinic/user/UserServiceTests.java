@@ -60,6 +60,8 @@ class UserServiceTests {
 	@Test
 	void shouldFindAllUsers() {
 		Pageable paging = PageRequest.of(0, 0,Sort.by("-").ascending());
+		List<User> users = (List<User>) this.userService.findAll(paging);
+		Pageable paging = PageRequest.of(0, 19);
 		List<User> users = (List<User>) this.userService.findAll(paging).getContent();
 		assertEquals(19, users.size());
 	}
@@ -72,14 +74,14 @@ class UserServiceTests {
 
 	@Test
 	void shouldFindUsersByAuthority() {
-		Pageable paging = PageRequest.of(0, 0,Sort.by("-").ascending());
+		Pageable paging = PageRequest.of(0, 10);
 		List<User> owners = (List<User>) this.userService.findAllByAuthority("OWNER", paging).getContent();
 		assertEquals(10, owners.size());
 
-		List<User> admins = (List<User>) this.userService.findAllByAuthority("ADMIN", paging).getContent();
+		List<User> admins = (List<User>) this.userService.findAllByAuthority("ADMIN", paging);
 		assertEquals(1, admins.size());
 
-		List<User> vets = (List<User>) this.userService.findAllByAuthority("VET", paging).getContent();
+		List<User> vets = (List<User>) this.userService.findAllByAuthority("VET", paging);
 		assertEquals(6, vets.size());
 	}
 
@@ -144,8 +146,8 @@ class UserServiceTests {
 	@Test
 	@Transactional
 	void shouldInsertUser() {
-		Pageable paging = PageRequest.of(0, 0,Sort.by("-").ascending());
-		int count = ( this.userService.findAll(paging)).getSize();
+		Pageable paging = PageRequest.of(0, 10);
+		int count = ( this.userService.findAll(paging).getContent()).size();
 
 		User user = new User();
 		user.setUsername("Sam");
@@ -156,7 +158,7 @@ class UserServiceTests {
 		assertNotEquals(0, user.getId().longValue());
 		assertNotNull(user.getId());
 
-		int finalCount = ( this.userService.findAll(paging)).getSize();
+		int finalCount = ( userService.findAll(paging).getContent()).size();
 		assertEquals(count + 1, finalCount);
 	}
 	
@@ -164,7 +166,7 @@ class UserServiceTests {
 	@Test
 	@Transactional
 	void shouldDeleteUserWithoutOwner() {
-		Pageable paging = PageRequest.of(0, 0,Sort.by("-").ascending());
+		Pageable paging = PageRequest.of(0, 10);
 		Integer firstCount = ( userService.findAll(paging)).getSize();
 		User user = new User();
 		user.setUsername("Sam");
@@ -173,10 +175,10 @@ class UserServiceTests {
 		user.setAuthority(auth);
 		this.userService.saveUser(user);
 
-		Integer secondCount = ( userService.findAll(paging)).getSize();
+		Integer secondCount = ( userService.findAll(paging)).size();
 		assertEquals(firstCount + 1, secondCount);
 		userService.deleteUser(user.getId());
-		Integer lastCount = ( userService.findAll(paging)).getSize();
+		Integer lastCount = ( userService.findAll(paging)).size();
 		assertEquals(firstCount, lastCount);
 	}
 
@@ -209,7 +211,7 @@ class UserServiceTests {
 	@Test
 	@Transactional
 	void shouldDeleteUserWithoutVet() {
-		Pageable paging = PageRequest.of(0, 0,Sort.by("-").ascending());
+		Pageable paging = PageRequest.of(0, 10);
 		Integer firstCount = ( userService.findAll(paging)).getSize();
 		User user = new User();
 		user.setUsername("Sam");
@@ -218,10 +220,10 @@ class UserServiceTests {
 		user.setAuthority(auth);
 		this.userService.saveUser(user);
 
-		Integer secondCount = ( userService.findAll(paging)).getSize();
+		Integer secondCount = ( userService.findAll(paging)).size();
 		assertEquals(firstCount + 1, secondCount);
 		userService.deleteUser(user.getId());
-		Integer lastCount = ( userService.findAll(paging)).getSize();
+		Integer lastCount = ( userService.findAll(paging)).size();
 		assertEquals(firstCount, lastCount);
 	}
 

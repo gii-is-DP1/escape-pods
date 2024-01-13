@@ -1,15 +1,12 @@
 import jwt_decode from "jwt-decode";
 import React, { useEffect, useState } from 'react';
-import { Button, Badge, UncontrolledCollapse, Alert } from "reactstrap";
+import { Button, Alert } from "reactstrap";
 import '../App.css';
 import tokenService from '../services/token.service';
 import '../static/css/home/home.css';
 import "../static/css/lobby/lobby.css";
 import "../static/css/game/game.css";
 import scrap from "../static/images/scrap.png";
-import Board from "../static/images/escape-pods-board-horizontal.jpg"
-import { Link } from 'react-router-dom';
-import { move } from "react-big-calendar";
 import itemGetters from "./itemGetters";
 import { HiMiniWrenchScrewdriver } from "react-icons/hi2";
 import { IoIosFlask } from "react-icons/io";
@@ -490,7 +487,7 @@ export default function Game() {
                     }}>
                     </div>
                 }
-                {GetCrewmatesFromShelter(props.shelterCard).map((crewmate, index) => (
+                {GetCrewmatesFromShelter(props.shelterCard).sort((a, b) => a.arrivalOrder - b.arrivalOrder).map((crewmate, index) => (
                     <div style={{ position: "absolute", left: shelterEmbarkingSlotsX[index], top: shelterEmbarkingSlotsY[index] }}>
                         <Crewmate crewmate={crewmate} size="s" />
                     </div>
@@ -1402,6 +1399,23 @@ export default function Game() {
                         }
                         <ActionCards />
                         <div style={{ display: "flex", flexDirection: "row" }}>
+                            <Button className="button" style={{
+                                backgroundColor: "#CFFF68",
+                                border: "none",
+                                width: 200,
+                                fontSize: 20,
+                                borderRadius: 20,
+                                height: 60,
+                                boxShadow: "5px 5px 5px #00000020",
+                                textShadow: "2px 2px 2px #00000020",
+                                transition: "0.15s",
+                                alignSelf: "center",
+                                marginBottom: 20
+                            }} onClick={() => {
+                                window.location.href = "/game/" + gameId + "/scores"
+                            }}>
+                                puntuar
+                            </Button>
                             <Button className="button" style={{
                                 backgroundColor: "#CFFF68",
                                 border: "none",

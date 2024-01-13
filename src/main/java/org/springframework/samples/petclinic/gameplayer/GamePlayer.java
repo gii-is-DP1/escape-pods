@@ -7,6 +7,8 @@ import org.springframework.samples.petclinic.player.Player;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -18,6 +20,8 @@ import lombok.Setter;
 @EqualsAndHashCode(of = "id")
 public class GamePlayer extends BaseEntity {
     @NotNull
+    @Min(1)
+    @Max(2)
     Integer actions;
 
     @NotNull
