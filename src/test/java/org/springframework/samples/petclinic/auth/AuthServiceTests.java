@@ -49,9 +49,9 @@ public class AuthServiceTests {
 	public void shouldCreateAdminUser() {
 		Pageable paging = PageRequest.of(0, 0,Sort.by("-").ascending());
 		SignupRequest request = createRequest("ADMIN", "admin2");
-		int userFirstCount = ( this.userService.findAll(paging)).getSize();
+		int userFirstCount = ( this.userService.findAll(paging)).size();
 		this.authService.createUser(request);
-		int userLastCount = ( this.userService.findAll(paging)).getSize();
+		int userLastCount = ( this.userService.findAll(paging)).size();
 		assertEquals(userFirstCount + 1, userLastCount);
 	}
 	
@@ -60,10 +60,10 @@ public class AuthServiceTests {
 	public void shouldCreateVetUser() {
 		Pageable paging = PageRequest.of(0, 0,Sort.by("-").ascending());
 		SignupRequest request = createRequest("VET", "vettest");
-		int userFirstCount = (userService.findAll(paging)).getSize();
+		int userFirstCount = (userService.findAll(paging)).size();
 		int vetFirstCount = ((Collection<Vet>) this.vetService.findAll()).size();
 		this.authService.createUser(request);
-		int userLastCount = (userService.findAll(paging)).getSize();
+		int userLastCount = (userService.findAll(paging)).size();
 		int vetLastCount = ((Collection<Vet>) this.vetService.findAll()).size();
 		assertEquals(userFirstCount + 1, userLastCount);
 		assertEquals(vetFirstCount + 1, vetLastCount);
@@ -74,10 +74,10 @@ public class AuthServiceTests {
 	public void shouldCreateOwnerUser() {
 		Pageable paging = PageRequest.of(0, 0,Sort.by("-").ascending());
 		SignupRequest request = createRequest("OWNER", "ownertest");
-		int userFirstCount = (userService.findAll(paging)).getSize();
+		int userFirstCount = (userService.findAll(paging)).size();
 		int ownerFirstCount = ((Collection<Owner>) this.ownerService.findAll()).size();
 		this.authService.createUser(request);
-		int userLastCount = (userService.findAll(paging)).getSize();
+		int userLastCount = (userService.findAll(paging)).size();
 		int ownerLastCount = ((Collection<Owner>) this.ownerService.findAll()).size();
 		assertEquals(userFirstCount + 1, userLastCount);
 		assertEquals(ownerFirstCount + 1, ownerLastCount);

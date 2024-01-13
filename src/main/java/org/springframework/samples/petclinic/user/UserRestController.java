@@ -74,9 +74,9 @@ class UserRestController {
         }
 
 		if (auth != null) {
-			res = userService.findAllByAuthority(auth, paging).getContent();
+			res = userService.findAllByAuthority(auth, paging);
 		} else
-			res =  userService.findAll(paging).getContent();
+			res =  userService.findAll(paging);
 		return new ResponseEntity<>(res, HttpStatus.OK);
 	}
 	
