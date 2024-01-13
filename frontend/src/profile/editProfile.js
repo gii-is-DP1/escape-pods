@@ -13,34 +13,23 @@ export default function EditProfile() {
     const jwt = tokenService.getLocalAccessToken();
     const myUsername = jwt_decode(jwt).sub;
 
-    function GetCurrentUser() {
-        fetch("/api/v1/users?username=" + myUsername, {
+    async function GetCurrentAccount() {
+        const response = await fetch("/api/v1/players?username=" + myUsername, {
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${jwt}`,
             },
             method: "GET"
         })
-            .then(response => response.json())
-            .then(response => { setMyUser(response[0]) })
+        
+        const fetchedPlayer = await response.json();
+        setMyUser(fetchedPlayer[0].user);
+        setMyPlayer(fetchedPlayer[0]);
     }
 
-    function GetCurrentPlayer() {
-        fetch("/api/v1/players?username=" + myUsername, {
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${jwt}`,
-            },
-            method: "GET"
-        })
-            .then(response => response.json())
-            .then(response => { setMyPlayer(response[0]) })
-    }
     useEffect(() => {
         if (jwt) {
-            GetCurrentPlayer();
-            GetCurrentUser();
-            console.log(myPlayer, myUser);
+            GetCurrentAccount();
         }
     }, [jwt])
 
@@ -132,7 +121,7 @@ export default function EditProfile() {
                             required
                             name="name"
                             id="name"
-                            value={myUsername || ""}
+                            value={myUser.username || ""}
                             onChange={handleChangeUsername}
                             className="custom-input"
                         />

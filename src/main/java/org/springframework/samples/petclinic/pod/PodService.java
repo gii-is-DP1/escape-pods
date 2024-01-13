@@ -19,7 +19,7 @@ public class PodService {
     }
 
     @Transactional(readOnly = true)
-    public List<Pod> getAllPodss() throws DataAccessException {
+    public List<Pod> getAllPods() throws DataAccessException {
         return p.findAll();
     }
 

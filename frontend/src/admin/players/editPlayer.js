@@ -11,10 +11,7 @@ export default function EditPlayer() {
     const jwt = tokenService.getLocalAccessToken();
     const myUsername = jwt_decode(jwt).sub;
     const playerUsername = window.location.href.split("/")[4]
-    console.log(myPlayer.id) 
-    console.log(myUser.id) 
-    console.log(playerUsername)
-    const [usernameBueno, setUsernameBueno] = useState({});
+    
 
     async function GetCurrentPlayer() {
         const response = await fetch("/api/v1/players?username=" + playerUsername, {
@@ -26,30 +23,13 @@ export default function EditPlayer() {
         })
         
         const fetchedPlayer = await response.json();
-        console.log(fetchedPlayer[0]);
         setMyUser(fetchedPlayer[0].user);
         setMyPlayer(fetchedPlayer[0]);
-    }
-    console.log(usernameBueno)
-
-    async function GetUserToEdit() {
-        const response = await fetch("/api/v1/users?username=" + playerUsername, {
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${jwt}`,
-            },
-            method: "GET"
-        })
-        console.log(response)
-        const fetchedUser = await response.json();
-        console.log(fetchedUser[0]);
-        setMyUser(fetchedUser[0]);
     }
 
     useEffect(() => {
         if (jwt) {
             GetCurrentPlayer();
-            //GetUserToEdit();
         }
     }, [jwt])
 

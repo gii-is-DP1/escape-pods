@@ -45,7 +45,7 @@ public class PodController {
         if (gameid != null) {
             return ps.getPodsByGameId(gameid);
         } else {
-            return ps.getAllPodss();
+            return ps.getAllPods();
         }
     }
 
