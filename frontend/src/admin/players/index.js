@@ -1,22 +1,12 @@
 import jwt_decode from "jwt-decode";
 import React, { useEffect, useState } from 'react';
-import { Button, Badge, UncontrolledCollapse, Modal, ModalHeader, ModalFooter, ModalBody, } from "reactstrap";
+import { Button, Modal, ModalFooter, ModalBody, } from "reactstrap";
 import '../../App.css';
 import tokenService from '../../services/token.service';
 import '../../static/css/home/home.css';
 import "../../static/css/lobby/lobby.css";
-import { Link } from 'react-router-dom';
 import foto from "../../static/images/profile-picture-cover.png";
 import fotoP2 from "../../static/images/amongus-profile-picture.png";
-
-
-
-//ICONOS
-import { DiAptana } from "react-icons/di";
-import { MdAdd, MdOutlinePersonAddAlt1 } from "react-icons/md";
-import { TiTick } from "react-icons/ti";
-import { RiChatOffLine, RiChat4Line, RiCodeFill } from "react-icons/ri";
-
 
 export default function Players() {
 

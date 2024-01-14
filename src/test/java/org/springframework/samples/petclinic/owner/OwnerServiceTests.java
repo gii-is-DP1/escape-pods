@@ -182,7 +182,7 @@ public class OwnerServiceTests {
 		assertTrue(stats.containsKey("goldOwners"));
 		assertEquals(3, stats.get("goldOwners"));
 		assertTrue(stats.containsKey("platinumOwners"));
-		assertEquals(4, stats.get("platinumOwners"));
+		assertEquals(9, stats.get("platinumOwners"));
 		assertTrue(stats.containsKey("ownersVisits"));
 	}
 

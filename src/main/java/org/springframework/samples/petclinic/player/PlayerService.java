@@ -59,6 +59,7 @@ public class PlayerService {
 
 		for (Game game : gameRepository.findPlayerGames(id)) {
         game.removePlayer(toDelete);
+		gameRepository.save(game);
     }
 
 		playerRepository.delete(toDelete);
