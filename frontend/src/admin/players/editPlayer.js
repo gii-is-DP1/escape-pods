@@ -13,9 +13,6 @@ export default function EditPlayer() {
     const jwt = tokenService.getLocalAccessToken();
     const myUsername = jwt_decode(jwt).sub;
     const playerUsername = window.location.href.split("/")[4]
-    console.log(myPlayer.id)
-    console.log(myUser.id)
-    console.log(playerUsername)
     const auths = useFetchData(`/api/v1/users/authorities`, jwt);
 
     const authOptions = auths.map((auth) => (
@@ -64,7 +61,8 @@ export default function EditPlayer() {
             method: "PUT",
             body: JSON.stringify(myPlayer)
         })
-        window.location.href = `/players/${myUser.username}`
+        console.log(myUser)
+        //window.location.href = `/players/${myUser.username}`
     }
 
     function handleChangeUsername(event) {
@@ -103,6 +101,7 @@ export default function EditPlayer() {
         console.log(changedPlayer)
         setMyPlayer(changedPlayer);
     }
+    
 
     function handleChangeAuth(event) {
         const target = event.target;
@@ -176,33 +175,16 @@ export default function EditPlayer() {
                         <Label for="authority" className="custom-form-input-label-not-mandatory">
                             Authority:
                         </Label>
-                        {myUser.id ? (
                             <Input
                                 type="select"
-                                disabled
                                 name="authority"
                                 id="authority"
-                                value={myUser.authority?.id || ""}
+                                value={myUser.authority || ""}
                                 onChange={handleChangeAuth}
                                 className="custom-input"
                             >
-                                <option value="">None</option>
                                 {authOptions}
                             </Input>
-                        ) : (
-                            <Input
-                                type="select"
-                                required
-                                name="authority"
-                                id="authority"
-                                value={myUser.authority?.id || ""}
-                                onChange={handleChangeAuth}
-                                className="custom-input"
-                            >
-                                <option value="">None</option>
-                                {authOptions}
-                            </Input>
-                        )}
                     </div>
 
                     <div className="custom-button-row">
