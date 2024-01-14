@@ -1,5 +1,6 @@
 package org.springframework.samples.petclinic.game;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -8,15 +9,19 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Pageable;
+import org.springframework.samples.petclinic.gameplayer.GamePlayerRepository;
+import org.springframework.samples.petclinic.player.Player;
 
 @Service
 public class GameService {
 
     private GameRepository gr;
+    private GamePlayerRepository gpr;
 
     @Autowired
-    public GameService(GameRepository gr) throws DataAccessException {
+    public GameService(GameRepository gr, GamePlayerRepository gpr) throws DataAccessException {
         this.gr = gr;
+        this.gpr = gpr;
     }
 
     @Transactional(readOnly = true)
@@ -58,5 +63,27 @@ public class GameService {
     @Transactional(readOnly = true)
     public List<Game> getOngoingGames(Pageable pageable) throws DataAccessException {
         return gr.findByFinishIsNullAndStartIsNotNull(pageable);
+    }
+
+    @Transactional
+    public Game nextTurn(Game g, boolean lastRound) throws DataAccessException {
+        List<Player> players = g.getPlayers();
+        int index = g.getPlayers().indexOf(g.getActivePlayer());
+        if(lastRound) {
+            gpr.findByPlayerId(g.getActivePlayer().getId()).setNoMoreTurns(true); ;           
+        }
+        if (index == players.size() - 1) {
+            g.setActivePlayer(players.get(0));
+        } else {
+            g.setActivePlayer(players.get(index + 1));
+        }
+
+        return g;
+    }
+
+    @Transactional
+    public void finishGame(Game g) throws DataAccessException {
+        g.setFinish(LocalDateTime.now());
+        g.setStatus(GameStatus.FINISHED);
     }
 }

@@ -329,11 +329,10 @@ class GameItemsInitializers {
                         method: "POST",
                         body: JSON.stringify({
                             actions: 1,
-                            points: 0,
                             color: colors[i],
                             game: game,
-                            player: game.players[i]
-
+                            player: game.players[i],
+                            noMoreTurns: false
                         })
                     })
                 } else {
@@ -345,11 +344,10 @@ class GameItemsInitializers {
                         method: "POST",
                         body: JSON.stringify({
                             actions: 2,
-                            points: 0,
                             color: colors[i],
                             game: game,
-                            player: game.players[i]
-
+                            player: game.players[i],
+                            noMoreTurns: false
                         })
                     })
 
@@ -365,10 +363,10 @@ class GameItemsInitializers {
                         method: "POST",
                         body: JSON.stringify({
                             actions: 1,
-                            points: 0,
                             color: colors[i],
                             game: game,
-                            player: game.players[i]
+                            player: game.players[i],
+                            noMoreTurns: false
 
                         })
                     })
@@ -381,11 +379,10 @@ class GameItemsInitializers {
                         method: "POST",
                         body: JSON.stringify({
                             actions: 2,
-                            points: 0,
                             color: colors[i],
                             game: game,
-                            player: game.players[i]
-
+                            player: game.players[i],
+                            noMoreTurns: false
                         })
                     })
                 }
@@ -545,13 +542,8 @@ class GameItemsInitializers {
 
                 } else {
                     score = Math.round(Math.random() * (4 - 2) + 2)
-                    /* EN CASO DE QUERER IPLEMNETAR QUE LOS 2 ULTIMOS ESPACIOS DEL REFUGIO ROSA NO NECESITEN ROL
-                    if(j>2 && shelters[i].type=="PINK"){
-                        roleNeeded=false;
-                    }*/
                 }
                 const slotInfo = {
-                    position: j,
                     slotScore: score,
                     role: randomRole[0],
                     shelter: shelterI,

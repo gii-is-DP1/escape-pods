@@ -37,12 +37,7 @@ public class SlotInfoController {
     }
 
     @GetMapping
-    public List<SlotInfo> getAllSlotInfos(
-            @ParameterObject @RequestParam(value = "status", required = false) Integer position,
-            @ParameterObject @RequestParam(value = "gameid", required = false) Integer gameid) {
-        if (position != null) {
-            return sis.getSlotInfoByPosition(position);
-        }
+    public List<SlotInfo> getAllSlotInfos(@ParameterObject @RequestParam(value = "gameid", required = false) Integer gameid) {
         if (gameid != null) {
             return sis.getSlotInfoByGameId(gameid);
         } else {

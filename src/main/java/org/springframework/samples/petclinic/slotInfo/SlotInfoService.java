@@ -33,12 +33,7 @@ public class SlotInfoService {
         si.save(g);
         return g;
     }
-
-    @Transactional(readOnly = true)
-    public List<SlotInfo> getSlotInfoByPosition(Integer postion) throws DataAccessException {
-        return si.findByPosition(postion);
-    }
-
+    
     @Transactional(readOnly = true)
     public List<SlotInfo> getSlotInfoByGameId(Integer id) throws DataAccessException {
         return si.findByGameId(id);
