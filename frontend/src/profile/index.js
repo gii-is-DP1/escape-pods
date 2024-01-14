@@ -7,6 +7,7 @@ import '../static/css/home/home.css';
 import "../static/css/lobby/lobby.css";
 import { Link } from 'react-router-dom';
 import foto from "../static/images/pods/pod1.png";
+import { IoReturnUpBack } from "react-icons/io5";
 
 
 //ICONOS
@@ -63,10 +64,10 @@ export default function Profile() {
         }
     }
 
-    async function getPageData(){
+    async function getPageData() {
         await getPlayerGames(0, await GetCurrentPlayer());
     }
-    
+
     async function fetchPlayerGames(page, player) {
         const response = await fetch(`/api/v1/games?playerId=${player.id}&page=${page}`, {
             headers: {
@@ -90,7 +91,7 @@ export default function Profile() {
             <td style={{ color: '#ffffff', backgroundColor: 'rgba(0, 0, 0, 0)' }}>{game.id}</td>
             <td style={{ color: '#ffffff', backgroundColor: 'rgba(0, 0, 0, 0)' }}>{game.players[0].user.username}</td>
             <td style={{ color: '#ffffff', backgroundColor: 'rgba(0, 0, 0, 0)', }}>{JSON.stringify(game) === "{}" ? null : game.players.map((player, index, array) => player.user.username + (index < array.length - 1 ? ", " : ""))}</td>
-        </tr>)                                                
+        </tr>)
 
     function newPages(direction) {
         let out = []
@@ -100,15 +101,15 @@ export default function Profile() {
         return out;
     }
 
-        function sendLogoutRequest() {
-          const jwt = window.localStorage.getItem("jwt");
-          if (jwt || typeof jwt === "undefined") {
+    function sendLogoutRequest() {
+        const jwt = window.localStorage.getItem("jwt");
+        if (jwt || typeof jwt === "undefined") {
             tokenService.removeUser();
             window.location.href = "/";
-          } else {
+        } else {
             alert("There is no user logged in");
-          }
-        
+        }
+
     }
 
     function DeleteCurrentAccount() {

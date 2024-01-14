@@ -32,6 +32,7 @@ function HowToPlayButton() {
 export default function Home() {
     const [joinLobbyvisible, setJoinLobbyVisible] = useState(false);
     const [verUsersVisible, setVerUsersVisible] = useState(false);
+    const [verAdminsVisible, setVerAdminsVisible] = useState(false);
     const [numPlayersVisible, setNumPlayersVisible] = useState(false)
     const [roles, setRoles] = useState([]);
     const [waitingGames, setWaitingGames] = useState([])
@@ -94,7 +95,16 @@ export default function Home() {
             const fetchedUsers = await fetchUsers(page);
             setUsers(fetchedUsers);
         } catch (error) {
-            console.error("Failed to fetch games: ", error);
+            console.error("Failed to fetch users: ", error);
+        }
+    }
+
+    async function getAdmins(page) {
+        try {
+            const fetchedUsers = await fetchAdmins(page);
+            setUsers(fetchedUsers);
+        } catch (error) {
+            console.error("Failed to fetch admins: ", error);
         }
     }
 
@@ -117,6 +127,23 @@ export default function Home() {
 
     async function fetchUsers(page) {
         const response = await fetch(`/api/v1/users?auth=PLAYER&page=${page}`, {
+            headers: {
+                "Authorization": `Bearer ${jwt}`,
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`http error with status: ${response.status}`);
+        }
+
+        const users = await response.json();
+        return users;
+    }
+
+    async function fetchAdmins(page) {
+        const response = await fetch(`/api/v1/users?auth=ADMIN&page=${page}`, {
             headers: {
                 "Authorization": `Bearer ${jwt}`,
                 'Accept': 'application/json',
@@ -194,6 +221,29 @@ export default function Home() {
                 onClick={() => {
                     setVerUsersVisible(false)
                     window.location.href = `/players/${user.username}`
+                }}>
+                DETAILS
+            </Button>
+        </li>)
+
+    const adminList = users.map(user =>
+        <li key={user.username} className='list-games-name' style={{ display: "flex", justifyContent: 'space-between', marginBottom: 10, marginRight: 10 }}>
+            <span style={{ fontFamily: 'monospace', color: '#00FF66' }}>
+                {user.username}
+            </span>
+            <Button className="done-button" style={{
+                backgroundColor: "#00ff6658",
+                border: "none",
+                borderRadius: 0,
+                boxShadow: "5px 5px 5px #00000020",
+                textShadow: "2px 2px 2px #00000020",
+                transition: "0.15s",
+                fontFamily: 'monospace',
+                color: '#00FF66'
+            }}
+                onClick={() => {
+                    setVerAdminsVisible(false)
+                    window.location.href = `/admins/${user.username}`
                 }}>
                 DETAILS
             </Button>
@@ -500,6 +550,7 @@ export default function Home() {
                             width: 300,
                             marginTop: 460,
                             justifyContent: 'center',
+                            marginRight: 50,
 
                         }} onClick={() => {
                             setVerUsersVisible(true)
@@ -507,6 +558,28 @@ export default function Home() {
                         }}
                         >
                             <p style={{ color: '#00FF66', fontFamily: 'monospace' }}>Users List</p>
+                        </Button>
+
+                        <Button style={{
+                            transition: "0.15s",
+                            backgroundColor: "#00ff6658",
+                            border: "none",
+                            borderRadius: 0,
+                            textAlign: "center",
+                            fontSize: 35,
+                            boxShadow: "3px 3px 5px #00000020",
+                            textShadow: "2px 2px 2px #00000020",
+                            height: 90,
+                            width: 300,
+                            marginTop: 460,
+                            justifyContent: 'center',
+
+                        }} onClick={() => {
+                            setVerAdminsVisible(true)
+                            getAdmins(0)
+                        }}
+                        >
+                            <p style={{ color: '#00FF66', fontFamily: 'monospace' }}>Admin List</p>
                         </Button>
                     </div>
                     <div>
@@ -560,6 +633,66 @@ export default function Home() {
 
                                             onClick={() => {
                                                 setVerUsersVisible(false)
+                                                console.log(users);
+                                            }}>
+                                            Close
+                                        </Button>
+                                    </div>
+                                </div>
+                            </ModalFooter>
+                        </Modal>
+                    </div>
+                    <div>
+                        <Modal isOpen={verAdminsVisible} className="modal-join-lobby" >
+                            <ModalHeader style={{ color: '#00FF66', textShadow: "2px 2px 2px #00000020" }}>
+                                <div style={{ display: 'flex', flexDirection: 'row', alignContent: 'right', alignSelf: 'right', alignItems: 'right' }}>
+                                    <p style={{ fontFamily: 'monospace' }}>Admins</p>
+                                </div>
+                            </ModalHeader>
+                            <ModalBody style={{ flexDirection: "row", fontFamily: 'monospace', color: '#00FF66' }}>
+                                {users.length !== 0 &&
+                                    < ul className="ul-games" style={{ fontFamily: 'monospace', color: '#00FF66' }}>
+                                        {adminList}
+                                    </ul>
+                                }
+                                {users.length === 0 &&
+                                    <p style={{ height: 310, fontFamily: 'monospace', color: '#00FF66' }}> No users found to show. </p>
+                                }
+                            </ModalBody>
+                            <ModalFooter>
+                                <div style={{ flexDirection: "row", alignItems: 'center' }}>
+                                    <div class="pagination">
+                                        <a style={{ fontFamily: 'monospace', color: '#00FF66' }} onClick={() => {
+                                            if (pages[0] != 0) {
+                                                setPages(newPages('down'))
+                                            }
+
+                                        }}>&laquo;</a>
+                                        {pages.map((page, index) => (
+                                            <a style={{ fontFamily: 'monospace', color: '#00FF66' }} onClick={() => {
+                                                getAdmins(page)
+                                            }}
+                                            >
+                                                {pages[index] + 1}
+                                            </a>))}
+                                        <a style={{ fontFamily: 'monospace', color: '#00FF66' }} onClick={() => {
+                                            setPages(newPages('up'))
+                                        }}
+
+                                        >
+                                            &raquo;
+                                        </a>
+                                    </div>
+
+                                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                                        <Button className="done-button" style={{
+                                            backgroundColor: "#00ff6658", fontFamily: 'monospace', border: "none", boxShadow: "5px 5px 5px #00000020",
+                                            textShadow: "2px 2px 2px #00000020", transition: "0.15s", marginTop: 10, flexDirection: 'column', alignSelf: 'center',
+                                            alignContent: 'center', alignItems: 'center', borderRadius: 0, color: '#00FF66'
+                                        }}
+
+                                            onClick={() => {
+                                                setVerAdminsVisible(false)
                                                 console.log(users);
                                             }}>
                                             Close

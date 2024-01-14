@@ -4,6 +4,8 @@
 INSERT INTO authorities(id,authority) VALUES (1,'ADMIN');
 INSERT INTO appusers(id,username,password,authority) VALUES (1,'admin1','$2a$10$nMmTWAhPTqXqLDJTag3prumFrAJpsYtroxf0ojesFYq0k4PmcbWUS',1);
 
+INSERT INTO appusers(id,username,password,authority) VALUES (99,'admin2','$2a$10$nMmTWAhPTqXqLDJTag3prumFrAJpsYtroxf0ojesFYq0k4PmcbWUS',1);
+
 -- Three clinic owners, with password "clinic_owner"
 INSERT INTO authorities(id,authority) VALUES (2,'CLINIC_OWNER');
 INSERT INTO appusers(id,username,password,authority) VALUES (2,'clinicOwner1','$2a$10$t.I/C4cjUdUWzqlFlSddLeh9SbZ6d8wR7mdbeIRghT355/KRKZPAi',2);

@@ -14,6 +14,9 @@ function AppNavbar() {
     const jwt = tokenService.getLocalAccessToken();
     const [collapsed, setCollapsed] = useState(true);
     const [myPlayer, setMyPlayer] = useState({})
+    
+    
+
 
     const toggleNavbar = () => setCollapsed(!collapsed);
 
@@ -59,43 +62,13 @@ function AppNavbar() {
     roles.forEach((role) => {
         if (role === "ADMIN") {
             adminLinks = (
-                <>
-                    {/*<NavItem>
-                        <NavLink style={{ color: "white" }} tag={Link} to="/owners">Owners</NavLink>
-                    </NavItem>
-                    <NavItem>
-                        <NavLink style={{ color: "white" }} tag={Link} to="/pets">Pets</NavLink>
-                    </NavItem>
-                    <NavItem>
-                        <NavLink style={{ color: "white" }} tag={Link} to="/vets">Vets</NavLink>
-                    </NavItem>
-                    <NavItem>
-                        <NavLink style={{ color: "white" }} tag={Link} to="/consultations">Consultations</NavLink>
-                    </NavItem>
-                    <NavItem>
-                        <NavLink style={{ color: "white" }} tag={Link} to="/clinicOwners">Clinic Owners</NavLink>
-                    </NavItem>
-                    <NavItem>
-                        <NavLink style={{ color: "white" }} tag={Link} to="/clinics">Clinics</NavLink>
-                    </NavItem>
-                    <NavItem>
-                        <NavLink style={{ color: "white" }} tag={Link} to="/users">Users</NavLink>
-                    </NavItem*/}
-                </>
+                null
             )
         }
         if (role === "OWNER") {
             ownerLinks = (
                 <>
-                    {/*                    <NavItem>
-                        <NavLink style={{ color: "white" }} tag={Link} to="/myPets">My Pets</NavLink>
-                    </NavItem>
-                    <NavItem>
-                        <NavLink style={{ color: "white" }} tag={Link} to="/consultations">Consultations</NavLink>
-                    </NavItem>
-                    <NavItem>
-                        <NavLink style={{ color: "white" }} tag={Link} to="/plan">Plan</NavLink>
-                    </NavItem>*/}
+                    
                     <NavItem>
                         <NavLink style={{ color: "white" }} tag={Link} to="/achievements">Achievements</NavLink>
                     </NavItem>
@@ -144,14 +117,7 @@ function AppNavbar() {
                 </NavItem>
             </>
         )
-        /*
-                        <NavItem>
-                            <NavLink style={{ color: "white" }} id="docs" tag={Link} to="/docs">Docs</NavLink>
-                        </NavItem>
-                        <NavItem>
-                            <NavLink style={{ color: "white" }} id="plans" tag={Link} to="/plans">Pricing Plans</NavLink>
-                        </NavItem>
-        */
+        
     } else {
         userLinks = (
             <>
@@ -160,7 +126,6 @@ function AppNavbar() {
         )
         userLogout = (
             <>
-                {/* TODO añadir el enlace hacia mi perfil en el username */}
                 <NavbarText style={{ color: "white" }} className="justify-content-end">{username}</NavbarText>
 
                 <NavItem className="d-flex" style={{ marginLeft: 10 }}>
@@ -168,22 +133,15 @@ function AppNavbar() {
                 </NavItem>
             </>
         )
-        /*
-                        <NavItem>
-                            <NavLink style={{ color: "white" }} id="docs" tag={Link} to="/docs">Docs</NavLink>
-                        </NavItem>
-                        <NavItem>
-                            <NavLink style={{ color: "white" }} id="plans" tag={Link} to="/plans">Pricing Plans</NavLink>
-                        </NavItem>
-        */
+        
 
     }
 
     return (
         <div>
             <Navbar expand="md">
-                <NavbarBrand href="/">
-                    <img alt="logo" src="/escape-pods-logo.png" style={{ height: 40, width: 60 }} />
+                <NavbarBrand href={!window.location.href.match(/\/game\/\d+$/)? "/" : null }>
+                     <img alt="logo" src="/escape-pods-logo.png" style={{ height: 40, width: 60 }} />
                 </NavbarBrand>
 
                 <NavbarToggler onClick={toggleNavbar} className="ms-2" />
@@ -195,12 +153,12 @@ function AppNavbar() {
                     </Nav>
                     <Nav className="ms-auto mb-2 mb-lg-0" navbar>
                         {publicLinks}
-                        {userLogout}
+                        {!window.location.href.match(/\/game\/\d+$/) && userLogout}
                     </Nav>
                 </Collapse>
-                {!emptyChecker('object', myPlayer)&& roles.includes("PLAYER") &&
+                {!emptyChecker('object', myPlayer)&& roles.includes("PLAYER") && !window.location.href.match(/\/game\/\d+$/)  &&
                     <NavbarBrand href="/profile">
-                        <img src={!emptyChecker("object", myPlayer) && myPlayer != undefined && myPlayer!= undefined ? myPlayer.profilePicture : fotoP2} style={{ height: 45, width: 45, marginLeft: 10, borderRadius: '50%' }} />                    </NavbarBrand>
+                        <img src={!emptyChecker("object", myPlayer) && myPlayer != undefined && myPlayer!= undefined ? myPlayer.profilePicture : fotoP2} style={{ height: 50, width: 50, marginLeft: 10, borderRadius: '50%' }} />                    </NavbarBrand>
                 }
             </Navbar>
         </div >
