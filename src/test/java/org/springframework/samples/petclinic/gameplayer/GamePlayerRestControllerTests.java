@@ -139,11 +139,10 @@ public class GamePlayerRestControllerTests {
 
                 MockHttpServletRequestBuilder requestBuilder = get("/api/v1/gamePlayers/{id}", gamePlayerId)
                                 .with(csrf());
-        
+
                 mockMvc.perform(requestBuilder)
                                 .andExpect(status().isOk())
                                 .andExpect(jsonPath("$.id").value(gamePlayerId));
-
 
         }
 
@@ -151,7 +150,6 @@ public class GamePlayerRestControllerTests {
         @WithMockUser("PLAYER")
         void cantCreateGamePlayer_BadRequest() throws Exception {
 
-                // con datos incorrectos
                 GamePlayer gameplayer = new GamePlayer();
                 gameplayer.setGame(null);
                 gameplayer.setId(-1);

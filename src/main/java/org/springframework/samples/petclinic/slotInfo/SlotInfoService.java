@@ -48,4 +48,9 @@ public class SlotInfoService {
     public void delete(Integer id) throws DataAccessException {
         si.deleteById(id);
     }
+
+    @Transactional
+    public void deleteByGameId(Integer id) throws DataAccessException {
+        si.deleteByGameId(id);
+    }
 }

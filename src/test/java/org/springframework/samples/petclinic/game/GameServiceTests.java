@@ -114,14 +114,10 @@ class GameServiceTests {
 
         doNothing().when(gameRepository).deleteById(gameId);
         when(gameRepository.findById(gameId)).thenReturn(Optional.of(expectedGame));
-        
+
         gameService.delete(gameId);
 
         assertEquals(expectedGame, gameService.getGameById(gameId).get());
-        /* la manera de comprobar que funcione lo de borrar es llamar al metodo pero que no se borre,
-        entonces luego llamamos al metodo que llame al game de la id que habiamos borrado para comprobar
-        que efectivamente no se ha borrado pero que hemos llamado al metodo de borrar.
-        */
 
         verify(gameRepository, times(1)).deleteById(gameId);
     }
