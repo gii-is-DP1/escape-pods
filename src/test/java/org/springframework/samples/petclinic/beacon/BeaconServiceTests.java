@@ -60,8 +60,6 @@ class BeaconServiceTests {
         List<Beacon> expectedBeacons = Arrays.asList(new Beacon(), new Beacon());
         when(beaconRepository.findByColor1(color)).thenReturn(expectedBeacons);
 
-        when(beaconRepository.findByColor1(color)).thenReturn(expectedBeacons);
-
         List<Beacon> actualBeacons = beaconService.getBeaconByColor(color);
 
         assertEquals(expectedBeacons, actualBeacons);
