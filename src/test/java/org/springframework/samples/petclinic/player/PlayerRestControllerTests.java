@@ -38,253 +38,218 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 @WebMvcTest(PlayerRestController.class)
 public class PlayerRestControllerTests {
 
-    @MockBean
-    private PlayerService playerService;
+        @MockBean
+        private PlayerService playerService;
 
-    @MockBean
-    private UserService userService;
+        @MockBean
+        private UserService userService;
 
-    @Autowired
-    private MockMvc mockMvc;
+        @Autowired
+        private MockMvc mockMvc;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+        @Autowired
+        private ObjectMapper objectMapper;
 
-    private User user1;
-    private User user2;
+        private User user1;
+        private User user2;
 
-    private Player player1;
-    private Player player2;
+        private Player player1;
+        private Player player2;
 
-    private List<Player> players = new ArrayList<>();
+        private List<Player> players = new ArrayList<>();
 
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-        objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
+        @BeforeEach
+        void setUp() {
+                MockitoAnnotations.openMocks(this);
+                objectMapper = new ObjectMapper();
+                objectMapper.registerModule(new JavaTimeModule());
 
-        user1 = new User();
-        user1.setId(1);
-        user1.setUsername("user1");
-        user1.setPassword("0wn3r");
-        user2 = new User();
-        user2.setId(2);
-        user2.setUsername("user2");
-        user2.setPassword("0wn3r");
+                user1 = new User();
+                user1.setId(1);
+                user1.setUsername("user1");
+                user1.setPassword("0wn3r");
+                user2 = new User();
+                user2.setId(2);
+                user2.setUsername("user2");
+                user2.setPassword("0wn3r");
 
-        player1 = new Player();
-        player1.setId(1);
-        player1.setUser(user1);
-        player1.setProfileDescription("perfil de player1");
-        player1.setProfilePicture("https://metricool.com/wp-content/uploads/PERFIL-TIKTOK-scaled.jpg");
+                player1 = new Player();
+                player1.setId(1);
+                player1.setUser(user1);
+                player1.setProfileDescription("perfil de player1");
+                player1.setProfilePicture("https://metricool.com/wp-content/uploads/PERFIL-TIKTOK-scaled.jpg");
 
-        player2 = new Player();
-        player2.setUser(user2);
-        player2.setId(2);
-        player2.setProfileDescription("jaja");
-        player2.setProfilePicture("https://i.kym-cdn.com/photos/images/newsfeed/000/611/069/733.jpg");
+                player2 = new Player();
+                player2.setUser(user2);
+                player2.setId(2);
+                player2.setProfileDescription("jaja");
+                player2.setProfilePicture("https://i.kym-cdn.com/photos/images/newsfeed/000/611/069/733.jpg");
 
-        players.add(player1);
-        players.add(player2);
+                players.add(player1);
+                players.add(player2);
 
-    }
+        }
 
-    @Test
-    @WithMockUser("ADMIN")
-    void canGetAllPlayers() throws Exception {
-        List<Player> expectedPlayers = players;
-        when(playerService.findAll()).thenReturn(expectedPlayers);
-        MockHttpServletRequestBuilder requestBuilder = get("/api/v1/players")
-                .with(csrf());
+        @Test
+        @WithMockUser("ADMIN")
+        void canGetAllPlayers() throws Exception {
+                List<Player> expectedPlayers = players;
+                when(playerService.findAll()).thenReturn(expectedPlayers);
+                MockHttpServletRequestBuilder requestBuilder = get("/api/v1/players")
+                                .with(csrf());
 
-        MvcResult result = mockMvc.perform(requestBuilder)
-                .andExpect(status().isOk())
-                .andReturn();
+                MvcResult result = mockMvc.perform(requestBuilder)
+                                .andExpect(status().isOk())
+                                .andReturn();
 
-        String responseBody = result.getResponse().getContentAsString();
-        List<Beacon> actualPlayers = objectMapper.readValue(responseBody, List.class);
+                String responseBody = result.getResponse().getContentAsString();
+                List<Beacon> actualPlayers = objectMapper.readValue(responseBody, List.class);
 
-        assertEquals(expectedPlayers.size(), actualPlayers.size());
-    }
+                assertEquals(expectedPlayers.size(), actualPlayers.size());
+        }
 
-    @Test
-    @WithMockUser("ADMIN")
-    void canGetPlayerById() throws Exception {
-        Integer player1Id = 1;
-        when(playerService.findPlayerById(player1Id)).thenReturn(player1);
+        @Test
+        @WithMockUser("ADMIN")
+        void canGetPlayerById() throws Exception {
+                Integer player1Id = 1;
+                when(playerService.findPlayerById(player1Id)).thenReturn(player1);
 
-        MockHttpServletRequestBuilder requestBuilder = get("/api/v1/players/{id}", player1Id)
-                .with(csrf());
+                MockHttpServletRequestBuilder requestBuilder = get("/api/v1/players/{id}", player1Id)
+                                .with(csrf());
 
-        mockMvc.perform(requestBuilder)
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(player1Id));
+                mockMvc.perform(requestBuilder)
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.id").value(player1Id));
 
-    }
+        }
 
-    @Test
-    @WithMockUser("ADMIN")
-    void cantGetPlayerById_NotFound() throws Exception {
+        @Test
+        @WithMockUser("ADMIN")
+        void cantGetPlayerById_NotFound() throws Exception {
 
-        Integer nonExistentPlayerId = 12;
+                Integer nonExistentPlayerId = 12;
 
-        when(playerService.findPlayerById(nonExistentPlayerId)).thenThrow(ResourceNotFoundException.class);
+                when(playerService.findPlayerById(nonExistentPlayerId)).thenThrow(ResourceNotFoundException.class);
 
-        MockHttpServletRequestBuilder requestBuilder = get("/api/v1/players/{id}", nonExistentPlayerId)
-                .with(csrf());
+                MockHttpServletRequestBuilder requestBuilder = get("/api/v1/players/{id}", nonExistentPlayerId)
+                                .with(csrf());
 
-        mockMvc.perform(requestBuilder)
-                .andExpect(status().isNotFound());
+                mockMvc.perform(requestBuilder)
+                                .andExpect(status().isNotFound());
 
-    }
+        }
 
-    @Test
-    @WithMockUser("ADMIN")
-    void canCreatePlayer() throws Exception {
+        @Test
+        @WithMockUser("ADMIN")
+        void canCreatePlayer() throws Exception {
 
-        Authorities playerAuth = new Authorities();
-        playerAuth.setId(1);
-        playerAuth.setAuthority("PLAYER");
+                Authorities playerAuth = new Authorities();
+                playerAuth.setId(1);
+                playerAuth.setAuthority("PLAYER");
 
-        User user3 = new User();
-        user3.setId(3);
-        user3.setUsername("user3");
-        user3.setPassword("0wn3r");
-        user3.setAuthority(playerAuth);
+                User user3 = new User();
+                user3.setId(3);
+                user3.setUsername("user3");
+                user3.setPassword("0wn3r");
+                user3.setAuthority(playerAuth);
 
-        Player player3 = new Player();
-        player3.setId(3);
-        player3.setUser(user3);
-        player3.setProfileDescription("jajajajaajjajajja");
-        player3.setProfilePicture("https://i.kym-cdn.com/photos/images/newsfeed/000/611/069/733.jpg");
+                Player player3 = new Player();
+                player3.setId(3);
+                player3.setUser(user3);
+                player3.setProfileDescription("jajajajaajjajajja");
+                player3.setProfilePicture("https://i.kym-cdn.com/photos/images/newsfeed/000/611/069/733.jpg");
 
-        when(playerService.savePlayer(any(Player.class))).thenAnswer(i -> i.getArguments()[0]);
-        String json = objectMapper.writeValueAsString(player3);
+                when(playerService.savePlayer(any(Player.class))).thenAnswer(i -> i.getArguments()[0]);
+                String json = objectMapper.writeValueAsString(player3);
 
-        MockHttpServletRequestBuilder requestBuilder = post("/api/v1/players")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(json)
-                .with(csrf());
+                MockHttpServletRequestBuilder requestBuilder = post("/api/v1/players")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(json)
+                                .with(csrf());
 
-        MvcResult result = mockMvc.perform(requestBuilder)
-                .andExpect(status().isCreated())
-                .andReturn();
+                MvcResult result = mockMvc.perform(requestBuilder)
+                                .andExpect(status().isCreated())
+                                .andReturn();
 
-        String responseBody = result.getResponse().getContentAsString();
-        Player createdPlayer = objectMapper.readValue(responseBody, Player.class);
+                String responseBody = result.getResponse().getContentAsString();
+                Player createdPlayer = objectMapper.readValue(responseBody, Player.class);
 
-        assertEquals("jajajajaajjajajja", createdPlayer.getProfileDescription());
-    }
+                assertEquals("jajajajaajjajajja", createdPlayer.getProfileDescription());
+        }
 
-    @Test
-    @WithMockUser("ADMIN")
-    void cantCreatePlayer() throws Exception {
+        @Test
+        @WithMockUser("ADMIN")
+        void cantCreatePlayer() throws Exception {
 
-        User user3 = new User();
-        user3.setId(3);
-        user3.setUsername("user3");
-        user3.setPassword("0wn3r");
+                User user3 = new User();
+                user3.setId(3);
+                user3.setUsername("user3");
+                user3.setPassword("0wn3r");
 
-        Player player3 = new Player();
-        player3.setId(3);
-        player3.setUser(user3);
-        player3.setProfileDescription(null);
-        player3.setProfilePicture(null);
+                Player player3 = new Player();
+                player3.setId(3);
+                player3.setUser(user3);
+                player3.setProfileDescription(null);
+                player3.setProfilePicture(null);
 
-        when(playerService.savePlayer(any(Player.class))).thenAnswer(i -> i.getArguments()[0]);
-        String json = objectMapper.writeValueAsString(player3);
+                when(playerService.savePlayer(any(Player.class))).thenAnswer(i -> i.getArguments()[0]);
+                String json = objectMapper.writeValueAsString(player3);
 
-        MockHttpServletRequestBuilder requestBuilder = post("/api/v1/players")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(json)
-                .with(csrf());
+                MockHttpServletRequestBuilder requestBuilder = post("/api/v1/players")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(json)
+                                .with(csrf());
 
-        MvcResult result = mockMvc.perform(requestBuilder)
-                .andExpect(status().isBadRequest())
-                .andReturn();
+                MvcResult result = mockMvc.perform(requestBuilder)
+                                .andExpect(status().isBadRequest())
+                                .andReturn();
 
-        Integer actualStatus = result.getResponse().getStatus();
-        assertTrue(400 == actualStatus);
+                Integer actualStatus = result.getResponse().getStatus();
+                assertTrue(400 == actualStatus);
 
-    }
+        }
 
-    /*@Test
-    @WithMockUser("ADMIN")
-    void canUpdatePlayer() throws Exception {
-        Integer player1Id = 1;
+        @Test
+        @WithMockUser("ADMIN")
+        void cantUpdatePlayer() throws Exception {
+                Integer nonExistentplayerId = 1;
 
-        player1.setProfileDescription("estoy completamente loco y desquiciado con escape pods");
+                player1.setProfileDescription("ealpdep");
 
-        when(playerService.findPlayerById(player1Id)).thenReturn(player1);
-        when(playerService.savePlayer(player1)).thenReturn(player1);
-        String player3JsonString = objectMapper.writeValueAsString(player1);
+                when(playerService.findPlayerById(nonExistentplayerId)).thenThrow(ResourceNotFoundException.class);
+                when(playerService.savePlayer(player1)).thenReturn(player1);
+                String player3JsonString = objectMapper.writeValueAsString(player1);
 
-        MockHttpServletRequestBuilder requestBuilder = put("/api/v1/players/{id}", player1Id)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(player3JsonString)
-                .with(csrf());
+                MockHttpServletRequestBuilder requestBuilder = put("/api/v1/players/{id}", nonExistentplayerId)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(player3JsonString)
+                                .with(csrf());
 
-        mockMvc.perform(requestBuilder)
-                .andExpect(status().isNoContent());
+                mockMvc.perform(requestBuilder)
+                                .andExpect(status().isNotFound());
 
-    }*/
+        }
 
-    @Test
-    @WithMockUser("ADMIN")
-    void cantUpdatePlayer() throws Exception {
-        Integer nonExistentplayerId = 1;
+        @Test
+        @WithMockUser("ADMIN")
+        void cantDeletePlayer_NotFound() throws Exception {
+                Integer player1Id = 1;
+                Integer nonExistendPlayerId = 33;
 
-        player1.setProfileDescription("ealpdep");
+                ObjectMapper objectMapper = new ObjectMapper();
 
-        when(playerService.findPlayerById(nonExistentplayerId)).thenThrow(ResourceNotFoundException.class);
-        when(playerService.savePlayer(player1)).thenReturn(player1);
-        String player3JsonString = objectMapper.writeValueAsString(player1);
+                when(playerService.findPlayerById(nonExistendPlayerId)).thenThrow(ResourceNotFoundException.class);
+                doNothing().when(playerService).deletePlayer(player1Id);
 
-        MockHttpServletRequestBuilder requestBuilder = put("/api/v1/players/{id}", nonExistentplayerId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(player3JsonString)
-                .with(csrf());
+                String json = objectMapper.writeValueAsString(player1);
 
-        mockMvc.perform(requestBuilder)
-                .andExpect(status().isNotFound());
+                MockHttpServletRequestBuilder requestBuilder = delete("/api/v1/players/{id}", player1Id)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(json)
+                                .with(csrf());
 
-    }
+                mockMvc.perform(requestBuilder)
+                                .andExpect(status().isNotFound());
 
-    /*@Test
-    @WithMockUser("ADMIN")
-    void canDeletePlayer() throws Exception {
-        Integer player1Id = 1;
-
-        when(playerService.findPlayerById(player1Id)).thenReturn(player1);
-        doNothing().when(playerService).deletePlayer(player1Id);
-
-        mockMvc.perform(delete("/api/v1/players/{id}", player1Id)
-                .with(csrf()))
-                .andExpect(status().isOk());
-
-    }*/
-
-    @Test
-    @WithMockUser("ADMIN")
-    void cantDeletePlayer_NotFound() throws Exception {
-        Integer player1Id = 1;
-        Integer nonExistendPlayerId = 33;
-
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        when(playerService.findPlayerById(nonExistendPlayerId)).thenThrow(ResourceNotFoundException.class);
-        doNothing().when(playerService).deletePlayer(player1Id);
-
-        String json = objectMapper.writeValueAsString(player1);
-
-        MockHttpServletRequestBuilder requestBuilder = delete("/api/v1/players/{id}", player1Id)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(json)
-                .with(csrf());
-
-        mockMvc.perform(requestBuilder)
-                .andExpect(status().isNotFound());
-
-    }
+        }
 }

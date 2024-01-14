@@ -1,7 +1,5 @@
 package org.springframework.samples.petclinic.user;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
@@ -19,35 +17,23 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.autoconfigure.observation.ObservationProperties.Http;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.samples.petclinic.configuration.SecurityConfiguration;
-import org.springframework.samples.petclinic.exceptions.AccessDeniedException;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
-import org.springframework.samples.petclinic.game.Game;
 import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
-
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import io.micrometer.core.ipc.http.HttpSender.Response;
-
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 
 /**
  * Test class for the {@link VetController}
@@ -77,7 +63,6 @@ class UserControllerTests {
 	private List<User> users = new ArrayList<User>();
 	ObjectMapper objectMapper = new ObjectMapper();
 
-
 	@BeforeEach
 	void setup() {
 
@@ -95,7 +80,6 @@ class UserControllerTests {
 		List<User> users = new ArrayList<User>();
 		users.add(user1);
 		users.add(user2);
-//-----------------------------------------------
 		auth = new Authorities();
 		auth.setId(TEST_AUTH_ID);
 		auth.setAuthority("VET");
@@ -233,7 +217,7 @@ class UserControllerTests {
 		doNothing().when(this.userService).deleteUser(TEST_USER_ID);
 
 		mockMvc.perform(delete(BASE_URL + "/{id}", TEST_USER_ID).with(csrf())).andExpect(status().isOk());
-				
+
 	}
 
 }
