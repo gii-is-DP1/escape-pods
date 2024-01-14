@@ -1,23 +1,19 @@
 import jwt_decode from "jwt-decode";
 import React, { useEffect, useState } from 'react';
-import { Button, Modal, ModalHeader, ModalFooter, ModalBody, Badge, UncontrolledCollapse, Table } from "reactstrap";
+import { Button, Modal, ModalFooter, ModalBody, Table } from "reactstrap";
 import '../App.css';
 import tokenService from '../services/token.service';
 import '../static/css/home/home.css';
 import "../static/css/lobby/lobby.css";
 import { Link } from 'react-router-dom';
 import foto from "../static/images/pods/pod1.png";
-import { IoReturnUpBack } from "react-icons/io5";
 
 
 //ICONOS
-import { DiAptana } from "react-icons/di";
-import { MdAdd, MdOutlinePersonAddAlt1 } from "react-icons/md";
-import { TiTick } from "react-icons/ti";
-import { RiChatOffLine, RiChat4Line, RiCodeFill } from "react-icons/ri";
+
 import { BiSolidInvader } from "react-icons/bi";
 import { FaSpaceAwesome } from "react-icons/fa6";
-import { FaGalacticRepublic, FaFulcrum } from "react-icons/fa";
+import { FaFulcrum } from "react-icons/fa";
 
 
 export default function Profile() {
