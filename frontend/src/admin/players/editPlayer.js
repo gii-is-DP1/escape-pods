@@ -1,9 +1,11 @@
 import tokenService from "../../services/token.service";
 import React, { useEffect, useState } from 'react';
 import { Link } from "react-router-dom";
-import { Form, Input, Label, Button } from "reactstrap";
+import { Form, Input, Label } from "reactstrap";
 import jwt_decode from "jwt-decode";
 import FormGenerator from "../../components/formGenerator/formGenerator";
+import useFetchData from "../../util/useFetchData";
+
 
 export default function EditPlayer() {
     const [myPlayer, setMyPlayer] = useState({})
@@ -11,10 +13,16 @@ export default function EditPlayer() {
     const jwt = tokenService.getLocalAccessToken();
     const myUsername = jwt_decode(jwt).sub;
     const playerUsername = window.location.href.split("/")[4]
-    console.log(myPlayer.id) 
-    console.log(myUser.id) 
+    console.log(myPlayer.id)
+    console.log(myUser.id)
     console.log(playerUsername)
-    const [usernameBueno, setUsernameBueno] = useState({});
+    const auths = useFetchData(`/api/v1/users/authorities`, jwt);
+
+    const authOptions = auths.map((auth) => (
+        <option key={auth.id} value={auth.id}>
+            {auth.authority}
+        </option>
+    ));
 
     async function GetCurrentPlayer() {
         const response = await fetch("/api/v1/players?username=" + playerUsername, {
@@ -24,37 +32,21 @@ export default function EditPlayer() {
             },
             method: "GET"
         })
-        
+
         const fetchedPlayer = await response.json();
         console.log(fetchedPlayer[0]);
         setMyUser(fetchedPlayer[0].user);
         setMyPlayer(fetchedPlayer[0]);
     }
-    console.log(usernameBueno)
-
-    async function GetUserToEdit() {
-        const response = await fetch("/api/v1/users?username=" + playerUsername, {
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${jwt}`,
-            },
-            method: "GET"
-        })
-        console.log(response)
-        const fetchedUser = await response.json();
-        console.log(fetchedUser[0]);
-        setMyUser(fetchedUser[0]);
-    }
 
     useEffect(() => {
         if (jwt) {
             GetCurrentPlayer();
-            //GetUserToEdit();
         }
     }, [jwt])
 
 
-    function ActualizarUsuario(event) {
+    function ActualizarUsuario(event) { //handleSumbit
         event.preventDefault();
         fetch(`/api/v1/users/${myUser.id}`, {
             headers: {
@@ -74,7 +66,7 @@ export default function EditPlayer() {
             body: JSON.stringify(myPlayer)
         })
         window.location.href = `/players/${myUser.username}`
-    }       
+    }
 
     function handleChangeUsername(event) {
         const target = event.target;
@@ -113,16 +105,29 @@ export default function EditPlayer() {
         setMyPlayer(changedPlayer);
     }
 
+    function handleChangeAuth(event) {
+        const target = event.target;
+        const value = target.value;
+        const changedUser = {
+            id: myUser.id,
+            username: myUser.username,
+            password: myUser.password,
+            authority: value,
+
+        }
+        setMyUser(changedUser);
+    }
+
 
     return (
         <div className="auth-page-container">
             <h2 className="text-center">
                 {"Edit Player"}
             </h2>
-            
+
             <div className="auth-form-container">
                 <Form onSubmit={ActualizarUsuario}>
-                    
+
                     <div className="custom-form-input">
                         <Label for="name" className="custom-form-input-label-not-mandatory">
                             Username:
@@ -137,7 +142,7 @@ export default function EditPlayer() {
                             className="custom-input"
                         />
                     </div>
-    
+
                     <div className="custom-form-input">
                         <Label for="badgeImage" className="custom-form-input-label-not-mandatory">
                             Profile descripction:
@@ -166,6 +171,39 @@ export default function EditPlayer() {
                             onChange={handleChangePlayerPicture}
                             className="custom-input"
                         />
+                    </div>
+
+                    <div className="custom-form-input">
+                        <Label for="authority" className="custom-form-input-label-not-mandatory">
+                            Authority:
+                        </Label>
+                        {myUser.id ? (
+                            <Input
+                                type="select"
+                                disabled
+                                name="authority"
+                                id="authority"
+                                value={myUser.authority?.id || ""}
+                                onChange={handleChangeAuth}
+                                className="custom-input"
+                            >
+                                <option value="">None</option>
+                                {authOptions}
+                            </Input>
+                        ) : (
+                            <Input
+                                type="select"
+                                required
+                                name="authority"
+                                id="authority"
+                                value={myUser.authority?.id || ""}
+                                onChange={handleChangeAuth}
+                                className="custom-input"
+                            >
+                                <option value="">None</option>
+                                {authOptions}
+                            </Input>
+                        )}
                     </div>
 
                     <div className="custom-button-row">

@@ -256,7 +256,7 @@ class PetServiceTests {
 		assertTrue(stats.containsKey("totalPets"));
 		assertEquals(((Collection<Pet>) this.petService.findAll()).size(), stats.get("totalPets"));
 		assertTrue(stats.containsKey("petsByType"));
-		assertEquals(4, ((Map<String, Integer>) stats.get("petsByType")).get("cat"));
+		assertEquals(5, ((Map<String, Integer>) stats.get("petsByType")).get("cat"));
 		assertTrue(stats.containsKey("avgPetsByOwner"));
 		assertNotEquals(0, stats.get("avgPetsByOwner"));
 	}

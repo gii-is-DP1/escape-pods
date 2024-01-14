@@ -17,16 +17,16 @@ public class PlayerService {
 
     private PlayerRepository playerRepository;
 
-	@Autowired
     private GameRepository gameRepository;
 
     @Autowired
-	public PlayerService(PlayerRepository playerRepository) {
+	public PlayerService(PlayerRepository playerRepository, GameRepository gameRepository) {
 		this.playerRepository = playerRepository;
+		this.gameRepository = gameRepository;
 	}
     
     @Transactional(readOnly = true)
-	public Iterable<Player> findAll() throws DataAccessException {
+	public List<Player> findAll() throws DataAccessException {
 		return playerRepository.findAll();
 	}
 
@@ -59,6 +59,7 @@ public class PlayerService {
 
 		for (Game game : gameRepository.findPlayerGames(id)) {
         game.removePlayer(toDelete);
+		gameRepository.save(game);
     }
 
 		playerRepository.delete(toDelete);
