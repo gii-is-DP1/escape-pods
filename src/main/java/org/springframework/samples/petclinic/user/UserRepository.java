@@ -3,8 +3,8 @@ package org.springframework.samples.petclinic.user;
 import java.util.List;
 import java.util.Optional;
 
+
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -37,8 +37,8 @@ public interface UserRepository extends CrudRepository<User, String> {
 	Optional<User> findById(Integer id);
 
 	@Query("SELECT u FROM User u WHERE u.authority.authority = :auth")
-	Page<User> findAllByAuthority(String auth, Pageable paging);
-	
+	List<User> findAllByAuthority(String auth, Pageable paging);
+		
 	@Query("DELETE FROM Owner o WHERE o.user.id = :userId")
 	@Modifying
 	void deleteOwnerRelation(int userId);
@@ -46,6 +46,6 @@ public interface UserRepository extends CrudRepository<User, String> {
 	@Query("DELETE FROM Vet v WHERE v.user.id = :userId")
 	@Modifying
 	void deleteVetRelation(int userId);
-
-	Page<User> findAll(Pageable paging);
+	
+	List<User> findAll(Pageable paging);
 }

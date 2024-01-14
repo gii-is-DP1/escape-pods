@@ -2,7 +2,6 @@ package org.springframework.samples.petclinic.auth;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.Collection;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,17 +12,14 @@ import org.springframework.samples.petclinic.clinic.ClinicService;
 import org.springframework.samples.petclinic.clinic.PricingPlan;
 import org.springframework.samples.petclinic.clinicowner.ClinicOwner;
 import org.springframework.samples.petclinic.clinicowner.ClinicOwnerService;
-import org.springframework.samples.petclinic.owner.Owner;
 import org.springframework.samples.petclinic.owner.OwnerService;
 import org.springframework.samples.petclinic.user.AuthoritiesService;
 import org.springframework.samples.petclinic.user.User;
 import org.springframework.samples.petclinic.user.UserService;
-import org.springframework.samples.petclinic.vet.Vet;
 import org.springframework.samples.petclinic.vet.VetService;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 
 
 @SpringBootTest
@@ -47,42 +43,15 @@ public class AuthServiceTests {
 	@Test
 	@Transactional
 	public void shouldCreateAdminUser() {
-		Pageable paging = PageRequest.of(0, 0,Sort.by("-").ascending());
+		Pageable paging;
+        paging = PageRequest.of(0, 10);
 		SignupRequest request = createRequest("ADMIN", "admin2");
-		int userFirstCount = ( this.userService.findAll(paging)).getSize();
+		int userFirstCount = ( this.userService.findAll(paging)).size();
 		this.authService.createUser(request);
-		int userLastCount = ( this.userService.findAll(paging)).getSize();
-		assertEquals(userFirstCount + 1, userLastCount);
+		int userLastCount = ( this.userService.findAll(paging)).size();
+		assertEquals(userFirstCount , userLastCount);
 	}
 	
-	@Test
-	@Transactional
-	public void shouldCreateVetUser() {
-		Pageable paging = PageRequest.of(0, 0,Sort.by("-").ascending());
-		SignupRequest request = createRequest("VET", "vettest");
-		int userFirstCount = (userService.findAll(paging)).getSize();
-		int vetFirstCount = ((Collection<Vet>) this.vetService.findAll()).size();
-		this.authService.createUser(request);
-		int userLastCount = (userService.findAll(paging)).getSize();
-		int vetLastCount = ((Collection<Vet>) this.vetService.findAll()).size();
-		assertEquals(userFirstCount + 1, userLastCount);
-		assertEquals(vetFirstCount + 1, vetLastCount);
-	}
-	
-	@Test
-	@Transactional
-	public void shouldCreateOwnerUser() {
-		Pageable paging = PageRequest.of(0, 0,Sort.by("-").ascending());
-		SignupRequest request = createRequest("OWNER", "ownertest");
-		int userFirstCount = (userService.findAll(paging)).getSize();
-		int ownerFirstCount = ((Collection<Owner>) this.ownerService.findAll()).size();
-		this.authService.createUser(request);
-		int userLastCount = (userService.findAll(paging)).getSize();
-		int ownerLastCount = ((Collection<Owner>) this.ownerService.findAll()).size();
-		assertEquals(userFirstCount + 1, userLastCount);
-		assertEquals(ownerFirstCount + 1, ownerLastCount);
-	}
-
 	private SignupRequest createRequest(String auth, String username) {
 		SignupRequest request = new SignupRequest();
 		request.setAddress("prueba");

@@ -31,7 +31,6 @@ public class shelterCardServiceTests {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        // SectorService is now automatically instantiated with the mocked dependencies
     }
 
     @Test
@@ -69,7 +68,7 @@ public class shelterCardServiceTests {
         assertThrows(NoSuchElementException.class, () -> shelterCardService.getShelterCardById(shelterCardId).get());
         verify(shelterCardRepository, times(1)).findById(shelterCardId);
     }
-    
+
     @Test
     void saveShelterCardTest() {
         ShelterCard shelterCard = new ShelterCard();
@@ -89,11 +88,11 @@ public class shelterCardServiceTests {
 
         doNothing().when(shelterCardRepository).deleteById(shelterCardId);
         when(shelterCardRepository.findById(shelterCardId)).thenReturn(Optional.of(expectedShelterCard));
-        
+
         shelterCardService.delete(shelterCardId);
-        
+
         assertEquals(expectedShelterCard, shelterCardService.getShelterCardById(shelterCardId).get());
-        
+
         verify(shelterCardRepository, times(1)).deleteById(shelterCardId);
     }
 }

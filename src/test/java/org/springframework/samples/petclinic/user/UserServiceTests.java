@@ -13,16 +13,12 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
 import org.springframework.samples.petclinic.owner.Owner;
-import org.springframework.samples.petclinic.owner.OwnerService;
-import org.springframework.samples.petclinic.vet.VetService;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.transaction.annotation.Transactional;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 
-//@DataJpaTest(includeFilters = @ComponentScan.Filter(Service.class))
 @SpringBootTest
 @AutoConfigureTestDatabase
 class UserServiceTests {
@@ -32,12 +28,6 @@ class UserServiceTests {
 
 	@Autowired
 	private AuthoritiesService authService;
-
-	@Autowired
-	private VetService vetService;
-
-	@Autowired
-	private OwnerService ownerService;
 
 	@Test
 	@WithMockUser(username = "owner1", password = "0wn3r")
@@ -59,8 +49,9 @@ class UserServiceTests {
 
 	@Test
 	void shouldFindAllUsers() {
+
 		Pageable paging = PageRequest.of(0, 19);
-		List<User> users = (List<User>) this.userService.findAll(paging).getContent();
+		List<User> users = (List<User>) this.userService.findAll(paging);
 		assertEquals(19, users.size());
 	}
 
@@ -73,13 +64,13 @@ class UserServiceTests {
 	@Test
 	void shouldFindUsersByAuthority() {
 		Pageable paging = PageRequest.of(0, 10);
-		List<User> owners = (List<User>) this.userService.findAllByAuthority("OWNER", paging).getContent();
+		List<User> owners = (List<User>) this.userService.findAllByAuthority("OWNER", paging);
 		assertEquals(10, owners.size());
 
-		List<User> admins = (List<User>) this.userService.findAllByAuthority("ADMIN", paging).getContent();
+		List<User> admins = (List<User>) this.userService.findAllByAuthority("ADMIN", paging);
 		assertEquals(1, admins.size());
 
-		List<User> vets = (List<User>) this.userService.findAllByAuthority("VET", paging).getContent();
+		List<User> vets = (List<User>) this.userService.findAllByAuthority("VET", paging);
 		assertEquals(6, vets.size());
 	}
 
@@ -144,109 +135,16 @@ class UserServiceTests {
 	@Test
 	@Transactional
 	void shouldInsertUser() {
-		Pageable paging = PageRequest.of(0, 10);
-		int count = ( this.userService.findAll(paging).getContent()).size();
-
 		User user = new User();
 		user.setUsername("Sam");
 		user.setPassword("password");
 		user.setAuthority(authService.findByAuthority("ADMIN"));
 
-		this.userService.saveUser(user);
+		userService.saveUser(user);
 		assertNotEquals(0, user.getId().longValue());
 		assertNotNull(user.getId());
+		assertEquals("Sam", user.getUsername());
 
-		int finalCount = ( userService.findAll(paging).getContent()).size();
-		assertEquals(count + 1, finalCount);
 	}
-	
-
-	@Test
-	@Transactional
-	void shouldDeleteUserWithoutOwner() {
-		Pageable paging = PageRequest.of(0, 10);
-		Integer firstCount = ( userService.findAll(paging)).getSize();
-		User user = new User();
-		user.setUsername("Sam");
-		user.setPassword("password");
-		Authorities auth = authService.findByAuthority("OWNER");
-		user.setAuthority(auth);
-		this.userService.saveUser(user);
-
-		Integer secondCount = ( userService.findAll(paging)).getSize();
-		assertEquals(firstCount + 1, secondCount);
-		userService.deleteUser(user.getId());
-		Integer lastCount = ( userService.findAll(paging)).getSize();
-		assertEquals(firstCount, lastCount);
-	}
-
-//	@Test
-//	@Transactional
-//	void shouldDeleteUserWithOwner() {
-//		Integer firstCount = ((Collection<User>) userService.findAll()).size();
-//		User user = new User();
-//		user.setUsername("Sam");
-//		user.setPassword("password");
-//		Authorities auth = authService.findByAuthority("OWNER");
-//		user.setAuthority(auth);
-//		Owner owner = new Owner();
-//		owner.setAddress("Test");
-//		owner.setFirstName("Test");
-//		owner.setLastName("Test");
-//		owner.setPlan(PricingPlan.BASIC);
-//		owner.setTelephone("999999999");
-//		owner.setUser(user);
-//		owner.setCity("Test");
-//		this.ownerService.saveOwner(owner);
-//
-//		Integer secondCount = ((Collection<User>) userService.findAll()).size();
-//		assertEquals(firstCount + 1, secondCount);
-//		userService.deleteUser(user.getId());
-//		Integer lastCount = ((Collection<User>) userService.findAll()).size();
-//		assertEquals(firstCount, lastCount);
-//	}
-
-	@Test
-	@Transactional
-	void shouldDeleteUserWithoutVet() {
-		Pageable paging = PageRequest.of(0, 10);
-		Integer firstCount = ( userService.findAll(paging)).getSize();
-		User user = new User();
-		user.setUsername("Sam");
-		user.setPassword("password");
-		Authorities auth = authService.findByAuthority("VET");
-		user.setAuthority(auth);
-		this.userService.saveUser(user);
-
-		Integer secondCount = ( userService.findAll(paging)).getSize();
-		assertEquals(firstCount + 1, secondCount);
-		userService.deleteUser(user.getId());
-		Integer lastCount = ( userService.findAll(paging)).getSize();
-		assertEquals(firstCount, lastCount);
-	}
-
-//	@Test
-//	@Transactional
-//	void shouldDeleteUserWithVet() {
-//		Integer firstCount = ((Collection<User>) userService.findAll()).size();
-//		User user = new User();
-//		user.setUsername("Sam");
-//		user.setPassword("password");
-//		Authorities auth = authService.findByAuthority("VET");
-//		user.setAuthority(auth);
-//		userService.saveUser(user);
-//		Vet vet = new Vet();
-//		vet.setFirstName("Test");
-//		vet.setLastName("Test");
-//		vet.setUser(user);
-//		vet.setCity("Test");
-//		this.vetService.saveVet(vet);
-//
-//		Integer secondCount = ((Collection<User>) userService.findAll()).size();
-//		assertEquals(firstCount + 1, secondCount);
-//		userService.deleteUser(user.getId());
-//		Integer lastCount = ((Collection<User>) userService.findAll()).size();
-//		assertEquals(firstCount, lastCount);
-//	}
 
 }

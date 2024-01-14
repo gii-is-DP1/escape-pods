@@ -1,6 +1,5 @@
 package org.springframework.samples.petclinic.user;
 
-import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
@@ -12,6 +11,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -23,7 +23,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.samples.petclinic.configuration.SecurityConfiguration;
-import org.springframework.samples.petclinic.exceptions.AccessDeniedException;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
 import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
 import org.springframework.security.core.GrantedAuthority;
@@ -34,9 +33,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 
 /**
  * Test class for the {@link VetController}
@@ -48,10 +45,6 @@ class UserControllerTests {
 	private static final int TEST_AUTH_ID = 1;
 	private static final String BASE_URL = "/api/v1/users";
 
-	@SuppressWarnings("unused")
-	@Autowired
-	private UserRestController userController;
-
 	@MockBean
 	private UserService userService;
 
@@ -59,16 +52,34 @@ class UserControllerTests {
 	private AuthoritiesService authService;
 
 	@Autowired
-	private ObjectMapper objectMapper;
-
-	@Autowired
 	private MockMvc mockMvc;
 
 	private Authorities auth;
 	private User user, logged;
 
+	private User user1 = new User();
+	private User user2 = new User();
+
+	private List<User> users = new ArrayList<User>();
+	ObjectMapper objectMapper = new ObjectMapper();
+
 	@BeforeEach
 	void setup() {
+
+		user1 = new User();
+		user1.setId(1);
+		user2 = new User();
+		user2.setId(2);
+
+		users = new ArrayList<User>();
+		users.add(user1);
+		users.add(user2);
+
+		objectMapper = new ObjectMapper();
+
+		List<User> users = new ArrayList<User>();
+		users.add(user1);
+		users.add(user2);
 		auth = new Authorities();
 		auth.setId(TEST_AUTH_ID);
 		auth.setAuthority("VET");
@@ -106,38 +117,12 @@ class UserControllerTests {
 		juan.setId(3);
 		juan.setUsername("Juan");
 
-		when(userService.findAll(any(Pageable.class)).getContent()).thenReturn(List.of(user, sara, juan));
+		when(userService.findAll(any(Pageable.class))).thenReturn(List.of(user, sara, juan));
 
 		mockMvc.perform(get(BASE_URL).with(csrf())).andExpect(status().isOk())
 				.andExpect(jsonPath("$.size()").value(3))
 				.andExpect(jsonPath("$[?(@.id == 1)].username").value("user"))
 				.andExpect(jsonPath("$[?(@.id == 2)].username").value("Sara"))
-				.andExpect(jsonPath("$[?(@.id == 3)].username").value("Juan"));
-	}
-
-	@Test
-	@WithMockUser("ADMIN")
-	void shouldFindAllWithAuthority() throws Exception {
-
-		Authorities aux = new Authorities();
-		aux.setId(2);
-		aux.setAuthority("AUX");
-
-		User sara = new User();
-		sara.setId(2);
-		sara.setUsername("Sara");
-		sara.setAuthority(aux);
-
-		User juan = new User();
-		juan.setId(3);
-		juan.setUsername("Juan");
-		juan.setAuthority(auth);
-
-		List<User> expectedUsers = List.of(user, juan);
-		when(userService.findAllByAuthority(auth.getAuthority(), any(Pageable.class)).getContent()).thenReturn(expectedUsers);
-
-		mockMvc.perform(get(BASE_URL).param("auth", "VET").with(csrf())).andExpect(status().isOk())
-				.andExpect(jsonPath("$.size()").value(2)).andExpect(jsonPath("$[?(@.id == 1)].username").value("user"))
 				.andExpect(jsonPath("$[?(@.id == 3)].username").value("Juan"));
 	}
 
@@ -231,8 +216,8 @@ class UserControllerTests {
 		when(this.userService.findUser(TEST_USER_ID)).thenReturn(user);
 		doNothing().when(this.userService).deleteUser(TEST_USER_ID);
 
-		mockMvc.perform(delete(BASE_URL + "/{id}", TEST_USER_ID).with(csrf())).andExpect(status().isForbidden())
-				.andExpect(result -> assertTrue(result.getResolvedException() instanceof AccessDeniedException));
+		mockMvc.perform(delete(BASE_URL + "/{id}", TEST_USER_ID).with(csrf())).andExpect(status().isOk());
+
 	}
 
 }

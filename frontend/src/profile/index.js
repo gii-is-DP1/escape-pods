@@ -113,7 +113,7 @@ export default function Profile() {
 
     function DeleteCurrentAccount() {
 
-        fetch(`/api/v1/users/${myUser.id}`, {
+        fetch(`/api/v1/players/${myPlayer.id}`, {
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${jwt}`,
@@ -139,7 +139,6 @@ export default function Profile() {
                                 backgroundColor: "#DC2525", border: "none", boxShadow: "5px 5px 5px #00000020", textShadow: "2px 2px 2px #00000020", transition: "0.15s",
                             }} onClick={() => {
                                 setDeleteAccountVisible(false);
-                                console.log(myUser)
                             }}>
                                 Cancel
                             </Button>

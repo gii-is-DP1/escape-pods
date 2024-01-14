@@ -80,4 +80,11 @@ public class SlotInfoController {
         return ResponseEntity.noContent().build();
     }
 
+    @DeleteMapping()
+    public ResponseEntity<Void> deleteSlotInfoByGameId(
+            @ParameterObject @RequestParam(value = "gameid", required = false) Integer gameid) {
+        sis.deleteByGameId(gameid);
+        return ResponseEntity.noContent().build();
+    }
+
 }

@@ -26,7 +26,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.samples.petclinic.auth.payload.response.MessageResponse;
-import org.springframework.samples.petclinic.exceptions.AccessDeniedException;
 import org.springframework.samples.petclinic.util.RestPreconditions;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -74,9 +73,9 @@ class UserRestController {
         }
 
 		if (auth != null) {
-			res = userService.findAllByAuthority(auth, paging).getContent();
+			res = userService.findAllByAuthority(auth, paging);
 		} else
-			res =  userService.findAll(paging).getContent();
+			res =  userService.findAll(paging);
 		return new ResponseEntity<>(res, HttpStatus.OK);
 	}
 	
