@@ -26,11 +26,10 @@ public class SectorServiceTest {
 
     @InjectMocks
     private SectorService sectorService;
-    
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        // SectorService is now automatically instantiated with the mocked dependencies
     }
 
     @Test
@@ -47,7 +46,7 @@ public class SectorServiceTest {
         assertEquals(expectedSectors, actualSectors);
         verify(sectorRepository, times(1)).findAll();
     }
-    
+
     @Test
     void getSectorByIdTest() {
         Integer sectorId = 1;
@@ -88,13 +87,12 @@ public class SectorServiceTest {
 
         doNothing().when(sectorRepository).deleteById(sectorId);
         when(sectorRepository.findById(sectorId)).thenReturn(Optional.of(expectedSector));
-        
+
         sectorService.delete(sectorId);
-        
+
         assertEquals(expectedSector, sectorService.getSectorById(sectorId).get());
-        
+
         verify(sectorRepository, times(1)).deleteById(sectorId);
     }
 
 }
-

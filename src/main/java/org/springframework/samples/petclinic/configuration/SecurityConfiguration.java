@@ -1,4 +1,5 @@
 package org.springframework.samples.petclinic.configuration;
+
 // TODO Cambiar uris y movidas relacionadas a las anteriores versiones
 import static org.springframework.security.config.Customizer.withDefaults;
 /*
@@ -9,7 +10,6 @@ import static org.springframework.security.config.Customizer.withDefaults;
 
 import javax.sql.DataSource;
 
-import org.h2.engine.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -43,41 +43,47 @@ public class SecurityConfiguration {
 
 	private static final String ADMIN = "ADMIN";
 	private static final String CLINIC_OWNER = "CLINIC_OWNER";
-	
 
 	@Bean
 	protected SecurityFilterChain configure(HttpSecurity http) throws Exception {
-		
+
 		http
-			.cors(withDefaults())		
-			.csrf(AbstractHttpConfigurer::disable)		
-			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-			//esto nos permite mantener info de la sesion y eso, con una cabecera de necesita json			
-			.headers((headers) -> headers.frameOptions((frameOptions) -> frameOptions.sameOrigin()))
-			.exceptionHandling((exepciontHandling) -> exepciontHandling.authenticationEntryPoint(unauthorizedHandler))			
-			
-			.authorizeHttpRequests(authorizeRequests ->	authorizeRequests
-			.requestMatchers("/resources/**", "/webjars/**", "/h2-console/**", "/h2-console",  "/static/**", "/swagger-resources/**").permitAll()
-			.requestMatchers( "/api/v1/clinics","/", "/oups","/api/v1/auth/**","/v3/api-docs/**","/swagger-ui.html","/swagger-ui/**").permitAll()												
-			.requestMatchers("/api/v1/developers").permitAll()
-			.requestMatchers("/api/v1/plan").hasAuthority("OWNER")
-			.requestMatchers("/api/v1/users/**").permitAll()
-			.requestMatchers("/api/v1/clinicOwners/all").hasAuthority(ADMIN)
-			.requestMatchers("/api/v1/clinicOwners/**").hasAnyAuthority(ADMIN, CLINIC_OWNER)
-			.requestMatchers(HttpMethod.DELETE, "/api/v1/consultations/**").hasAuthority(ADMIN)
-			.requestMatchers("/api/v1/owners/*/pets/**").authenticated()				
-			.requestMatchers("/api/v1/owners/**").hasAuthority(ADMIN)
-			.requestMatchers("/api/v1/visits/**").authenticated()
-			.requestMatchers(HttpMethod.GET, "/api/v1/pets/stats").hasAuthority(ADMIN)
-			.requestMatchers("/api/v1/pets").authenticated()
-			.requestMatchers("/api/v1/pets/**").authenticated()
-			.requestMatchers("/api/v1/clinics/**").hasAnyAuthority(CLINIC_OWNER, ADMIN)
-			.requestMatchers(HttpMethod.GET, "/api/v1/vets/stats").hasAuthority(ADMIN)
-			.requestMatchers(HttpMethod.GET, "/api/v1/vets/**").authenticated()
-			.requestMatchers("/api/v1/vets/**").hasAnyAuthority(ADMIN, "VET", CLINIC_OWNER) 
-			.anyRequest().permitAll())		//.anyRequest().authenticated())  se ha cambiado para entrar facil al h2	
-			
-			.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);		
+				.cors(withDefaults())
+				.csrf(AbstractHttpConfigurer::disable)
+				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+				// esto nos permite mantener info de la sesion y eso, con una cabecera de
+				// necesita json
+				.headers((headers) -> headers.frameOptions((frameOptions) -> frameOptions.sameOrigin()))
+				.exceptionHandling(
+						(exepciontHandling) -> exepciontHandling.authenticationEntryPoint(unauthorizedHandler))
+
+				.authorizeHttpRequests(authorizeRequests -> authorizeRequests
+						.requestMatchers("/resources/**", "/webjars/**", "/h2-console/**", "/h2-console", "/static/**",
+								"/swagger-resources/**")
+						.permitAll()
+						.requestMatchers("/api/v1/clinics", "/", "/oups", "/api/v1/auth/**", "/v3/api-docs/**",
+								"/swagger-ui.html", "/swagger-ui/**")
+						.permitAll()
+						.requestMatchers("/api/v1/developers").permitAll()
+						.requestMatchers("/api/v1/plan").hasAuthority("OWNER")
+						.requestMatchers("/api/v1/users/**").permitAll()
+						.requestMatchers("/api/v1/clinicOwners/all").hasAuthority(ADMIN)
+						.requestMatchers("/api/v1/clinicOwners/**").hasAnyAuthority(ADMIN, CLINIC_OWNER)
+						.requestMatchers(HttpMethod.DELETE, "/api/v1/consultations/**").hasAuthority(ADMIN)
+						.requestMatchers("/api/v1/owners/*/pets/**").authenticated()
+						.requestMatchers("/api/v1/owners/**").hasAuthority(ADMIN)
+						.requestMatchers("/api/v1/visits/**").authenticated()
+						.requestMatchers(HttpMethod.GET, "/api/v1/pets/stats").hasAuthority(ADMIN)
+						.requestMatchers("/api/v1/pets").authenticated()
+						.requestMatchers("/api/v1/pets/**").authenticated()
+						.requestMatchers("/api/v1/clinics/**").hasAnyAuthority(CLINIC_OWNER, ADMIN)
+						.requestMatchers(HttpMethod.GET, "/api/v1/vets/stats").hasAuthority(ADMIN)
+						.requestMatchers(HttpMethod.GET, "/api/v1/vets/**").authenticated()
+						.requestMatchers("/api/v1/vets/**").hasAnyAuthority(ADMIN, "VET", CLINIC_OWNER)
+						.anyRequest().permitAll()) // .anyRequest().authenticated()) se ha cambiado para entrar facil al
+													// h2
+
+				.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 		return http.build();
 	}
 
@@ -87,16 +93,13 @@ public class SecurityConfiguration {
 	}
 
 	@Bean
-	public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception{
+	public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
 		return config.getAuthenticationManager();
-	}	
-
+	}
 
 	@Bean
 	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
-	
-	
-	
+
 }

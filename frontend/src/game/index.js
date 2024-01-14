@@ -58,7 +58,7 @@ export default function Game() {
 
     const [spiedCrewmates, setSpiedCrewmates] = useState([])
 
-    const [gameOver, setGameOver] = useState(false)
+    const [lastRound, setLastRound] = useState(false)
     const [playableSectorsNumbers, setPlayableSectorsNumbers] = useState(null)
 
     const [selectingAction, setSelectingAction] = useState(false)
@@ -147,18 +147,29 @@ export default function Game() {
     function refresher() {
         let intervalID = setInterval(() => {
             refresherSetters();
-        }, 8000);
+        }, 5000);
         return () => {
             clearInterval(intervalID);
         };
     }
 
     async function refresherSetters() {
-        setGame(await fetchCurrentGame());
-        setPods(await itemGetters.fetchPods(gameId, jwt));
-        setCrewmates(await itemGetters.fetchCrewmates(gameId, jwt));
-        setLines(await itemGetters.fetchLines(gameId, jwt));
-        setSectors(await itemGetters.fetchSectors(gameId, jwt));
+        const fetchedGame = await fetchCurrentGame();
+        setGame(fetchedGame);
+        const fetchedPods = await itemGetters.fetchPods(gameId, jwt);
+        setPods(fetchedPods);
+        const fetchedCrewmates = await itemGetters.fetchCrewmates(gameId, jwt);
+        setCrewmates(fetchedCrewmates);
+        const fetchedLines = await itemGetters.fetchLines(gameId, jwt);
+        setLines(fetchedLines);
+        const fetchedSectors = await itemGetters.fetchSectors(gameId, jwt);
+        setSectors(fetchedSectors);
+        const fetchedGamePlayers = await itemGetters.fetchGamePlayers(gameId, jwt);
+        setGamePlayers(fetchedGamePlayers);
+        const fetchedShelterCards = await itemGetters.fetchShelterCards(gameId, jwt);
+        setShelterCards(fetchedShelterCards);
+        const playableSectorsNumbers = isLastRound(fetchedSectors);
+        isGameFinished(fetchedGamePlayers, playableSectorsNumbers, fetchedPods, fetchedShelterCards);
     }
 
     function GetCurrentPlayer() {
@@ -176,9 +187,11 @@ export default function Game() {
     async function GetGameData() {
         const currentGame = await fetchCurrentGame();
         setGame(currentGame);
+        const fetchedSectors = await itemGetters.fetchSectors(currentGame.id, jwt);
         setPods(await itemGetters.fetchPods(currentGame.id, jwt));
         setCrewmates(await itemGetters.fetchCrewmates(currentGame.id, jwt));
-        setSectors(await itemGetters.fetchSectors(currentGame.id, jwt));
+        setSectors(fetchedSectors);
+        isLastRound(fetchedSectors);
         setBeacons(await itemGetters.fetchBeacons(currentGame.id, jwt));
         setLines(await itemGetters.fetchLines(currentGame.id, jwt));
         setGamePlayers(await itemGetters.fetchGamePlayers(currentGame.id, jwt));
@@ -216,26 +229,63 @@ export default function Game() {
         return beacons.filter(beacon => !usedBeacons.includes(beacon.id))
     }
 
-    function isGameOver(sectors) {
+    function isLastRound(sectors) {
         let scrappedSectorsNumbers = sectors.filter(sector => sector.scrap).map(sector => sector.number);
+        let playableSectorsNumbers = null
         if ((scrappedSectorsNumbers.includes(4) && scrappedSectorsNumbers.includes(5) && scrappedSectorsNumbers.includes(6))) {
-            setGameOver(true)
-            setPlayableSectorsNumbers([7, 8, 9, 10, 11, 12, 13])
+            setLastRound(true)
+            playableSectorsNumbers = [7, 8, 9, 10, 11, 12, 13]
+            setPlayableSectorsNumbers(playableSectorsNumbers)
         } else if (scrappedSectorsNumbers.includes(4) && scrappedSectorsNumbers.includes(8) && scrappedSectorsNumbers.includes(6)) {
-            setGameOver(true)
-            setPlayableSectorsNumbers([7, 9, 10, 11, 12, 13])
+            setLastRound(true)
+            playableSectorsNumbers = [7, 9, 10, 11, 12, 13]
+            setPlayableSectorsNumbers(playableSectorsNumbers)
         } else if (scrappedSectorsNumbers.includes(4) && scrappedSectorsNumbers.includes(8) && scrappedSectorsNumbers.includes(9)) {
-            setGameOver(true)
-            setPlayableSectorsNumbers([7, 10, 11, 12, 13])
+            setLastRound(true)
+            playableSectorsNumbers = [7, 10, 11, 12, 13]
+            setPlayableSectorsNumbers(playableSectorsNumbers)
         } else if (scrappedSectorsNumbers.includes(6) && scrappedSectorsNumbers.includes(8) && scrappedSectorsNumbers.includes(7)) {
-            setGameOver(true)
-            setPlayableSectorsNumbers([9, 10, 11, 12, 13])
+            setLastRound(true)
+            playableSectorsNumbers = [9, 10, 11, 12, 13]
+            setPlayableSectorsNumbers(playableSectorsNumbers)
         } else if (scrappedSectorsNumbers.includes(7) && scrappedSectorsNumbers.includes(8) && scrappedSectorsNumbers.includes(9)) {
-            setGameOver(true)
-            setPlayableSectorsNumbers([10, 11, 12, 13])
+            setLastRound(true)
+            playableSectorsNumbers = [10, 11, 12, 13]
+            setPlayableSectorsNumbers(playableSectorsNumbers)
         } else if (scrappedSectorsNumbers.includes(7) && scrappedSectorsNumbers.includes(10) && scrappedSectorsNumbers.includes(9)) {
-            setGameOver(true)
-            setPlayableSectorsNumbers([11, 12, 13])
+            setLastRound(true)
+            playableSectorsNumbers = [11, 12, 13]
+            setPlayableSectorsNumbers(playableSectorsNumbers)
+        }
+        return playableSectorsNumbers
+    }
+
+    function isGameFinished(gamePlayers, playableSectorsNumbers, pods, shelterCards) {
+        let finished = false
+        let noMoreTurns = gamePlayers.filter(gamePlayer => gamePlayer.noMoreTurns === true).length === gamePlayers.length
+        console.log(noMoreTurns)
+        let noPlayablePods = playableSectorsNumbers && (pods.filter(pod => pod.sector && playableSectorsNumbers.includes(pod.sector.number)).length === 0)
+        console.log(playableSectorsNumbers)
+        console.log(noPlayablePods)
+        let allSheltersFull = shelterCards.filter(shelterCard => shelterCard.explosion === 6).length === 4
+        console.log(allSheltersFull)
+        if (noMoreTurns || noPlayablePods || allSheltersFull) {
+            finished = true
+        }
+        if (finished) {
+            ShowAlert("The game has finished! You will be sent to the scoreboard soon", 10000)
+            setSpiedCrewmates(shelterCards.map(shelterCard => GetCrewmatesFromShelter(shelterCard)))
+            setTimeout(() => {
+                fetch(`/api/v1/games/${gameId}/finish`, {
+                    headers: {
+                        "Authorization": `Bearer ${jwt}`,
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    method: 'PATCH',
+                })
+                window.location.href = "/game/" + gameId + "/scores"
+            }, 6000);
         }
     }
 
@@ -320,7 +370,7 @@ export default function Game() {
             <div className={props.pod.capacity === 3 ? "pod3" : props.pod.capacity === 2 ? "pod2" : "pod1"} style={props.pod.sector === null ? { left: hangarX[props.pod.number - 1], top: hangarY[props.pod.number - 1] } : null}
                 onClick={() => {
                     console.log(props.pod)
-                    if (gameOver && !playableSectorsNumbers.includes(props.pod.sector ? props.pod.sector.number : null)) {
+                    if (lastRound && !playableSectorsNumbers.includes(props.pod.sector ? props.pod.sector.number : null)) {
                         ShowAlert("There is an impassible barrier, so you cannot use this pod")
                     } else if (selectingPod) {
                         podClickHandler(props.pod)
@@ -349,7 +399,7 @@ export default function Game() {
                 if ([...Object.values(actionSlots), ...Object.values(specialActionSlots)]
                     .flat().map(actionCrewmate => actionCrewmate ? actionCrewmate.id : null).includes(props.crewmate.id)) {
                     ShowAlert("You cannot use a crewmate that is already in an action slot")
-                } else if (gameOver && !playableSectorsNumbers.includes(props.crewmate.pod ? props.crewmate.pod.sector.number : null) && !selectingAction) {
+                } else if (lastRound && !playableSectorsNumbers.includes(props.crewmate.pod ? props.crewmate.pod.sector.number : null) && !selectingAction) {
                     ShowAlert("There is an impassible barrier, so you cannot use this crewmate")
                 } else if (selectingCrewmate && !props.crewmate.shelter) {
                     crewmateClickHandler(props.crewmate)
@@ -516,12 +566,19 @@ export default function Game() {
         if (emptyChecker("array", gamePlayers)) {
             return null
         }
+        const alreadyActioning = embarking || accelerating || spying || boarding || programming || piloting || minipodSpawning
         return (
             <div style={{ display: "flex", flexDirection: "row", width: 480, height: 170, position: "relative" }}>
                 <div className={gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).color.toLowerCase() + "-action-card"}>
                     <div style={{ position: "absolute", left: 92, top: 20, width: 40, height: 40 }}
                         onClick={() => {
-                            if (!actionSlots.embark) {
+                            if (gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).noMoreTurns) {
+                                ShowAlert("You already used a turn in the last round, the game will end soon")
+                            } else if (!(game.activePlayer.id === myPlayer.id)) {
+                                ShowAlert("It's not your turn!")
+                            } else if (alreadyActioning) {
+                                ShowAlert("You are already doing an action")
+                            } else if (!actionSlots.embark) {
                                 setSelectingCrewmate(true);
                                 setSelectingAction(true);
                                 setSelectedAction("embark");
@@ -535,7 +592,13 @@ export default function Game() {
                     </div>
                     <div style={{ position: "absolute", left: 138, top: 20, width: 40, height: 40 }}
                         onClick={() => {
-                            if (actionSlots.embark && actionSlots.embark.length === 1) {
+                            if (gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).noMoreTurns) {
+                                ShowAlert("You already used a turn in the last round, the game will end soon")
+                            } else if (!(game.activePlayer.id === myPlayer.id)) {
+                                ShowAlert("It's not your turn!")
+                            } else if (alreadyActioning) {
+                                ShowAlert("You are already doing an action")
+                            } else if (!actionSlots.embark || actionSlots.embark.length === 1) {
                                 setSelectingCrewmate(true);
                                 setSelectingAction(true);
                                 setSelectedAction("embark");
@@ -549,7 +612,13 @@ export default function Game() {
                     </div>
                     <div style={{ position: "absolute", left: 33, top: 95.5, width: 40, height: 40 }}
                         onClick={() => {
-                            if (!actionSlots.accelerate) {
+                            if (gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).noMoreTurns) {
+                                ShowAlert("You already used a turn in the last round, the game will end soon")
+                            } else if (!(game.activePlayer.id === myPlayer.id)) {
+                                ShowAlert("It's not your turn!")
+                            } else if (alreadyActioning) {
+                                ShowAlert("You are already doing an action")
+                            } else if (!actionSlots.accelerate) {
                                 setSelectedAction("accelerate");
                                 setSelectingAction(true);
                                 setSelectingCrewmate(true);
@@ -563,7 +632,13 @@ export default function Game() {
                     </div>
                     <div style={{ position: "absolute", left: 96, top: 95.5, width: 40, height: 40 }}
                         onClick={() => {
-                            if (!actionSlots.spy) {
+                            if (gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).noMoreTurns) {
+                                ShowAlert("You already used a turn in the last round, the game will end soon")
+                            } else if (!(game.activePlayer.id === myPlayer.id)) {
+                                ShowAlert("It's not your turn!")
+                            } else if (alreadyActioning) {
+                                ShowAlert("You are already doing an action")
+                            } else if (!actionSlots.spy) {
                                 setSelectedAction("spy");
                                 setSelectingAction(true);
                                 setSelectingCrewmate(true);
@@ -577,7 +652,13 @@ export default function Game() {
                     </div>
                     <div style={{ position: "absolute", left: 159, top: 95.5, width: 40, height: 40 }}
                         onClick={() => {
-                            if (!actionSlots.minipod) {
+                            if (gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).noMoreTurns) {
+                                ShowAlert("You already used a turn in the last round, the game will end soon")
+                            } else if (!(game.activePlayer.id === myPlayer.id)) {
+                                ShowAlert("It's not your turn!")
+                            } else if (alreadyActioning) {
+                                ShowAlert("You are already doing an action")
+                            } else if (!actionSlots.minipod) {
                                 setSelectedAction("minipod");
                                 setSelectingCrewmate(true);
                                 setSelectingAction(true);
@@ -594,7 +675,13 @@ export default function Game() {
                 <div className={gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).color.toLowerCase() + "-special-action-card"} style={{ position: "absolute", left: 250 }}>
                     <div style={{ position: "absolute", left: 65.5, top: 26, width: 40, height: 40 }}
                         onClick={() => {
-                            if (!specialActionSlots.board) {
+                            if (gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).noMoreTurns) {
+                                ShowAlert("You already used a turn in the last round, the game will end soon")
+                            } else if (!(game.activePlayer.id === myPlayer.id)) {
+                                ShowAlert("It's not your turn!")
+                            } else if (alreadyActioning) {
+                                ShowAlert("You are already doing an action")
+                            } else if (!specialActionSlots.board) {
                                 setSelectedAction("board");
                                 setSelectingCrewmate(true);
                                 setSelectingAction(true);
@@ -608,7 +695,13 @@ export default function Game() {
                     </div>
                     <div style={{ position: "absolute", left: 160.5, top: 26, width: 40, height: 40 }}
                         onClick={() => {
-                            if (!specialActionSlots.program) {
+                            if (gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).noMoreTurns) {
+                                ShowAlert("You already used a turn in the last round, the game will end soon")
+                            } else if (!(game.activePlayer.id === myPlayer.id)) {
+                                ShowAlert("It's not your turn!")
+                            } else if (alreadyActioning) {
+                                ShowAlert("You are already doing an action")
+                            } else if (!specialActionSlots.program) {
                                 setSelectedAction("program");
                                 setSelectingAction(true);
                                 setSelectingCrewmate(true);
@@ -622,7 +715,13 @@ export default function Game() {
                     </div>
                     <div style={{ position: "absolute", left: 65, top: 89.5, width: 40, height: 40 }}
                         onClick={() => {
-                            if (!specialActionSlots.pilot) {
+                            if (gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).noMoreTurns) {
+                                ShowAlert("You already used a turn in the last round, the game will end soon")
+                            } else if (!(game.activePlayer.id === myPlayer.id)) {
+                                ShowAlert("It's not your turn!")
+                            } else if (alreadyActioning) {
+                                ShowAlert("You are already doing an action")
+                            } else if (!specialActionSlots.pilot) {
                                 setSelectedAction("pilot");
                                 setSelectingAction(true);
                                 setSelectingCrewmate(true);
@@ -636,16 +735,19 @@ export default function Game() {
                     </div>
                     <div style={{ position: "absolute", left: 160.5, top: 89.5, width: 40, height: 40 }}
                         onClick={() => {
-                            /*
-                            if (!specialActionSlots.refresh) {
+                            if (gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).noMoreTurns) {
+                                ShowAlert("You already used a turn in the last round, the game will end soon")
+                            } else if (!(game.activePlayer.id === myPlayer.id)) {
+                                ShowAlert("It's not your turn!")
+                            } else if (alreadyActioning) {
+                                ShowAlert("You are already doing an action")
+                            } else if (!specialActionSlots.refresh) {
                                 setSelectingCrewmate(true);
                                 setSelectingAction(true);
                                 ShowAlert("Click on any of your reserve crewmates to spend it in this action")
                             } else if (!selectingCrewmate) {
                                 ShowAlert("The slot is not empty")
                             }
-                            */
-                            Explode(shelterCards.find(shelterCard => shelterCard.sector.number === 11))
                         }}
                     >
                         <Crewmate crewmate={specialActionSlots.refresh}></Crewmate>
@@ -667,6 +769,7 @@ export default function Game() {
                     setSelectingCrewmate(false)
                     setSelectingBeacon(false)
                     ShowAlert("The explosion card was placed at the end of the deck")
+                    spendAction()
                 }
             }}>
                 <p style={{ color: "#ff7354", fontSize: 25, marginTop: 16 }}>{game.explosions[0]}</p>
@@ -719,8 +822,8 @@ export default function Game() {
         } else {
             setSelectingCrewmate(false);
             setSpecialActionSlots({ ...specialActionSlots, board: null, pilot: null, program: null, refresh: crewmate })
-            Explode(shelterCards.find(shelterCard => shelterCard.sector.number === 11))
             ShowAlert("Special action card refreshed")
+            spendAction()
         }
         setSelectingAction(false)
         setSelectedAction(null)
@@ -728,8 +831,6 @@ export default function Game() {
     }
 
     async function movePod(pod, sector) {
-        console.log("fetch pod" + pod)
-        console.log("fetch sector" + sector)
         const movedPod = {
             emptySlots: pod.emptySlots,
             capacity: pod.capacity,
@@ -792,7 +893,7 @@ export default function Game() {
         }
         await fetch(`/api/v1/shelterCards/${shelterCard.id}`, {
             headers: {
-                "Authorization": ' Bearer ${ jwt }',
+                "Authorization": `Bearer ${jwt}`,
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
@@ -810,7 +911,7 @@ export default function Game() {
         }
         await fetch(`/api/v1/sectors/${sectors.find(sector => sector.number === game.explosions[0]).id}`, {
             headers: {
-                "Authorization": ' Bearer ${ jwt }',
+                "Authorization": `Bearer ${jwt}`,
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
@@ -819,13 +920,15 @@ export default function Game() {
         })
         setSectors(await itemGetters.fetchSectors(gameId, jwt))
 
+        const upToDateGame = await fetchCurrentGame()
         const modifiedGame = {
-            numPlayers: game.numPlayers,
-            start: game.start,
-            finish: game.finish,
-            status: game.status,
-            explosions: game.explosions.slice(1),
-            players: game.players
+            numPlayers: upToDateGame.numPlayers,
+            start: upToDateGame.start,
+            finish: upToDateGame.finish,
+            status: upToDateGame.status,
+            explosions: upToDateGame.explosions.slice(1),
+            players: upToDateGame.players,
+            activePlayer: upToDateGame.activePlayer
         }
         await fetch(`/api/v1/games/${gameId}`, {
             headers: {
@@ -845,7 +948,7 @@ export default function Game() {
             movePod(pods.find(pod => pod.sector && pod.sector.number === sectorToModify.number), null)
         }
 
-        isGameOver(await itemGetters.fetchSectors(gameId, jwt))
+        isLastRound(await itemGetters.fetchSectors(gameId, jwt))
     }
 
     async function ProgramExplosionCard() {
@@ -858,7 +961,8 @@ export default function Game() {
             players: game.players,
             start: game.start,
             finish: game.finish,
-            status: game.status
+            status: game.status,
+            activePlayer: game.activePlayer
         }
         await fetch(`/api/v1/games/${gameId}`, {
             headers: {
@@ -901,6 +1005,18 @@ export default function Game() {
         }
     }
 
+    function freeMovementChecker(sector1, sector2, pod) {
+        const sector1LinesIds = sector1.lines.map(line => line.id)
+        const sector2LinesIds = sector2.lines.map(line => line.id)
+        const lineBetween = lines.find(line => sector1LinesIds.includes(line.id) && sector2LinesIds.includes(line.id))
+        const podCrewmatesColors = GetCrewmatesFromPod(pod).map(crewmate => crewmate.color)
+        const myColor = gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).color
+        if (lineBetween.beacon && podCrewmatesColors.includes(myColor)
+            && (myColor === lineBetween.beacon.color1 || myColor === lineBetween.beacon.color2)) {
+            return true
+        }
+
+    }
 
     async function sectorClickHandler(sector) {
         setSelectedSector(sector)
@@ -914,6 +1030,15 @@ export default function Game() {
                         await movePod(selectedPod, sector)
                         await movePod(crasher2, crashSector2)
                         await movePod(crasher1, crashSector1)
+                        if (!freeMovementChecker(crasher1.sector, crasher2.sector, crasher1)) {
+                            spendAction()
+                        } else {
+                            if (accelerating) {
+                                setActionSlots({ ...actionSlots, accelerate: null })
+                            } else {
+                                setSpecialActionSlots({ ...specialActionSlots, pilot: null })
+                            }
+                        }
                         setCrasher1(null)
                         setCrashSector1(null)
                         setCrasher2(null)
@@ -926,6 +1051,15 @@ export default function Game() {
                         await movePod(crasher1, null)
                         await movePod(selectedPod, sector)
                         await movePod(crasher1, crashSector1)
+                        if (!freeMovementChecker(crasher1.sector, selectedPod.sector, crasher1)) {
+                            spendAction()
+                        } else {
+                            if (accelerating) {
+                                setActionSlots({ ...actionSlots, accelerate: null })
+                            } else {
+                                setSpecialActionSlots({ ...specialActionSlots, pilot: null })
+                            }
+                        }
                         setCrasher1(null)
                         setCrashSector1(null)
                         setSelectingSector(false)
@@ -943,6 +1077,15 @@ export default function Game() {
                         await movePod(selectedPod, sector)
                         await movePod(crasher2, crashSector2)
                         await movePod(crasher1, crashSector1)
+                        if (!freeMovementChecker(crasher1.sector, crasher2.sector, crasher1)) {
+                            spendAction()
+                        } else {
+                            if (accelerating) {
+                                setActionSlots({ ...actionSlots, accelerate: null })
+                            } else {
+                                setSpecialActionSlots({ ...specialActionSlots, pilot: null })
+                            }
+                        }
                         setCrasher1(null)
                         setCrashSector1(null)
                         setCrasher2(null)
@@ -950,23 +1093,35 @@ export default function Game() {
                     } else if (crasher1) {
                         await movePod(selectedPod, sector)
                         await movePod(crasher1, crashSector1)
+                        if (!freeMovementChecker(crasher1.sector, selectedPod.sector, crasher1)) {
+                            spendAction()
+                        } else {
+                            if (accelerating) {
+                                setActionSlots({ ...actionSlots, accelerate: null })
+                            } else {
+                                setSpecialActionSlots({ ...specialActionSlots, pilot: null })
+                            }
+                        }
                         setCrasher1(null)
                         setCrashSector1(null)
                     } else {
                         movePod(selectedPod, sector)
+                        if (!freeMovementChecker(selectedPod.sector, sector, selectedPod)) {
+                            spendAction()
+                        } else {
+                            if (accelerating) {
+                                setActionSlots({ ...actionSlots, accelerate: null })
+                            } else {
+                                setSpecialActionSlots({ ...specialActionSlots, pilot: null })
+                            }
+                        }
                     }
-
                     setSelectingSector(false)
                     setSelectingPod(false)
-
                     setAccelerating(false)
                     setPiloting(false)
-
-
-
                 } else {
                     ShowAlert("You crashed with another pod, select the sector you want to move the crashed pod to")
-
                     let crashedPod = pods.find(pod => pod.sector && (pod.sector.id === sector.id))
                     if (crasher1 === null) {
                         setCrasher1(selectedPod)
@@ -979,7 +1134,11 @@ export default function Game() {
                     setSelectingPod(false)
                 }
             } else {
-                ShowAlert("You cannot move the pod to a not adjacent sector")
+                if (selectedPod.sector && selectedPod.sector.number === sector.number) {
+                    ShowAlert("You cannot move the pod to the same sector")
+                } else {
+                    ShowAlert("You cannot move the pod to a not adjacent sector")
+                }
             }
 
         } else if (embarking) {
@@ -989,6 +1148,7 @@ export default function Game() {
                 setSelectingCrewmate(false)
                 setEmbarking(false)
                 setSelectingSector(false)
+                spendAction()
             } else {
                 ShowAlert("Select one of the adjacent sectors to the hangar")
             }
@@ -1004,6 +1164,7 @@ export default function Game() {
                     setSelectingSector(false)
                     setSelectingPod(false)
                     setMinipodSpawning(false)
+                    spendAction()
                 }
             }
         }
@@ -1033,12 +1194,15 @@ export default function Game() {
                         if (pod.number === 1 && (pods.filter(pod => pod.sector && pod.sector.number === 2).length === 0)) {
                             movePod(pod, sectors.find(sector => sector.number === 2));
                             setEmbarking(false)
+                            spendAction()
                         } else if (pod.number === 2 && (pods.filter(pod => pod.sector && pod.sector.number === 1).length === 0)) {
                             movePod(pod, sectors.find(sector => sector.number === 1));
                             setEmbarking(false)
+                            spendAction()
                         } else if (pod.number === 3 && (pods.filter(pod => pod.sector && pod.sector.number === 3).length === 0)) {
                             movePod(pod, sectors.find(sector => sector.number === 3));
                             setEmbarking(false)
+                            spendAction()
                         } else if (pods.filter(pod => pod.sector && embarkSectorsNumbers.includes(pod.sector.number)).length === 3) {
                             ShowAlert("There are no available sectors next to the hangar")
                             setEmbarking(false)
@@ -1049,6 +1213,7 @@ export default function Game() {
                         }
                     } else {
                         setEmbarking(false)
+                        spendAction()
                     }
                     setSelectingCrewmate(false)
                     setSelectingPod(false)
@@ -1062,6 +1227,7 @@ export default function Game() {
                 setEmbarking(false)
                 setSelectedCrewmate(null)
                 ShowAlert("The crewmate was moved to the selected pod")
+                spendAction()
             } else {
                 ShowAlert(`You cannot move your ${selectedCrewmate.role.toLowerCase()} to that pod`)
             }
@@ -1079,6 +1245,7 @@ export default function Game() {
                 setSpiedCrewmates([])
                 setSpying(false)
             }, 5000)
+            spendAction()
         }
     }
 
@@ -1126,6 +1293,7 @@ export default function Game() {
                                 setSelectedCrewmate(null)
                                 setSelectingCrewmate(false)
                                 setBoarding(false)
+                                spendAction()
                             } else {
                                 moveCrewmate(selectedCrewmate, crewmate.pod, null)
                                 moveCrewmate(crewmate, selectedCrewmate.pod, null)
@@ -1133,6 +1301,7 @@ export default function Game() {
                                 setSelectedCrewmate(null)
                                 setSelectingCrewmate(false)
                                 setBoarding(false)
+                                spendAction()
                             }
                         } else {
                             ShowAlert("You can only swap crewmates in adjacent pods")
@@ -1147,6 +1316,7 @@ export default function Game() {
                                 setSelectedCrewmate(null)
                                 setSelectingCrewmate(false)
                                 setBoarding(false)
+                                spendAction()
                             } else {
                                 moveCrewmate(selectedCrewmate, crewmate.pod, null)
                                 moveCrewmate(crewmate, null, null)
@@ -1154,6 +1324,7 @@ export default function Game() {
                                 setSelectedCrewmate(null)
                                 setSelectingCrewmate(false)
                                 setBoarding(false)
+                                spendAction()
                             }
                         } else {
                             ShowAlert("If your selected crewmate is in your reserve you can only board pods adjacent to the hangar")
@@ -1167,8 +1338,6 @@ export default function Game() {
                 //no hay pods de 1 disponibles
                 if (pods.filter(pod => pod.number > 3 && pod.sector && GetCrewmatesFromPod(pod).length !== 0).length >= 3) {
                     ShowAlert("There are no minipods available to spawn")
-                    setSelectingCrewmate(false)
-                    setMinipodSpawning(false)
                 } else {
                     ShowAlert("Select where you want to spawn the minipod")
                     let minipod = pods.filter(pod => pod.number > 3 && (!pod.sector && pods.filter(pod => pod.number > 3 && GetCrewmatesFromPod(pod).length === 0)))[0]
@@ -1184,9 +1353,7 @@ export default function Game() {
     function shelterClickHandler(shelterCard) {
         setSelectedShelterCard(shelterCard)
         if (embarking) {
-            console.log(selectedCrewmate.pod.sector.number)
-            console.log(shelterCard.sector.number)
-            if (selectedCrewmate.pod && (selectedCrewmate.pod.sector.number === shelterCard.sector.number)) {
+            if (selectedCrewmate.pod && (selectedCrewmate.pod.sector.number === shelterCard.sector.number) && (GetCrewmatesFromShelter(shelterCard).length !== 5)) {
                 moveCrewmate(selectedCrewmate, null, shelterCard)
                 setSelectingPod(false)
                 setSelectingCrewmate(false)
@@ -1194,8 +1361,13 @@ export default function Game() {
                 setEmbarking(false)
                 setSelectedCrewmate(null)
                 ShowAlert("The crewmate was moved to the selected shelter")
+                spendAction()
             } else {
-                ShowAlert("You can only disembark a crewmate in a shelter adjacent to your pod")
+                if (GetCrewmatesFromShelter(shelterCard).length === 5) {
+                    ShowAlert("You cannot move your crewmate to a shelter that is full")
+                } else {
+                    ShowAlert("You can only disembark a crewmate in a shelter adjacent to your pod")
+                }
             }
         } else if (spying) {
             setSelectingPod(false)
@@ -1205,6 +1377,7 @@ export default function Game() {
                 setSpiedCrewmates([])
                 setSpying(false)
             }, 5000)
+            spendAction()
         }
     }
 
@@ -1221,37 +1394,27 @@ export default function Game() {
         setSelectedLine(line)
         let selectedBeaconLine = lines.find(line => line.beacon && line.beacon.id === selectedBeacon.id)
         if (programming) {
-
-            //mover beacon nuevo a linea desokupada
             if (!line.beacon && selectedBeacon) {
                 if (!GetUnusedBeacons().includes(selectedBeacon)) {
-                    moveBeacon(null, selectedBeaconLine)
+                    moveBeacon(null, selectedBeaconLine) // porque si ya está usado, primero hay que sacar el beacon de la línea en la que está
                 }
                 ShowAlert("Beacon moved")
-                console.log(selectedBeacon)
                 moveBeacon(selectedBeacon, line)
                 setSelectingLine(false)
                 setProgramming(false)
-
-                // caso en el que se quiera hacer un intercambio en le que uno de los beacon es de nueva instalacion
+                spendAction()
             } else if (line.beacon && selectedBeacon && GetUnusedBeacons().includes(selectedBeacon)) {
                 ShowAlert("There is already a beacon in that line, select another one")
-
-                // intercambiar 2 beacon de sitio 
             } else if (line.beacon && selectedBeacon && !GetUnusedBeacons().includes(selectedBeacon)) {
                 let selectedLineBeacon = line.beacon
-
-                //limpiamos las lineas involucradas
                 moveBeacon(null, selectedBeaconLine)
                 moveBeacon(null, line)
                 ShowAlert("Beacons swapped")
-
-                //movemos los beacons  asus nuevos sitios
                 moveBeacon(selectedBeacon, line)
                 moveBeacon(selectedLineBeacon, selectedBeaconLine)
-
                 setSelectingLine(false)
                 setProgramming(false)
+                spendAction()
             }
         }
     }
@@ -1276,53 +1439,10 @@ export default function Game() {
         } else if (programming) {
             setSpecialActionSlots({ ...specialActionSlots, program: null })
         }
-        setAccelerating(false)
-        setEmbarking(false)
-        setSpying(false)
-        setMinipodSpawning(false)
-        setPiloting(false)
-        setBoarding(false)
-        setSelectedSector(null)
-        setSelectedPod(null)
-        setSelectedCrewmate(null)
-        setSelectedShelterCard(null)
-        setSelectedBeacon(null)
-        setSelectedLine(null)
-        setSelectingPod(false)
-        setSelectingCrewmate(false)
-        setSelectingSector(false)
-        setSelectingShelterCard(false)
-        setSelectingBeacon(false)
-        setSelectingLine(false)
-        setCrasher1(null)
-        setCrasher2(null)
-        setCrashSector1(null)
-        setCrashSector2(null)
-    }
-
-    function checkActionsState() {
-        console.log("accelerating " + accelerating)
-        console.log("embarking " + embarking)
-        console.log("spying " + spying)
-        console.log("minipodSpawning " + minipodSpawning)
-        console.log("piloting " + piloting)
-        console.log("boarding " + boarding)
-        console.log("selectingPod " + selectingPod)
-        console.log("selectingCrewmate " + selectingCrewmate)
-        console.log("selectingSector " + selectingSector)
-        console.log("selectingShelterCard " + selectingShelterCard)
-        console.log("selectingBeacon " + selectingBeacon)
-        console.log("selectingLine " + selectingLine)
-        console.log("crasher1 " + crasher1)
-        console.log("crasher2 " + crasher2)
-        console.log("crashSector1 " + crashSector1)
-        console.log("crashSector2 " + crashSector2)
-        console.log(selectedSector)
-        console.log(selectedPod)
-        console.log(selectedCrewmate)
-        console.log(selectedShelterCard)
-        console.log(selectedBeacon)
-        console.log(selectedLine)
+        setAccelerating(false); setEmbarking(false); setSpying(false); setMinipodSpawning(false); setPiloting(false); setBoarding(false); setProgramming(false)
+        setSelectedSector(null); setSelectedPod(null); setSelectedCrewmate(null); setSelectedShelterCard(null); setSelectedBeacon(null); setSelectedLine(null)
+        setSelectingPod(false); setSelectingCrewmate(false); setSelectingSector(false); setSelectingShelterCard(false); setSelectingBeacon(false); setSelectingLine(false)
+        setCrasher1(null); setCrasher2(null); setCrashSector1(null); setCrashSector2(null)
     }
 
     const [alertMessage, setAlertMessage] = useState("");
@@ -1334,6 +1454,43 @@ export default function Game() {
         setTimeout(() => {
             setVisible(false);
         }, timeout);
+    }
+
+    async function nextTurn(skipping) {
+        const patchedGame = await fetch(`/api/v1/games/${gameId}/nextTurn${lastRound ? "?lastRound=true" : ""}`, {
+            headers: {
+                "Authorization": `Bearer ${jwt}`,
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            method: 'PATCH',
+        })
+        setGame(await patchedGame.json())
+        setActionSlots({ embark: null, accelerate: null, spy: null, minipod: null })
+        console.log(specialActionSlots.board, specialActionSlots.program, specialActionSlots.pilot)
+        if (specialActionSlots.board && specialActionSlots.program && specialActionSlots.pilot) {
+            setSpecialActionSlots({ ...specialActionSlots, board: null, program: null, pilot: null })
+        }
+        if (skipping) {
+            handleCancel()
+        }
+    }
+
+    async function spendAction(skipping) {
+        const patchedGamePlayers = await fetch(`/api/v1/gamePlayers/${gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).id}/spendAction`, {
+            headers: {
+                "Authorization": `Bearer ${jwt}`,
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            method: 'PATCH',
+        })
+        const newGamePlayers = await patchedGamePlayers.json()
+        setGamePlayers(newGamePlayers)
+        if (newGamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).actions === 2) {
+            nextTurn(skipping ? true : false)
+        }
+
     }
 
 
@@ -1358,6 +1515,40 @@ export default function Game() {
                     }}>
                         WARNING: Avoid reloading the page during the game. An alert should show after every click when selecting actions or items. If it doesn't, please wait a second and click again.
                     </Alert>
+                    <Alert style={{
+                        position: "absolute", zIndex: 1000, width: "auto", textAlign: "center", paddingTop: 2, paddingBottom: 2,
+                        paddingRight: 5, paddingLeft: 5, top: 93, marginLeft: "10px", borderRadius: 12,
+                        fontSize: 18, fontWeight: "lighter",
+                        backgroundColor: gamePlayers.find(gamePlayer => gamePlayer.player.id === game.activePlayer.id).color,
+                        borderColor: gamePlayers.find(gamePlayer => gamePlayer.player.id === game.activePlayer.id).color === "BLACK" ? "#FFFFFF" : "#000000",
+                        color: gamePlayers.find(gamePlayer => gamePlayer.player.id === game.activePlayer.id).color === "BLACK" ? "#FFFFFF" : "#000000",
+                    }}>
+                        {game.activePlayer.id === myPlayer.id ? `Your turn (${gamePlayers.find(gamePlayer => gamePlayer.player.id === game.activePlayer.id).actions} actions left)` : game.activePlayer.user.username + "'s turn"}
+                    </Alert>
+                    {game.activePlayer.id === myPlayer.id &&
+                        <Button className="button" style={{
+                            backgroundColor: "#CFFF68",
+                            border: "none",
+                            width: 130,
+                            fontSize: 20,
+                            borderRadius: 15,
+                            height: 50,
+                            position: "absolute",
+                            top: 85,
+                            left: 510,
+                            boxShadow: "5px 5px 5px #00000020",
+                            textShadow: "2px 2px 2px #00000020",
+                            transition: "0.15s",
+                        }} onClick={() => {
+                            if (gamePlayers.find(gamePlayer => gamePlayer.player.id === myPlayer.id).actions === 2) {
+                                nextTurn(true)
+                            } else {
+                                spendAction(true)
+                            }
+                        }}>
+                            Skip turn
+                        </Button>
+                    }
                     <div className="game-board">
                         {sectors.map((sector, index) => (
                             <div key={index}>
@@ -1399,75 +1590,9 @@ export default function Game() {
                         }
                         <ActionCards />
                         <div style={{ display: "flex", flexDirection: "row" }}>
-                            <Button className="button" style={{
-                                backgroundColor: "#CFFF68",
-                                border: "none",
-                                width: 200,
-                                fontSize: 20,
-                                borderRadius: 20,
-                                height: 60,
-                                boxShadow: "5px 5px 5px #00000020",
-                                textShadow: "2px 2px 2px #00000020",
-                                transition: "0.15s",
-                                alignSelf: "center",
-                                marginBottom: 20
-                            }} onClick={() => {
-                                window.location.href = "/game/" + gameId + "/scores"
-                            }}>
-                                puntuar
-                            </Button>
-                            <Button className="button" style={{
-                                backgroundColor: "#CFFF68",
-                                border: "none",
-                                width: 200,
-                                fontSize: 20,
-                                borderRadius: 20,
-                                height: 60,
-                                boxShadow: "5px 5px 5px #00000020",
-                                textShadow: "2px 2px 2px #00000020",
-                                transition: "0.15s",
-                                alignSelf: "center",
-                                marginBottom: 20
-                            }} onClick={() => {
-                                setActionSlots({ embark: null, accelerate: null, spy: null, minipod: null })
-                                setSpecialActionSlots({ pilot: null, board: null, program: null, refresh: null })
-                            }}>
-                                vaciar tarjetas
-                            </Button>
-                            <Button className="button" style={{
-                                backgroundColor: "#CFFF68",
-                                border: "none",
-                                width: 200,
-                                fontSize: 20,
-                                borderRadius: 20,
-                                height: 60,
-                                boxShadow: "5px 5px 5px #00000020",
-                                textShadow: "2px 2px 2px #00000020",
-                                transition: "0.15s",
-                                alignSelf: "center",
-                                marginBottom: 20
-                            }} onClick={() => {
-                                console.log(sectors)
-                                console.log(beacons)
-                                console.log(lines)
-                                console.log(gamePlayers)
-                                console.log(pods)
-                                console.log(crewmates)
-                                console.log(shelterCards)
-                                console.log(slotInfos)
-                                console.log(actionSlots)
-                                console.log(shelterCards.find(shelterCard => shelterCard.sector.number === 11))
-                                ShowAlert("Troncos lanzados")
-                                checkActionsState()
-                                console.log(game.explosions)
-                                console.log(gameOver)
-                                console.log(sectors.filter(sector => sector.scrap).map(sector => sector.number))
-                            }}>
-                                troncos
-                            </Button>
                             {(selectingBeacon || selectingCrewmate || selectingPod || selectingSector || selectingLine ||
                                 selectingShelterCard || accelerating || embarking || spying || minipodSpawning || piloting ||
-                                boarding) &&
+                                boarding || programming) &&
                                 <Button className="button" style={{
                                     backgroundColor: "#ff8368",
                                     border: "none",

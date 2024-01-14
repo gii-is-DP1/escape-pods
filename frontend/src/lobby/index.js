@@ -112,7 +112,8 @@ export default function Lobby() {
             start: game.start,
             finish: game.finish,
             status: "PLAYING",
-            players: game.players
+            players: game.players,
+            activePlayer: game.players[0]
         }
         await fetch(`/api/v1/games/${game.id}`, {
             headers: {

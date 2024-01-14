@@ -139,7 +139,8 @@ public class BeaconRestControllerTests {
                 assertTrue(400 == actualStatus);
         }
 
-        // Debido a que los beacons son una entidad fija, estos no cambian, por lo que no se puede testear su modificación.
+        // Debido a que los beacons son una entidad fija, estos no cambian, por lo que
+        // no se puede testear su modificación.
 
         @Test
         @WithMockUser("PLAYER")

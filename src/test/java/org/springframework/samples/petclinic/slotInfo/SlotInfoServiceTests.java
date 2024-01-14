@@ -26,9 +26,8 @@ class SlotInfoServiceTests {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        // SlotInfoService is now automatically instantiated with the mocked dependencies
     }
-    
+
     @Test
     void getAllBeaconsTest() {
         SlotInfo slotInfo1 = new SlotInfo();

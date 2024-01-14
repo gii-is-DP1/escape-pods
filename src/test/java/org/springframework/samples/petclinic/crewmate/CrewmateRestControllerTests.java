@@ -36,162 +36,162 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @WebMvcTest(CrewmateRestController.class)
 public class CrewmateRestControllerTests {
 
-    @MockBean
-    private CrewmateService crewmateService;
+        @MockBean
+        private CrewmateService crewmateService;
 
-    @Autowired
-    private MockMvc mockMvc;
+        @Autowired
+        private MockMvc mockMvc;
 
-    private Crewmate crewmate1;
-    private Crewmate crewmate2;
+        private Crewmate crewmate1;
+        private Crewmate crewmate2;
 
-    private List<Crewmate> crewmates;
-
-    ObjectMapper objectMapper = new ObjectMapper();
-
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-
-        crewmate1 = new Crewmate();
-        crewmate1.setId(1);
-
-        crewmate2 = new Crewmate();
-        crewmate2.setId(2);
-
-        crewmates = new ArrayList<Crewmate>();
-        crewmates.add(crewmate1);
-        crewmates.add(crewmate2);
-
-        objectMapper = new ObjectMapper();
-    }
-
-    @Test
-    @WithMockUser(username = "player2", password = "0wn3r")
-    void canGetAllCrewmates() throws Exception {
-
-        when(crewmateService.getAllCrewmates()).thenReturn(crewmates);
-
-        MockHttpServletRequestBuilder requestBuilder = get("/api/v1/crewmates")
-                .with(csrf());
-
-        MvcResult result = mockMvc.perform(requestBuilder)
-                .andExpect(status().isOk())
-                .andReturn();
-
-        String responseBody = result.getResponse().getContentAsString();
-        List<Crewmate> ActualCrewmates = objectMapper.readValue(responseBody, List.class);
-
-        assertEquals(crewmates.size(), ActualCrewmates.size());
-    }
-
-    @Test
-    @WithMockUser(username = "player2", password = "0wn3r")
-    void canCreateCrewmate() throws Exception {
-
-        Game game = new Game();
-        GamePlayer gameplayer = new GamePlayer();
-        Crewmate crewmate = new Crewmate();
-        crewmate.setId(1);
-        crewmate.setColor(Color.BLACK);
-        crewmate.setRole(Role.CAPTAIN);
-        crewmate.setArrivalOrder(1);
-        crewmate.setPlayer(gameplayer);
-        crewmate.setGame(game);
-
-        objectMapper = new ObjectMapper();
-        when(crewmateService.save(any(Crewmate.class))).thenAnswer(i -> i.getArguments()[0]);
-        String json = objectMapper.writeValueAsString(crewmate);
-
-        MockHttpServletRequestBuilder requestBuilder = post("/api/v1/crewmates")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(json)
-                .with(csrf());
-
-        MvcResult result = mockMvc.perform(requestBuilder)
-                .andExpect(status().isCreated())
-                .andReturn();
-
-        String responseBody = result.getResponse().getContentAsString();
-        Crewmate ActualCrewmate = objectMapper.readValue(responseBody, Crewmate.class);
-
-        assertTrue(1 == ActualCrewmate.getId());
-    }
-
-    @Test
-    @WithMockUser("PLAYER")
-    void cantCreateCrewmate_BadRequest() throws Exception {
-
-        // con datos incorrectos
-        Crewmate crewmate = new Crewmate();
-        crewmate.setId(-1);
-        crewmate.setColor(Color.BLACK);
-        crewmate.setRole(Role.CAPTAIN);
-        crewmate.setArrivalOrder(1);
-        crewmate.setPlayer(null);
-        crewmate.setGame(null);
-
-        objectMapper = new ObjectMapper();
-
-        when(crewmateService.save(any(Crewmate.class))).thenAnswer(i -> i.getArguments()[0]);
-        String json = objectMapper.writeValueAsString(crewmate);
-
-        MockHttpServletRequestBuilder requestBuilder = post("/api/v1/crewmates")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(json)
-                .with(csrf());
-
-        MvcResult result = mockMvc.perform(requestBuilder)
-                .andExpect(status().isBadRequest())
-                .andReturn();
-
-        Integer actualStatus = result.getResponse().getStatus();
-        assertTrue(400 == actualStatus);
-    }
-
-    // Debido a que los crewmates son una entidad fija, estos no cambian, por lo que
-    // no se puede testear su modificación.
-
-    @Test
-    @WithMockUser("PLAYER")
-    void canDeleteCrewmate() throws Exception {
-        Integer crewmate1Id = 1;
+        private List<Crewmate> crewmates;
 
         ObjectMapper objectMapper = new ObjectMapper();
 
-        when(crewmateService.getCrewmateById(crewmate1Id)).thenReturn(Optional.of(crewmate1));
-        doNothing().when(crewmateService).deleteById(crewmate1Id);
+        @BeforeEach
+        void setUp() {
+                MockitoAnnotations.openMocks(this);
 
-        String json = objectMapper.writeValueAsString(crewmate1);
+                crewmate1 = new Crewmate();
+                crewmate1.setId(1);
 
-        MockHttpServletRequestBuilder requestBuilder = delete("/api/v1/crewmates/{id}", crewmate1Id)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(json)
-                .with(csrf());
+                crewmate2 = new Crewmate();
+                crewmate2.setId(2);
+
+                crewmates = new ArrayList<Crewmate>();
+                crewmates.add(crewmate1);
+                crewmates.add(crewmate2);
+
+                objectMapper = new ObjectMapper();
+        }
+
+        @Test
+        @WithMockUser(username = "player2", password = "0wn3r")
+        void canGetAllCrewmates() throws Exception {
+
+                when(crewmateService.getAllCrewmates()).thenReturn(crewmates);
+
+                MockHttpServletRequestBuilder requestBuilder = get("/api/v1/crewmates")
+                                .with(csrf());
+
+                MvcResult result = mockMvc.perform(requestBuilder)
+                                .andExpect(status().isOk())
+                                .andReturn();
+
+                String responseBody = result.getResponse().getContentAsString();
+                List<Crewmate> ActualCrewmates = objectMapper.readValue(responseBody, List.class);
+
+                assertEquals(crewmates.size(), ActualCrewmates.size());
+        }
+
+        @Test
+        @WithMockUser(username = "player2", password = "0wn3r")
+        void canCreateCrewmate() throws Exception {
+
+                Game game = new Game();
+                GamePlayer gameplayer = new GamePlayer();
+                Crewmate crewmate = new Crewmate();
+                crewmate.setId(1);
+                crewmate.setColor(Color.BLACK);
+                crewmate.setRole(Role.CAPTAIN);
+                crewmate.setArrivalOrder(1);
+                crewmate.setPlayer(gameplayer);
+                crewmate.setGame(game);
+
+                objectMapper = new ObjectMapper();
+                when(crewmateService.save(any(Crewmate.class))).thenAnswer(i -> i.getArguments()[0]);
+                String json = objectMapper.writeValueAsString(crewmate);
+
+                MockHttpServletRequestBuilder requestBuilder = post("/api/v1/crewmates")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(json)
+                                .with(csrf());
+
+                MvcResult result = mockMvc.perform(requestBuilder)
+                                .andExpect(status().isCreated())
+                                .andReturn();
+
+                String responseBody = result.getResponse().getContentAsString();
+                Crewmate ActualCrewmate = objectMapper.readValue(responseBody, Crewmate.class);
+
+                assertTrue(1 == ActualCrewmate.getId());
+        }
+
+        @Test
+        @WithMockUser("PLAYER")
+        void cantCreateCrewmate_BadRequest() throws Exception {
+
+                // con datos incorrectos
+                Crewmate crewmate = new Crewmate();
+                crewmate.setId(-1);
+                crewmate.setColor(Color.BLACK);
+                crewmate.setRole(Role.CAPTAIN);
+                crewmate.setArrivalOrder(1);
+                crewmate.setPlayer(null);
+                crewmate.setGame(null);
+
+                objectMapper = new ObjectMapper();
+
+                when(crewmateService.save(any(Crewmate.class))).thenAnswer(i -> i.getArguments()[0]);
+                String json = objectMapper.writeValueAsString(crewmate);
+
+                MockHttpServletRequestBuilder requestBuilder = post("/api/v1/crewmates")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(json)
+                                .with(csrf());
+
+                MvcResult result = mockMvc.perform(requestBuilder)
+                                .andExpect(status().isBadRequest())
+                                .andReturn();
+
+                Integer actualStatus = result.getResponse().getStatus();
+                assertTrue(400 == actualStatus);
+        }
+
+        // Debido a que los crewmates son una entidad fija, estos no cambian, por lo que
+        // no se puede testear su modificación.
+
+        @Test
+        @WithMockUser("PLAYER")
+        void canDeleteCrewmate() throws Exception {
+                Integer crewmate1Id = 1;
+
+                ObjectMapper objectMapper = new ObjectMapper();
+
+                when(crewmateService.getCrewmateById(crewmate1Id)).thenReturn(Optional.of(crewmate1));
+                doNothing().when(crewmateService).deleteById(crewmate1Id);
+
+                String json = objectMapper.writeValueAsString(crewmate1);
+
+                MockHttpServletRequestBuilder requestBuilder = delete("/api/v1/crewmates/{id}", crewmate1Id)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(json)
+                                .with(csrf());
 
                 mockMvc.perform(requestBuilder)
-                .andExpect(status().isNoContent());
-    }
+                                .andExpect(status().isNoContent());
+        }
 
-    @Test
-    @WithMockUser("PLAYER")
-    void cantDeleteCrewmate_NotFound() throws Exception {
-        Integer crewmate1Id = 1;
-        Integer nonExistendCrewmateId = 33;
+        @Test
+        @WithMockUser("PLAYER")
+        void cantDeleteCrewmate_NotFound() throws Exception {
+                Integer crewmate1Id = 1;
+                Integer nonExistendCrewmateId = 33;
 
-        ObjectMapper objectMapper = new ObjectMapper();
+                ObjectMapper objectMapper = new ObjectMapper();
 
-        when(crewmateService.getCrewmateById(nonExistendCrewmateId)).thenThrow(ResourceNotFoundException.class);
-        doNothing().when(crewmateService).deleteById(crewmate1Id);
+                when(crewmateService.getCrewmateById(nonExistendCrewmateId)).thenThrow(ResourceNotFoundException.class);
+                doNothing().when(crewmateService).deleteById(crewmate1Id);
 
-        String json = objectMapper.writeValueAsString(crewmate1);
+                String json = objectMapper.writeValueAsString(crewmate1);
 
-        MockHttpServletRequestBuilder requestBuilder = delete("/api/v1/crewmates/{id}", crewmate1Id)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(json)
-                .with(csrf());
-                
-        mockMvc.perform(requestBuilder)
-                .andExpect(status().isNotFound());
-    }
+                MockHttpServletRequestBuilder requestBuilder = delete("/api/v1/crewmates/{id}", crewmate1Id)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(json)
+                                .with(csrf());
+
+                mockMvc.perform(requestBuilder)
+                                .andExpect(status().isNotFound());
+        }
 }
