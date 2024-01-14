@@ -124,7 +124,6 @@ public class SlotInfoRestControllerTests {
                 ShelterCard shelterCard = new ShelterCard();
                 SlotInfo slotInfo = new SlotInfo();
                 slotInfo.setId(1);
-                slotInfo.setPosition(3);
                 slotInfo.setRole(Role.CAPTAIN);
                 slotInfo.setSlotScore(3);
                 slotInfo.setShelter(shelterCard);
@@ -155,7 +154,6 @@ public class SlotInfoRestControllerTests {
                 // Con datos incorrectos
                 SlotInfo slotInfo = new SlotInfo();
                 slotInfo.setId(-1);
-                slotInfo.setPosition(3);
                 slotInfo.setRole(Role.CAPTAIN);
                 slotInfo.setSlotScore(3);
                 slotInfo.setShelter(null);
