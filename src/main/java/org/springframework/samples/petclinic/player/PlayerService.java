@@ -17,7 +17,7 @@ public class PlayerService {
 
     private PlayerRepository playerRepository;
 
-    private GameRepository gameRepository;
+	private GameRepository gameRepository;
 
     @Autowired
 	public PlayerService(PlayerRepository playerRepository, GameRepository gameRepository) {
