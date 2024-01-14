@@ -6,10 +6,6 @@ class ScoringFunction {
         const crewmates = await itemGetters.fetchCrewmates(gameId, jwt);
         const shelterCards = await itemGetters.fetchShelterCards(gameId, jwt);
         const slotInfos = await itemGetters.fetchSlotInfos(gameId, jwt);
-        console.log(slotInfos)
-        console.log(shelterCards)
-        console.log(crewmates)
-        console.log(gamePlayers)
 
         let asignments = shelterCards.reduce((ac, shelterCard) => {
             ac[shelterCard.id] = slotInfos.filter(slotInfo => slotInfo.shelter.id === shelterCard.id)
@@ -113,11 +109,49 @@ class ScoringFunction {
             }
         }
 
-
-        console.log(asignments)
-        const sortedPlayerScores = Object.entries(playerScores)
+        let sortedPlayerScores = Object.entries(playerScores)
             .sort(([, a], [, b]) => b - a)
             .reduce((ac, [key, value]) => ({ ...ac, [key]: value }), {});
+
+        //tie breakers
+        function getNumberOfShelterCrewmates(username) {
+            return crewmates.filter(crewmate => crewmate.shelterCard && crewmate.player.player.user.username === username).length;
+        }
+
+        function getNumberOfAssignments(username) {
+            return Object.keys(asignments).reduce((ac, shelterId) => {
+                return ac + Object.keys(asignments[shelterId]).reduce((ac, slotId) => {
+                    if (asignments[shelterId][slotId] && (crewmates.find(crewmate => crewmate.id === asignments[shelterId][slotId][0]).player.player.user.username === username)) {
+                        return ac + 1;
+                    }
+                    return ac;
+                }, 0);
+            }, 0);
+        }
+
+        function getNumberOfDifferentShelters(username) {
+            return new Set(crewmates.filter(crewmate => crewmate.shelterCard && crewmate.player.player.user.username === username).map(crewmate => crewmate.shelterCard.id)).size;
+        }
+
+        if (sortedPlayerScores[Object.keys(sortedPlayerScores)[0]] === sortedPlayerScores[Object.keys(sortedPlayerScores)[1]]) {
+            let tieBreakerScores = Object.entries(sortedPlayerScores)
+                .sort(([, a], [, b]) => getNumberOfShelterCrewmates(b) - getNumberOfShelterCrewmates(a))
+                .reduce((ac, [key, value]) => ({ ...ac, [key]: value }), {});
+
+            if (getNumberOfShelterCrewmates(Object.keys(tieBreakerScores)[0]) === getNumberOfShelterCrewmates(Object.keys(tieBreakerScores)[1])) {
+                tieBreakerScores = Object.entries(tieBreakerScores)
+                    .sort(([, a], [, b]) => getNumberOfAssignments(b) - getNumberOfAssignments(a))
+                    .reduce((ac, [key, value]) => ({ ...ac, [key]: value }), {});
+
+                if (getNumberOfAssignments(Object.keys(tieBreakerScores)[0]) === getNumberOfAssignments(Object.keys(tieBreakerScores)[1])) {
+                    tieBreakerScores = Object.entries(tieBreakerScores)
+                        .sort(([, a], [, b]) => getNumberOfDifferentShelters(b) - getNumberOfDifferentShelters(a))
+                        .reduce((ac, [key, value]) => ({ ...ac, [key]: value }), {});
+                }
+            }
+            sortedPlayerScores = tieBreakerScores;
+        }
+
         return sortedPlayerScores;
     }
 }

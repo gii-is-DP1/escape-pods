@@ -14,8 +14,6 @@ public interface SlotInfoRepository extends CrudRepository<SlotInfo, Integer> {
 
     List<SlotInfo> findAll();
 
-    List<SlotInfo> findByPosition(Integer position);
-
     Optional<SlotInfo> findById(Integer id);
 
     @Query("SELECT si FROM SlotInfo si WHERE si.game.id= :id")
