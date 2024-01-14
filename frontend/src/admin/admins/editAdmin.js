@@ -7,22 +7,22 @@ import FormGenerator from "../../components/formGenerator/formGenerator";
 import useFetchData from "../../util/useFetchData";
 
 
-export default function EditPlayer() {
-    const [myPlayer, setMyPlayer] = useState({})
+export default function EditAdmin() {
+
     const [myUser, setMyUser] = useState({});
     const jwt = tokenService.getLocalAccessToken();
     const myUsername = jwt_decode(jwt).sub;
     const playerUsername = window.location.href.split("/")[4]
     const auths = useFetchData(`/api/v1/users/authorities`, jwt);
 
-    const authOptions = auths.map((auth) => (
+    const authOptions = auths.filter(auth=> auth.id === 1 || auth.id === 5).map((auth) => (
         <option key={auth.id} value={auth.id}>
             {auth.authority}
         </option>
     ));
 
-    async function GetCurrentPlayer() {
-        const response = await fetch("/api/v1/players?username=" + playerUsername, {
+    async function GetCurrentUser() {
+        const response = await fetch(`/api/v1/users?username=${playerUsername}`, {
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${jwt}`,
@@ -30,21 +30,30 @@ export default function EditPlayer() {
             method: "GET"
         })
 
-        const fetchedPlayer = await response.json();
-        setMyUser(fetchedPlayer[0].user);
-        setMyPlayer(fetchedPlayer[0]);
+        const fetchedUser = await response.json();
+        setMyUser(fetchedUser[0]);
     }
 
     useEffect(() => {
         if (jwt) {
-            GetCurrentPlayer();
+            GetCurrentUser();
         }
     }, [jwt])
 
+    function sendLogoutRequest() {
+        const jwt = window.localStorage.getItem("jwt");
+        if (jwt || typeof jwt === "undefined") {
+            tokenService.removeUser();
+            window.location.href = "/";
+        } else {
+            alert("There is no user logged in");
+        }
 
-    function ActualizarUsuario(event) { //handleSumbit
+    }
+
+    async function ActualizarUsuario(event) {
         event.preventDefault();
-        fetch(`/api/v1/users/${myUser.id}`, {
+        await fetch(`/api/v1/users/${myUser.id}`, {
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${jwt}`,
@@ -52,17 +61,25 @@ export default function EditPlayer() {
             method: "PUT",
             body: JSON.stringify(myUser)
         })
-
-        fetch(`/api/v1/players/${myPlayer.id}`, {
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${jwt}`,
-            },
-            method: "PUT",
-            body: JSON.stringify(myPlayer)
-        })
         console.log(myUser)
-        window.location.href = `/players/${myUser.username}`
+        if (myUser.authority.id === 5) {
+            await fetch(`/api/v1/players`, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${jwt}`,
+                },
+                method: "POST",
+                body: JSON.stringify(
+                    {
+                        user: myUser,
+                        profileDescription: "hello world. I'm a new player",
+                        profilePicture: "https://www.webwise.ie/wp-content/uploads/2020/12/IMG1207.jpg",
+                    })
+            })
+        }
+        console.log(myUser)
+        sendLogoutRequest();
+
     }
 
     function handleChangeUsername(event) {
@@ -77,30 +94,9 @@ export default function EditPlayer() {
         setMyUser(changedUser);
     }
 
-    function handleChangePlayerDescription(event) {
-        const target = event.target;
-        const value = target.value;
-        const changedPlayer = {
-            id: myPlayer.id,
-            profileDescription: value,
-            profilePicture: myPlayer.profilePicture,
-            user: myUser,
-        }
-        setMyPlayer(changedPlayer);
-    }
 
-    function handleChangePlayerPicture(event) {
-        const target = event.target;
-        const value = target.value;
-        const changedPlayer = {
-            id: myPlayer.id,
-            profileDescription: myPlayer.profileDescription,
-            profilePicture: value,
-            user: myUser,
-        }
-        console.log(changedPlayer)
-        setMyPlayer(changedPlayer);
-    }
+
+
 
 
     function handleChangeAuth(event) {
@@ -144,36 +140,6 @@ export default function EditPlayer() {
                     </div>
 
                     <div className="custom-form-input">
-                        <Label for="badgeImage" className="custom-form-input-label-not-mandatory">
-                            Profile descripction:
-                        </Label>
-                        <Input
-                            type="text"
-                            required
-                            name="badgeImage"
-                            id="badgeImage"
-                            value={myPlayer.profileDescription || ""}
-                            onChange={handleChangePlayerDescription}
-                            className="custom-input"
-                        />
-                    </div>
-
-                    <div className="custom-form-input">
-                        <Label for="badgeImage" className="custom-form-input-label-not-mandatory">
-                            Profile picture:
-                        </Label>
-                        <Input
-                            type="text"
-                            required
-                            name="profilePicture"
-                            id="profilePicture"
-                            value={myPlayer.profilePicture || ""}
-                            onChange={handleChangePlayerPicture}
-                            className="custom-input"
-                        />
-                    </div>
-
-                    <div className="custom-form-input">
                         <Label for="authority" className="custom-form-input-label-not-mandatory">
                             Authority:
                         </Label>
@@ -194,7 +160,7 @@ export default function EditPlayer() {
                         </button>
 
                         <Link
-                            to={`/players/${myUser.username}`}
+                            to={`/admins/${myUser.username}`}
                             className="auth-button"
                             style={{ textDecoration: "none" }}
                         >Cancel
@@ -204,4 +170,6 @@ export default function EditPlayer() {
             </div>
         </div>
     );
+
+
 }

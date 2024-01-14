@@ -1,6 +1,6 @@
 import jwt_decode from "jwt-decode";
 import React, { useEffect, useState } from 'react';
-import { Button, Modal, ModalHeader, ModalFooter, ModalBody, Badge, UncontrolledCollapse, Table } from "reactstrap";
+import { Button, Modal, ModalFooter, ModalBody, Table } from "reactstrap";
 import '../App.css';
 import tokenService from '../services/token.service';
 import '../static/css/home/home.css';
@@ -10,13 +10,10 @@ import foto from "../static/images/pods/pod1.png";
 
 
 //ICONOS
-import { DiAptana } from "react-icons/di";
-import { MdAdd, MdOutlinePersonAddAlt1 } from "react-icons/md";
-import { TiTick } from "react-icons/ti";
-import { RiChatOffLine, RiChat4Line, RiCodeFill } from "react-icons/ri";
+
 import { BiSolidInvader } from "react-icons/bi";
 import { FaSpaceAwesome } from "react-icons/fa6";
-import { FaGalacticRepublic, FaFulcrum } from "react-icons/fa";
+import { FaFulcrum } from "react-icons/fa";
 
 
 export default function Profile() {
@@ -63,10 +60,10 @@ export default function Profile() {
         }
     }
 
-    async function getPageData(){
+    async function getPageData() {
         await getPlayerGames(0, await GetCurrentPlayer());
     }
-    
+
     async function fetchPlayerGames(page, player) {
         const response = await fetch(`/api/v1/games?playerId=${player.id}&page=${page}`, {
             headers: {
@@ -90,7 +87,7 @@ export default function Profile() {
             <td style={{ color: '#ffffff', backgroundColor: 'rgba(0, 0, 0, 0)' }}>{game.id}</td>
             <td style={{ color: '#ffffff', backgroundColor: 'rgba(0, 0, 0, 0)' }}>{game.players[0].user.username}</td>
             <td style={{ color: '#ffffff', backgroundColor: 'rgba(0, 0, 0, 0)', }}>{JSON.stringify(game) === "{}" ? null : game.players.map((player, index, array) => player.user.username + (index < array.length - 1 ? ", " : ""))}</td>
-        </tr>)                                                
+        </tr>)
 
     function newPages(direction) {
         let out = []
@@ -100,15 +97,15 @@ export default function Profile() {
         return out;
     }
 
-        function sendLogoutRequest() {
-          const jwt = window.localStorage.getItem("jwt");
-          if (jwt || typeof jwt === "undefined") {
+    function sendLogoutRequest() {
+        const jwt = window.localStorage.getItem("jwt");
+        if (jwt || typeof jwt === "undefined") {
             tokenService.removeUser();
             window.location.href = "/";
-          } else {
+        } else {
             alert("There is no user logged in");
-          }
-        
+        }
+
     }
 
     function DeleteCurrentAccount() {

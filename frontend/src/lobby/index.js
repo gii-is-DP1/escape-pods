@@ -1,6 +1,6 @@
 import jwt_decode from "jwt-decode";
 import React, { useEffect, useState } from 'react';
-import { Button, Badge, UncontrolledCollapse } from "reactstrap";
+import { Button, Badge } from "reactstrap";
 import '../App.css';
 import tokenService from '../services/token.service';
 import '../static/css/home/home.css';
@@ -9,10 +9,7 @@ import { Link } from 'react-router-dom';
 import itemsInitializers from "./gameItemsInitializers";
 
 //ICONOS
-import { DiAptana } from "react-icons/di";
-import { MdAdd, MdOutlinePersonAddAlt1 } from "react-icons/md";
-import { TiTick } from "react-icons/ti";
-import { RiChatOffLine, RiChat4Line, RiCodeFill } from "react-icons/ri";
+
 
 
 
@@ -220,67 +217,6 @@ export default function Lobby() {
                             </Button>
                         </Link>
                     </div>
-                    <div>
-                        <Button
-                            //color="dark"
-                            id="toggler"
-                            style={{
-                                marginBottom: '1rem', backgroundColor: "#fefefe2d",
-                                alignItems: 'center', height: 50, marginLeft: 60, marginRight: 10
-                            }}
-                        >
-                            <RiCodeFill style={{ fontSize: 30 }} />
-
-                        </Button>
-                    </div>
-
-                    <div style={{ marginTop: 50 }}>
-                        <UncontrolledCollapse horizontal toggler="#toggler" >
-
-                            <p style={{ backgroundColor: "#0000006a", color: 'white', borderRadius: 7, width: 400, height: 565 }}>
-                                <p style={{ color: 'white', textAlign: 'center', fontSize: 30 }}>Friends</p>
-                                <p style={{ color: 'white', textAlign: 'left', margin: 20 }}> <img className="profile-picture" src='https://media.tenor.com/uku4KIcT-oUAAAAC/ianleong.gif' />
-                                    player2 <Button className="button" style={{ color: 'white', backgroundColor: "#00000000" }}
-                                        onClick={() => {
-
-                                        }}>
-                                        <MdOutlinePersonAddAlt1 style={{ fontSize: 30 }} />
-                                    </Button>
-
-                                </p>
-
-                                <p style={{ color: 'white', textAlign: 'left', margin: 20 }}> <img className="profile-picture" src='https://media.tenor.com/MSF0PH3M2WkAAAAC/sungchan-nct-sungchan.gif' />
-                                    player3 <TiTick style={{ fontSize: 30 }} />
-
-                                </p>
-                                <p style={{ color: 'white', textAlign: 'left', margin: 20 }}> <img className="profile-picture" src='https://pbs.twimg.com/media/F3OcIipbMAAtbKH?format=jpg&name=medium' />
-                                    player4 <TiTick style={{ fontSize: 30 }} />
-
-                                </p>
-                                <p style={{ color: 'white', textAlign: 'left', margin: 20 }}> <img className="profile-picture" src='https://media.tenor.com/tGiOcAGrtpsAAAAd/daniel.gif' />
-                                    player5 <TiTick style={{ fontSize: 30 }} />
-
-                                </p>
-                                <p style={{ color: 'white', textAlign: 'left', fontSize: 25, margin: 20 }}>Chat :
-                                    <Button className="button" style={{ color: 'white', backgroundColor: "#00000000" }}
-                                        onClick={() => {
-                                            // es el chat activo, deberia cambiar al pulsarlo.
-                                            <RiChat4Line style={{ fontSize: 30 }} />
-
-                                        }}>
-                                        <RiChatOffLine style={{ fontSize: 30 }} />
-                                    </Button></p>
-                                <Badge color="secondary" style={{
-                                    width: 400, height: 50, fontSize: 30, textlign: 'center', borderRadius: 15
-                                }}>
-                                    hello dudes!
-                                </Badge>
-
-                            </p>
-                        </UncontrolledCollapse>
-                    </div>
-
-
                 </div >
             }
             {loading &&

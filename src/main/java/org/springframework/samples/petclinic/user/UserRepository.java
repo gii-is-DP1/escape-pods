@@ -32,6 +32,8 @@ public interface UserRepository extends CrudRepository<User, String> {
 
 	Optional<User> findByUsername(String username);
 
+	List<User> findByUsername(String username, Pageable paging);
+
 	Boolean existsByUsername(String username);
 
 	Optional<User> findById(Integer id);
