@@ -34,7 +34,6 @@ export default function EditPlayer() {
         })
 
         const fetchedPlayer = await response.json();
-        console.log(fetchedPlayer[0]);
         setMyUser(fetchedPlayer[0].user);
         setMyPlayer(fetchedPlayer[0]);
     }
