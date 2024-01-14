@@ -8,6 +8,8 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface PlayerRepository extends CrudRepository<Player, Integer> {
 
+    List<Player> findAll();      
+    Optional<Player> findById(Integer id);
     @Query("SELECT DISTINCT player FROM Player player WHERE player.user.id = :userId")
     public Optional<Player> findByUser(int userId);
 

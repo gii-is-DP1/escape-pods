@@ -37,70 +37,70 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @WebMvcTest(SlotInfoController.class)
 public class SlotInfoRestControllerTests {
 
-    @MockBean
-    private SlotInfoService slotInfoService;
+        @MockBean
+        private SlotInfoService slotInfoService;
 
-    @Autowired
-    private MockMvc mockMvc;
+        @Autowired
+        private MockMvc mockMvc;
 
-    private SlotInfo slotInfo1;
-    private SlotInfo slotInfo2;
+        private SlotInfo slotInfo1;
+        private SlotInfo slotInfo2;
 
-    private List<SlotInfo> slotInfos;
-    ObjectMapper objectMapper = new ObjectMapper();
+        private List<SlotInfo> slotInfos;
+        ObjectMapper objectMapper = new ObjectMapper();
 
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
+        @BeforeEach
+        void setUp() {
+                MockitoAnnotations.openMocks(this);
 
-        slotInfo1 = new SlotInfo();
-        slotInfo1.setId(1);
+                slotInfo1 = new SlotInfo();
+                slotInfo1.setId(1);
 
-        slotInfo2 = new SlotInfo();
-        slotInfo2.setId(2);
+                slotInfo2 = new SlotInfo();
+                slotInfo2.setId(2);
 
-        slotInfos = new ArrayList<SlotInfo>();
-        slotInfos.add(slotInfo1);
-        slotInfos.add(slotInfo2);
+                slotInfos = new ArrayList<SlotInfo>();
+                slotInfos.add(slotInfo1);
+                slotInfos.add(slotInfo2);
 
-        objectMapper = new ObjectMapper();
-    }
+                objectMapper = new ObjectMapper();
+        }
 
-    @Test
-    @WithMockUser(username = "player2", password = "0wn3r")
-    void canGetAllSlotInfos() throws Exception {
+        @Test
+        @WithMockUser(username = "player2", password = "0wn3r")
+        void canGetAllSlotInfos() throws Exception {
 
-        when(slotInfoService.getAllSlotInfos()).thenReturn(slotInfos);
+                when(slotInfoService.getAllSlotInfos()).thenReturn(slotInfos);
 
-        MockHttpServletRequestBuilder requestBuilder = get("/api/v1/slotInfos")
-                .with(csrf());
+                MockHttpServletRequestBuilder requestBuilder = get("/api/v1/slotInfos")
+                                .with(csrf());
 
-        MvcResult result = mockMvc.perform(requestBuilder)
-                .andExpect(status().isOk())
-                .andReturn();
+                MvcResult result = mockMvc.perform(requestBuilder)
+                                .andExpect(status().isOk())
+                                .andReturn();
 
-        String responseBody = result.getResponse().getContentAsString();
-        List<SlotInfo> ActualSlotInfos = objectMapper.readValue(responseBody, List.class);
+                String responseBody = result.getResponse().getContentAsString();
+                List<SlotInfo> ActualSlotInfos = objectMapper.readValue(responseBody, List.class);
 
-        assertEquals(slotInfos.size(), ActualSlotInfos.size());
-    }
+                assertEquals(slotInfos.size(), ActualSlotInfos.size());
+        }
 
-    @Test
-    @WithMockUser(username = "player2", password = "0wn3r")
-    void canGetSlotInfoById() throws Exception {
-        Integer slotInfo1Id = 1;
-        when(slotInfoService.getSlotInfoById(slotInfo1Id)).thenReturn(Optional.of(slotInfo1));
+        @Test
+        @WithMockUser(username = "player2", password = "0wn3r")
+        void canGetSlotInfoById() throws Exception {
+                Integer slotInfo1Id = 1;
+                when(slotInfoService.getSlotInfoById(slotInfo1Id)).thenReturn(Optional.of(slotInfo1));
 
-        MockHttpServletRequestBuilder requestBuilder = get("/api/v1/slotInfos/{id}", slotInfo1Id)
-                .with(csrf());
+                MockHttpServletRequestBuilder requestBuilder = get("/api/v1/slotInfos/{id}", slotInfo1Id)
+                                .with(csrf());
 
-        mockMvc.perform(requestBuilder)
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(slotInfo1Id));
+                mockMvc.perform(requestBuilder)
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.id").value(slotInfo1Id));
 
-    }
+        }
 
-    @Test
+        @Test
         @WithMockUser(username = "player2", password = "0wn3r")
         void cantGetSlotInfoById_NotFound() throws Exception {
 
@@ -110,114 +110,114 @@ public class SlotInfoRestControllerTests {
 
                 MockHttpServletRequestBuilder requestBuilder = get("/api/v1/slotInfos/{id}", nonExistentSlotInfoId)
                                 .with(csrf());
-                                
+
                 mockMvc.perform(requestBuilder)
                                 .andExpect(status().isNotFound());
 
         }
 
-    @Test
-    @WithMockUser(username = "player2", password = "0wn3r")
-    void canCreateSlotInfo() throws Exception {
+        @Test
+        @WithMockUser(username = "player2", password = "0wn3r")
+        void canCreateSlotInfo() throws Exception {
 
-        Game game = new Game();
-        ShelterCard shelterCard = new ShelterCard();
-        SlotInfo slotInfo = new SlotInfo();
-        slotInfo.setId(1);
-        slotInfo.setPosition(3);
-        slotInfo.setRole(Role.CAPTAIN);
-        slotInfo.setSlotScore(3);
-        slotInfo.setShelter(shelterCard);
-        slotInfo.setGame(game);
+                Game game = new Game();
+                ShelterCard shelterCard = new ShelterCard();
+                SlotInfo slotInfo = new SlotInfo();
+                slotInfo.setId(1);
+                slotInfo.setPosition(3);
+                slotInfo.setRole(Role.CAPTAIN);
+                slotInfo.setSlotScore(3);
+                slotInfo.setShelter(shelterCard);
+                slotInfo.setGame(game);
 
-        objectMapper = new ObjectMapper();
-        when(slotInfoService.save(any(SlotInfo.class))).thenAnswer(i -> i.getArguments()[0]);
-        String json = objectMapper.writeValueAsString(slotInfo);
+                objectMapper = new ObjectMapper();
+                when(slotInfoService.save(any(SlotInfo.class))).thenAnswer(i -> i.getArguments()[0]);
+                String json = objectMapper.writeValueAsString(slotInfo);
 
-        MockHttpServletRequestBuilder requestBuilder = post("/api/v1/slotInfos")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(json)
-                .with(csrf());
-        MvcResult result = mockMvc.perform(requestBuilder)
-                .andExpect(status().isCreated())
-                .andReturn();
+                MockHttpServletRequestBuilder requestBuilder = post("/api/v1/slotInfos")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(json)
+                                .with(csrf());
+                MvcResult result = mockMvc.perform(requestBuilder)
+                                .andExpect(status().isCreated())
+                                .andReturn();
 
-        String responseBody = result.getResponse().getContentAsString();
-        SlotInfo ActualSlotInfo = objectMapper.readValue(responseBody, SlotInfo.class);
+                String responseBody = result.getResponse().getContentAsString();
+                SlotInfo ActualSlotInfo = objectMapper.readValue(responseBody, SlotInfo.class);
 
-        assertTrue(1 == ActualSlotInfo.getId());
-    }
+                assertTrue(1 == ActualSlotInfo.getId());
+        }
 
-    @Test
-    @WithMockUser("PLAYER")
-    void cantCreateSlotInfo_BadRequest() throws Exception {
+        @Test
+        @WithMockUser("PLAYER")
+        void cantCreateSlotInfo_BadRequest() throws Exception {
 
-        // Con datos incorrectos
-        SlotInfo slotInfo = new SlotInfo();
-        slotInfo.setId(-1);
-        slotInfo.setPosition(3);
-        slotInfo.setRole(Role.CAPTAIN);
-        slotInfo.setSlotScore(3);
-        slotInfo.setShelter(null);
-        slotInfo.setGame(null);
+                // Con datos incorrectos
+                SlotInfo slotInfo = new SlotInfo();
+                slotInfo.setId(-1);
+                slotInfo.setPosition(3);
+                slotInfo.setRole(Role.CAPTAIN);
+                slotInfo.setSlotScore(3);
+                slotInfo.setShelter(null);
+                slotInfo.setGame(null);
 
-        objectMapper = new ObjectMapper();
+                objectMapper = new ObjectMapper();
 
-        when(slotInfoService.save(any(SlotInfo.class))).thenAnswer(i -> i.getArguments()[0]);
-        String json = objectMapper.writeValueAsString(slotInfo);
+                when(slotInfoService.save(any(SlotInfo.class))).thenAnswer(i -> i.getArguments()[0]);
+                String json = objectMapper.writeValueAsString(slotInfo);
 
-        MockHttpServletRequestBuilder requestBuilder = post("/api/v1/slotInfos")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(json)
-                .with(csrf());
-        MvcResult result = mockMvc.perform(requestBuilder)
-                .andExpect(status().isBadRequest())
-                .andReturn();
-        Integer actualStatus = result.getResponse().getStatus();
-        assertTrue(400 == actualStatus);
-    }
+                MockHttpServletRequestBuilder requestBuilder = post("/api/v1/slotInfos")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(json)
+                                .with(csrf());
+                MvcResult result = mockMvc.perform(requestBuilder)
+                                .andExpect(status().isBadRequest())
+                                .andReturn();
+                Integer actualStatus = result.getResponse().getStatus();
+                assertTrue(400 == actualStatus);
+        }
 
-    @Test
-    @WithMockUser("PLAYER")
-    void canDeleteSlotInfo() throws Exception {
-        Integer slotInfo1Id = 1;
+        @Test
+        @WithMockUser("PLAYER")
+        void canDeleteSlotInfo() throws Exception {
+                Integer slotInfo1Id = 1;
 
-        ObjectMapper objectMapper = new ObjectMapper();
+                ObjectMapper objectMapper = new ObjectMapper();
 
-        when(slotInfoService.getSlotInfoById(slotInfo1Id)).thenReturn(Optional.of(slotInfo1));
-        doNothing().when(slotInfoService).delete(slotInfo1Id);
+                when(slotInfoService.getSlotInfoById(slotInfo1Id)).thenReturn(Optional.of(slotInfo1));
+                doNothing().when(slotInfoService).delete(slotInfo1Id);
 
-        String json = objectMapper.writeValueAsString(slotInfo1);
+                String json = objectMapper.writeValueAsString(slotInfo1);
 
-        MockHttpServletRequestBuilder requestBuilder = delete("/api/v1/slotInfos/{id}", slotInfo1Id)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(json)
-                .with(csrf());
-        mockMvc.perform(requestBuilder)
-                .andExpect(status().isNoContent());
+                MockHttpServletRequestBuilder requestBuilder = delete("/api/v1/slotInfos/{id}", slotInfo1Id)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(json)
+                                .with(csrf());
+                mockMvc.perform(requestBuilder)
+                                .andExpect(status().isNoContent());
 
-    }
+        }
 
-    @Test
-    @WithMockUser("PLAYER")
-    void cantDeleteSlotInfo_NotFound() throws Exception {
-        Integer slotInfo1Id = 1;
-        Integer nonExistendSlotInfoId = 33;
+        @Test
+        @WithMockUser("PLAYER")
+        void cantDeleteSlotInfo_NotFound() throws Exception {
+                Integer slotInfo1Id = 1;
+                Integer nonExistendSlotInfoId = 33;
 
-        ObjectMapper objectMapper = new ObjectMapper();
+                ObjectMapper objectMapper = new ObjectMapper();
 
-        when(slotInfoService.getSlotInfoById(nonExistendSlotInfoId)).thenThrow(ResourceNotFoundException.class);
-        doNothing().when(slotInfoService).delete(slotInfo1Id);
+                when(slotInfoService.getSlotInfoById(nonExistendSlotInfoId)).thenThrow(ResourceNotFoundException.class);
+                doNothing().when(slotInfoService).delete(slotInfo1Id);
 
-        String json = objectMapper.writeValueAsString(slotInfo1);
+                String json = objectMapper.writeValueAsString(slotInfo1);
 
-        MockHttpServletRequestBuilder requestBuilder = delete("/api/v1/slotInfos/{id}", slotInfo1Id)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(json)
-                .with(csrf());
+                MockHttpServletRequestBuilder requestBuilder = delete("/api/v1/slotInfos/{id}", slotInfo1Id)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(json)
+                                .with(csrf());
 
-        mockMvc.perform(requestBuilder)
-                .andExpect(status().isNotFound());
+                mockMvc.perform(requestBuilder)
+                                .andExpect(status().isNotFound());
 
-    }
+        }
 }
