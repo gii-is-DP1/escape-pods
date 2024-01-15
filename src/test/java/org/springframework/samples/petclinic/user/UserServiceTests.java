@@ -68,7 +68,7 @@ class UserServiceTests {
 		assertEquals(10, owners.size());
 
 		List<User> admins = (List<User>) this.userService.findAllByAuthority("ADMIN", paging);
-		assertEquals(1, admins.size());
+		assertEquals(2, admins.size());
 
 		List<User> vets = (List<User>) this.userService.findAllByAuthority("VET", paging);
 		assertEquals(6, vets.size());

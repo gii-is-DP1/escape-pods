@@ -4,6 +4,8 @@
 INSERT INTO authorities(id,authority) VALUES (1,'ADMIN');
 INSERT INTO appusers(id,username,password,authority) VALUES (1,'admin1','$2a$10$nMmTWAhPTqXqLDJTag3prumFrAJpsYtroxf0ojesFYq0k4PmcbWUS',1);
 
+INSERT INTO appusers(id,username,password,authority) VALUES (99,'admin2','$2a$10$nMmTWAhPTqXqLDJTag3prumFrAJpsYtroxf0ojesFYq0k4PmcbWUS',1);
+
 -- Three clinic owners, with password "clinic_owner"
 INSERT INTO authorities(id,authority) VALUES (2,'CLINIC_OWNER');
 INSERT INTO appusers(id,username,password,authority) VALUES (2,'clinicOwner1','$2a$10$t.I/C4cjUdUWzqlFlSddLeh9SbZ6d8wR7mdbeIRghT355/KRKZPAi',2);
@@ -150,8 +152,8 @@ INSERT INTO players(id, profile_description, profile_picture, user_id) VALUES (5
 
 INSERT INTO games(id, num_players, start, finish, status) VALUES (1, 5, '2022-01-02 19:33', '2022-01-02 19:34', 'WAITING');
 INSERT INTO games(id, num_players, start, finish, status) VALUES (2, 4, '2022-01-03 19:33', '2022-01-03 19:34', 'WAITING');
-INSERT INTO games(id, num_players, start, finish, status) VALUES (3, 5, '2022-01-04 19:33', '2022-01-04 19:59', 'FINISHED');
-INSERT INTO games(id, num_players, start, finish, status) VALUES (4, 4, '2022-01-05 19:33', '2022-01-05 19:59', 'FINISHED');
+INSERT INTO games(id, num_players,winner_id, start, finish, status) VALUES (3, 5,2, '2022-01-04 19:33', '2022-01-04 19:59', 'FINISHED');
+INSERT INTO games(id, num_players,winner_id, start, finish, status) VALUES (4, 4,1, '2022-01-05 19:33', '2022-01-05 19:59', 'FINISHED');
 
 INSERT INTO games_players(game_id, players_id) VALUES (1, 1);
 INSERT INTO games_players(game_id, players_id) VALUES (1, 2);
