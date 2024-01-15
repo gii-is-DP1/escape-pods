@@ -20,6 +20,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
@@ -81,6 +82,37 @@ public class BeaconRestControllerTests {
                 List<Beacon> ActualBeacons = objectMapper.readValue(responseBody, List.class);
 
                 assertEquals(beacons.size(), ActualBeacons.size());
+        }
+
+        @Test
+        @WithMockUser(username = "player2", password = "0wn3r")
+        void canGetBeaconById() throws Exception {
+                Integer beacon1Id = 1;
+                when(beaconService.getBeaconById(beacon1Id)).thenReturn(Optional.of(beacon1));
+
+                MockHttpServletRequestBuilder requestBuilder = get("/api/v1/beacons/{id}", beacon1Id)
+                                .with(csrf());
+
+                mockMvc.perform(requestBuilder)
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.id").value(beacon1Id));
+
+        }
+
+        @Test
+        @WithMockUser(username = "player2", password = "0wn3r")
+        void cantGetBeaconById_NotFound() throws Exception {
+
+                Integer nonExistentBeaconId = 12;
+
+                when(beaconService.getBeaconById(nonExistentBeaconId)).thenThrow(ResourceNotFoundException.class);
+
+                MockHttpServletRequestBuilder requestBuilder = get("/api/v1/beacons/{id}", nonExistentBeaconId)
+                                .with(csrf());
+
+                mockMvc.perform(requestBuilder)
+                                .andExpect(status().isNotFound());
+
         }
 
         @Test

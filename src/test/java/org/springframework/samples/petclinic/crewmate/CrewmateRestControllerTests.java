@@ -20,6 +20,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
@@ -83,6 +84,37 @@ public class CrewmateRestControllerTests {
                 List<Crewmate> ActualCrewmates = objectMapper.readValue(responseBody, List.class);
 
                 assertEquals(crewmates.size(), ActualCrewmates.size());
+        }
+
+        @Test
+        @WithMockUser(username = "player2", password = "0wn3r")
+        void canGetCrewmateById() throws Exception {
+                Integer crewmate1Id = 1;
+                when(crewmateService.getCrewmateById(crewmate1Id)).thenReturn(Optional.of(crewmate1));
+
+                MockHttpServletRequestBuilder requestBuilder = get("/api/v1/crewmates/{id}", crewmate1Id)
+                                .with(csrf());
+
+                mockMvc.perform(requestBuilder)
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.id").value(crewmate1Id));
+
+        }
+
+        @Test
+        @WithMockUser(username = "player2", password = "0wn3r")
+        void cantCrewmateById_NotFound() throws Exception {
+
+                Integer nonExistentCrewmateId = 12;
+
+                when(crewmateService.getCrewmateById(nonExistentCrewmateId)).thenThrow(ResourceNotFoundException.class);
+
+                MockHttpServletRequestBuilder requestBuilder = get("/api/v1/crewmates/{id}", nonExistentCrewmateId)
+                                .with(csrf());
+
+                mockMvc.perform(requestBuilder)
+                                .andExpect(status().isNotFound());
+
         }
 
         @Test

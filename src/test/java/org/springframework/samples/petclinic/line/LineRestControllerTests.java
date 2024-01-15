@@ -20,6 +20,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.samples.petclinic.beacon.Beacon;
@@ -82,6 +83,37 @@ public class LineRestControllerTests {
                 List<Line> ActualLines = objectMapper.readValue(responseBody, List.class);
 
                 assertEquals(lines.size(), ActualLines.size());
+        }
+
+        @Test
+        @WithMockUser(username = "player2", password = "0wn3r")
+        void canGetLineById() throws Exception {
+                Integer line1Id = 1;
+                when(lineService.getLineById(line1Id)).thenReturn(Optional.of(line1));
+
+                MockHttpServletRequestBuilder requestBuilder = get("/api/v1/lines/{id}", line1Id)
+                                .with(csrf());
+
+                mockMvc.perform(requestBuilder)
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.id").value(line1Id));
+
+        }
+
+        @Test
+        @WithMockUser(username = "player2", password = "0wn3r")
+        void cantGetLineById_NotFound() throws Exception {
+
+                Integer nonExistentLineId = 12;
+
+                when(lineService.getLineById(nonExistentLineId)).thenThrow(ResourceNotFoundException.class);
+
+                MockHttpServletRequestBuilder requestBuilder = get("/api/v1/lines/{id}", nonExistentLineId)
+                                .with(csrf());
+
+                mockMvc.perform(requestBuilder)
+                                .andExpect(status().isNotFound());
+
         }
 
         @Test
