@@ -31,7 +31,7 @@ class SlotInfoServiceTests {
     }
 
     @Test
-    void getAllBeaconsTest() {
+    void getAllSlotInfosTest() {
         SlotInfo slotInfo1 = new SlotInfo();
         SlotInfo slotInfo2 = new SlotInfo();
 
@@ -81,7 +81,7 @@ class SlotInfoServiceTests {
     }
 
     @Test
-    void saveBeaconTest() {
+    void saveSlotInfoTest() {
         SlotInfo slotInfo = new SlotInfo();
         when(slotInfoRepository.save(slotInfo)).thenReturn(slotInfo);
 

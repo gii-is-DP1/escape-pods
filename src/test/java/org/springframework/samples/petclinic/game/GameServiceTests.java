@@ -32,36 +32,19 @@ class GameServiceTests {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        // GameService is now automatically instantiated with the mocked dependencies
     }
 
     @Test
     void getAllGamesTest() {
         Game game1 = new Game();
         Game game2 = new Game();
-        /*
-         * para que los test de servicios salgan bien, es necesario que lo que se
-         * pruebe( findAll())
-         * este bien declarado siempre, en este caso con el objeto paging como parametro
-         * para evitar lios
-         * 
-         */
         Pageable paging;
         paging = PageRequest.of(0, 10);
 
         List<Game> expectedGames = Arrays.asList(game1, game2);
-        /*
-         * si se esta llamando al findAll le tenemo que devolver la lista de juegos q
-         * hemos creado para q funcione
-         * correctamente, seguramnente, este proceso sera necesario en toda prueba q
-         * conlleve este tipo de operacion
-         * 
-         */
         when(gameRepository.findAll(any(Pageable.class))).thenReturn(expectedGames);
 
-        // se esta llamando 1 vez al findAll cada vez que se invoca el getAllGames()
         List<Game> actualGames = gameService.getAllGames(paging);
-        // System.out.println(gameService.getAllGames(paging));
 
         assertIterableEquals(expectedGames, actualGames);
         verify(gameRepository, times(1)).findAll(paging);
@@ -121,5 +104,6 @@ class GameServiceTests {
 
         verify(gameRepository, times(1)).deleteById(gameId);
     }
+
 
 }
