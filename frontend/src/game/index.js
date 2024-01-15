@@ -263,12 +263,8 @@ export default function Game() {
     function isGameFinished(gamePlayers, playableSectorsNumbers, pods, shelterCards) {
         let finished = false
         let noMoreTurns = gamePlayers.filter(gamePlayer => gamePlayer.noMoreTurns === true).length === gamePlayers.length
-        console.log(noMoreTurns)
         let noPlayablePods = playableSectorsNumbers && (pods.filter(pod => pod.sector && playableSectorsNumbers.includes(pod.sector.number)).length === 0)
-        console.log(playableSectorsNumbers)
-        console.log(noPlayablePods)
         let allSheltersFull = shelterCards.filter(shelterCard => shelterCard.explosion === 6).length === 4
-        console.log(allSheltersFull)
         if (noMoreTurns || noPlayablePods || allSheltersFull) {
             finished = true
         }
@@ -308,7 +304,6 @@ export default function Game() {
         return (
             <div style={{ width: 100, height: 100, position: "absolute", left: props.x, top: props.y }}
                 onClick={() => {
-                    console.log(props.sector)
                     if (selectingSector) {
                         sectorClickHandler(props.sector)
                     }
@@ -369,7 +364,6 @@ export default function Game() {
         return (
             <div className={props.pod.capacity === 3 ? "pod3" : props.pod.capacity === 2 ? "pod2" : "pod1"} style={props.pod.sector === null ? { left: hangarX[props.pod.number - 1], top: hangarY[props.pod.number - 1] } : null}
                 onClick={() => {
-                    console.log(props.pod)
                     if (lastRound && !playableSectorsNumbers.includes(props.pod.sector ? props.pod.sector.number : null)) {
                         ShowAlert("There is an impassible barrier, so you cannot use this pod")
                     } else if (selectingPod) {
@@ -525,7 +519,6 @@ export default function Game() {
         }
         return (
             <div className={"shelter-" + props.shelterCard.type.toLowerCase()} onClick={() => {
-                console.log(props.shelterCard)
                 if (selectingShelterCard) {
                     shelterClickHandler(props.shelterCard)
                 }
@@ -1472,7 +1465,6 @@ export default function Game() {
         })
         setGame(await patchedGame.json())
         setActionSlots({ embark: null, accelerate: null, spy: null, minipod: null })
-        console.log(specialActionSlots.board, specialActionSlots.program, specialActionSlots.pilot)
         if (specialActionSlots.board && specialActionSlots.program && specialActionSlots.pilot) {
             setSpecialActionSlots({ ...specialActionSlots, board: null, program: null, pilot: null })
         }
@@ -1503,7 +1495,7 @@ export default function Game() {
         <>
 
             {!emptyChecker("array", sectors) && !emptyChecker("array", lines) && !emptyChecker("array", pods) &&
-                !emptyChecker("array", shelterCards) && !emptyChecker("array", lines) &&
+                !emptyChecker("array", shelterCards) && !emptyChecker("array", lines) && game.players.map(player => player.id).includes(myPlayer.id) &&
                 <div className="game-page-container">
                     <Alert isOpen={visible} style={{
                         position: "absolute", zIndex: 1000, width: "40%", textAlign: "center",
