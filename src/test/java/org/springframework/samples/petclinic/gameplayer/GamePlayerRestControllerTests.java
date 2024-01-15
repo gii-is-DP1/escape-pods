@@ -116,6 +116,22 @@ public class GamePlayerRestControllerTests {
 
         @Test
         @WithMockUser(username = "player2", password = "0wn3r")
+        void cantGamePlayerById_NotFound() throws Exception {
+
+                Integer nonExistentGPId = 12;
+
+                when(gamePlayerService.getGamePlayerById(nonExistentGPId)).thenThrow(ResourceNotFoundException.class);
+
+                MockHttpServletRequestBuilder requestBuilder = get("/api/v1/gamePlayers/{id}", nonExistentGPId)
+                                .with(csrf());
+
+                mockMvc.perform(requestBuilder)
+                                .andExpect(status().isNotFound());
+
+        }
+
+        @Test
+        @WithMockUser(username = "player2", password = "0wn3r")
         void canCreateGamePlayer() throws Exception {
 
                 Game game = new Game();

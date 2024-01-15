@@ -21,6 +21,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
@@ -97,6 +98,37 @@ public class ShelterCardRestControllerTests {
                 List<ShelterCard> actualShelterCards = objectMapper.readValue(responseBody, List.class);
 
                 assertEquals(shelterCards.size(), actualShelterCards.size());
+        }
+
+        @Test
+        @WithMockUser(username = "player2", password = "0wn3r")
+        void canGetShelterCardById() throws Exception {
+                Integer shelterCard1Id = 1;
+                when(shelterCardService.getShelterCardById(shelterCard1Id)).thenReturn(Optional.of(shelterCard1));
+
+                MockHttpServletRequestBuilder requestBuilder = get("/api/v1/shelterCards/{id}", shelterCard1Id)
+                                .with(csrf());
+
+                mockMvc.perform(requestBuilder)
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.id").value(shelterCard1Id));
+
+        }
+
+        @Test
+        @WithMockUser(username = "player2", password = "0wn3r")
+        void cantGetBeaconById_NotFound() throws Exception {
+
+                Integer nonExistentShelterCardId = 12;
+
+                when(shelterCardService.getShelterCardById(nonExistentShelterCardId)).thenThrow(ResourceNotFoundException.class);
+
+                MockHttpServletRequestBuilder requestBuilder = get("/api/v1/shelterCards/{id}", nonExistentShelterCardId)
+                                .with(csrf());
+
+                mockMvc.perform(requestBuilder)
+                                .andExpect(status().isNotFound());
+
         }
 
         @Test
