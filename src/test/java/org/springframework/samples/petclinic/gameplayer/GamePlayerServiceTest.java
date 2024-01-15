@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.samples.petclinic.beacon.Beacon;
 import org.springframework.samples.petclinic.game.Game;
 
 class GamePlayerServiceTest {
@@ -114,6 +115,24 @@ class GamePlayerServiceTest {
         assertTrue(gamePlayerService.getGamePlayersByGameId(nonExistentGameId).isEmpty());
 
         verify(gamePlayerRepository, times(1)).findByGameId(nonExistentGameId);
+
+    }
+
+    @Test
+    void deleteGamePlayerByGameIdTest() {
+
+        Integer gameId = 1;
+        Game game1 = new Game();
+        game1.setId(gameId);
+
+        GamePlayer expectedGamePlayer = new GamePlayer();
+        expectedGamePlayer.setId(2);
+        expectedGamePlayer.setGame(game1);
+
+        when(gamePlayerRepository.deleteByGameId(game1.getId())).thenReturn(1);
+        gamePlayerService.deleteByGameId(gameId);
+        assertTrue(1== gamePlayerRepository.deleteByGameId(game1.getId()));
+        verify(gamePlayerRepository, times(2)).deleteByGameId(gameId);
 
     }
 

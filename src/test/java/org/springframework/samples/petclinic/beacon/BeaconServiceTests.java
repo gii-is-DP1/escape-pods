@@ -1,6 +1,7 @@
 package org.springframework.samples.petclinic.beacon;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 import java.util.Arrays;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.samples.petclinic.game.Game;
 
 class BeaconServiceTests {
 
@@ -100,5 +102,23 @@ class BeaconServiceTests {
         assertEquals(expectedBeacon, beaconService.getBeaconById(beaconId).get());
 
         verify(beaconRepository, times(1)).deleteById(beaconId);
+    }
+
+    @Test
+    void deleteBeaconByGameIdTest() {
+
+        Integer gameId = 1;
+        Game game1 = new Game();
+        game1.setId(gameId);
+
+        Beacon expectedBeacon = new Beacon();
+        expectedBeacon.setId(2);
+        expectedBeacon.setGame(game1);
+
+        when(beaconRepository.deleteByGameId(game1.getId())).thenReturn(1);
+        beaconService.deleteByGameId(gameId);
+        assertTrue(1== beaconRepository.deleteByGameId(game1.getId()));
+        verify(beaconRepository, times(2)).deleteByGameId(gameId);
+
     }
 }

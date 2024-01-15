@@ -2,6 +2,7 @@ package org.springframework.samples.petclinic.sector;
 
 import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 import java.util.Arrays;
@@ -14,7 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-
+import org.springframework.samples.petclinic.game.Game;
 import org.springframework.samples.petclinic.line.LineRepository;
 
 public class SectorServiceTest {
@@ -93,6 +94,24 @@ public class SectorServiceTest {
         assertEquals(expectedSector, sectorService.getSectorById(sectorId).get());
 
         verify(sectorRepository, times(1)).deleteById(sectorId);
+    }
+
+    @Test
+    void deleteSectorByGameIdTest() {
+
+        Integer gameId = 1;
+        Game game1 = new Game();
+        game1.setId(gameId);
+
+        Sector expectedSector = new Sector();
+        expectedSector.setId(2);
+        expectedSector.setGame(game1);
+
+        when(sectorRepository.deleteByGameId(game1.getId())).thenReturn(1);
+        sectorService.deleteByGameId(gameId);
+        assertTrue(1== sectorRepository.deleteByGameId(game1.getId()));
+        verify(sectorRepository, times(2)).deleteByGameId(gameId);
+
     }
 
 }
