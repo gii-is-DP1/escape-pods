@@ -1207,6 +1207,11 @@ export default function Game() {
                             ShowAlert("There are no available sectors next to the hangar")
                             setEmbarking(false)
                             moveCrewmate(selectedCrewmate, null, null)
+                            if (actionSlots.embark && actionSlots.embark.length === 2) {
+                                setActionSlots({ ...actionSlots, embark: actionSlots.embark.slice(0, 1) })
+                            } else {
+                                setActionSlots({ ...actionSlots, embark: null })
+                            }
                         } else {
                             ShowAlert("Select one of the adjacent sectors to the hangar")
                             setSelectingSector(true);

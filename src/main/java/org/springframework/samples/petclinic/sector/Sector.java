@@ -6,7 +6,7 @@ import org.springframework.samples.petclinic.game.Game;
 import org.springframework.samples.petclinic.line.Line;
 import org.springframework.samples.petclinic.model.BaseEntity;
 
-
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
@@ -26,7 +26,7 @@ public class Sector extends BaseEntity{
     Boolean scrap;
 
     @NotNull
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.REMOVE})
     List<Line> lines;
 
     @ManyToOne

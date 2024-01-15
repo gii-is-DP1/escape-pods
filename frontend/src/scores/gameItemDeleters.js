@@ -84,8 +84,8 @@ class ItemDeleters {
         await this.deleteCrewmates(gameId, jwt);
         await this.deletePods(gameId, jwt);
         await this.deleteShelterCards(gameId, jwt);
-        await this.deleteGamePlayers(gameId, jwt);
         await this.deleteSectors(gameId, jwt);
+        await this.deleteGamePlayers(gameId, jwt);
         await this.deleteLines(gameId, jwt);
         await this.deleteBeacons(gameId, jwt);
     }

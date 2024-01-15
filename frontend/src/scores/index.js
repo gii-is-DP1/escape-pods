@@ -206,7 +206,7 @@ export default function Scores() {
                         animation: "fadeIn 2s 15s forwards",
                         opacity: 0
                     }} onClick={() => {
-                        const tweetText = encodeURIComponent(`I just scored ${scores[myPlayer.user.username]} points in Escape Pods! #EscapePods #Un10ParaGonzalo \n\nTry it out at https://github.com/gii-is-DP1/DP1--2023-2024-l7-1`);
+                        const tweetText = encodeURIComponent(`I just scored ${scores[myPlayer.user.username]} points in Escape Pods!${myPlayer.id === winnerPlayer.id?"\nAND I WON😎!!!":""} \n\n#EscapePods #Un10ParaGonzalo #Un10ParaDani #Un10ParaPablo \n\nTry it out at https://github.com/gii-is-DP1/DP1--2023-2024-l7-1`);
                         window.open(`https://twitter.com/intent/tweet?text=${tweetText}`, "_blank");
                     }}>
                         {"Share on  "}
@@ -215,26 +215,28 @@ export default function Scores() {
                 </>
             }
             {!scores && game.winner &&
-                <Button className="button" style={{
-                    backgroundColor: "#ff8368",
-                    border: "none",
-                    width: 200,
-                    fontSize: 20,
-                    borderRadius: 20,
-                    height: 60,
-                    boxShadow: "5px 5px 5px #00000020",
-                    textShadow: "2px 2px 2px #00000020",
-                    transition: "0.15s",
-                    alignSelf: "center",
-                    marginRight: "4.5%",
-                    marginTop: "30px",
-                    animation: "fadeIn 2s 15s forwards",
-                    opacity: 0
-                }} onClick={() => {
-                    window.location.href = "/";
-                }}>
-                    EXIT
-                </Button>
+                <>
+                    <p style={{color:"white", fontSize:30, position:"absolute", top:"35%", left:"25%"}}>This game has already finished, nothing to see here...</p>
+                    <Button className="button" style={{
+                        backgroundColor: "#ff8368",
+                        position: "absolute",
+                        top: "40%",
+                        left: "40%",
+                        border: "none",
+                        width: 200,
+                        fontSize: 20,
+                        borderRadius: 20,
+                        height: 60,
+                        boxShadow: "5px 5px 5px #00000020",
+                        textShadow: "2px 2px 2px #00000020",
+                        transition: "0.15s",
+                        marginTop: "30px",
+                    }} onClick={() => {
+                        window.location.href = "/";
+                    }}>
+                        EXIT
+                    </Button>
+                </>
             }
         </div>
     )

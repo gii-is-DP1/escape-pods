@@ -41,6 +41,11 @@ public class GameService {
 
     @Transactional
     public Game save(Game g) throws DataAccessException {
+        if (g.getStatus() == GameStatus.PLAYING) {
+            if (!((g.getPlayers().size() >= 2) && (g.getPlayers().size() <= 5))) {
+                throw new IllegalArgumentException("The game must have between 2 and 5 players");
+            }
+        }
         gr.save(g);
         return g;
     }
@@ -66,11 +71,22 @@ public class GameService {
     }
 
     @Transactional
+    public Game addPlayer(Game g, Player p) throws DataAccessException {
+        if (g.getPlayers().size() < g.getNumPlayers() && !g.getPlayers().contains(p)) {
+            g.getPlayers().add(p);
+        } else {
+            throw new IllegalArgumentException("The game is full or you are already in it");
+        }
+        return g;
+    }
+
+    @Transactional
     public Game nextTurn(Game g, boolean lastRound) throws DataAccessException {
         List<Player> players = g.getPlayers();
         int index = g.getPlayers().indexOf(g.getActivePlayer());
-        if(lastRound) {
-            gpr.findByPlayerId(g.getActivePlayer().getId()).setNoMoreTurns(true); ;           
+        if (lastRound) {
+            gpr.findByPlayerId(g.getActivePlayer().getId()).setNoMoreTurns(true);
+            ;
         }
         if (index == players.size() - 1) {
             g.setActivePlayer(players.get(0));
