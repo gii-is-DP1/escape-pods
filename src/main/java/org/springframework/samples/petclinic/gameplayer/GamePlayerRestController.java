@@ -139,6 +139,14 @@ public class GamePlayerRestController {
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(summary = "this method update the number of actions that a player can do in a turn")
+    @ApiResponses(value = {
+
+            @ApiResponse(responseCode = "200", description = "the given id was correct and the gamePlayer's number of actions has been updated"),
+            @ApiResponse(responseCode = "401", description = "the user must be fully authenticated to access this method"),
+            @ApiResponse(responseCode = "404", description = " the given game id is not associated to any gamePlayer")
+
+    })
     @PatchMapping("/{id}/spendAction")
     public ResponseEntity<List<GamePlayer>> spendAction(@PathVariable("id") Integer id) {
         GamePlayer p = getGamePlayerById(id);

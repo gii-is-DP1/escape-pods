@@ -40,14 +40,17 @@ import org.springframework.data.domain.Pageable;
 @Tag(name = "Games", description = "API for the  management of Games, only the users athenticated as players or admins can acces to the methods below")
 @SecurityRequirement(name = "bearerAuth")
 public class GameRestController {
+    
+    @Autowired
     GameService gs;
 
     @Autowired
     PlayerService ps;
 
     @Autowired
-    public GameRestController(GameService gs) {
+    public GameRestController(GameService gs, PlayerService ps) {
         this.gs = gs;
+        this.ps = ps;
     }
 
     @Operation(summary = "returns the list of created games", description = " you can give a status or playerId to filter the returned games")
@@ -158,6 +161,14 @@ public class GameRestController {
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(summary = "this method adds the player that matches playerId to the game that matches the given id")
+    @ApiResponses(value = {
+
+            @ApiResponse(responseCode = "200", description = "the parameters were correct and the player was added to the game"),
+            @ApiResponse(responseCode = "401", description = "the user must be fully authenticated to access this method"),
+            @ApiResponse(responseCode = "404", description = " the id parameters are not associated to any game or any player")
+
+    })
     @PatchMapping("/{id}/addPlayer")
     public ResponseEntity<Game> addPlayer(@PathVariable("id") Integer id, @RequestParam("playerid") Integer playerid) {
         Game g = getGameById(id);
@@ -166,6 +177,14 @@ public class GameRestController {
         return ResponseEntity.ok(g);
     }
 
+    @Operation(summary = "this method updates the game that matches the id setting the next active player in the game, if lastRound is given the previous active player wont be able to play the next round ")
+    @ApiResponses(value = {
+
+            @ApiResponse(responseCode = "204", description = "the given id was correct and next active player has been selected"),
+            @ApiResponse(responseCode = "401", description = "the user must be fully authenticated to access this method"),
+            @ApiResponse(responseCode = "404", description = " the given ids  are not related to a game or player")
+
+    })
     @PatchMapping("/{id}/nextTurn")
     public ResponseEntity<Game> nextTurn(@PathVariable("id") Integer id,
             @RequestParam(value = "lastRound", required = false, defaultValue = "false") Boolean lastRound) {
@@ -174,6 +193,14 @@ public class GameRestController {
         return ResponseEntity.ok(g);
     }
 
+    @Operation(summary = "this method sets the game that matches the id as finished and sets the finish Date")
+    @ApiResponses(value = {
+
+            @ApiResponse(responseCode = "204", description = "the given id was correct and the game was set to finish"),
+            @ApiResponse(responseCode = "401", description = "the user must be fully authenticated to access this method"),
+            @ApiResponse(responseCode = "404", description = " the given id is not associated to any game")
+
+    })
     @PatchMapping("/{id}/finish")
     public ResponseEntity<Void> finishGame(@PathVariable("id") Integer id) {
         Game g = getGameById(id);

@@ -62,6 +62,7 @@ public class GamePlayerRestControllerTests {
                 gamePlayer1.setGame(game);
                 gamePlayer1.setColor(Color.BLACK);
                 gamePlayer1.setActions(2);
+                gamePlayer1.setNoMoreTurns(false);
 
                 gamePlayer2 = new GamePlayer();
                 gamePlayer2.setId(2);
@@ -71,6 +72,7 @@ public class GamePlayerRestControllerTests {
                 gamePlayer2.setGame(game2);
                 gamePlayer2.setColor(Color.WHITE);
                 gamePlayer2.setActions(1);
+                gamePlayer2.setNoMoreTurns(false);
 
                 gamePlayers = new ArrayList<GamePlayer>();
                 gamePlayers.add(gamePlayer1);
@@ -96,6 +98,22 @@ public class GamePlayerRestControllerTests {
                 assertEquals(gamePlayers.size(), actualGamePlayers.size());
         }
 
+
+        @Test
+        @WithMockUser(username = "player2", password = "0wn3r")
+        void canGetGamePlayerById() throws Exception {
+                Integer gamePlayerId = 1;
+                when(gamePlayerService.getGamePlayerById(gamePlayerId)).thenReturn(Optional.of(gamePlayer1));
+
+                MockHttpServletRequestBuilder requestBuilder = get("/api/v1/gamePlayers/{id}", gamePlayerId)
+                                .with(csrf());
+
+                mockMvc.perform(requestBuilder)
+                                .andExpect(status().isOk())
+                                .andExpect(jsonPath("$.id").value(gamePlayerId));
+
+        }
+
         @Test
         @WithMockUser(username = "player2", password = "0wn3r")
         void canCreateGamePlayer() throws Exception {
@@ -108,6 +126,7 @@ public class GamePlayerRestControllerTests {
                 gameplayer.setColor(Color.BLACK);
                 gameplayer.setPlayer(player);
                 gameplayer.setActions(2);
+                gameplayer.setNoMoreTurns(false);
 
                 objectMapper = new ObjectMapper();
                 when(gamePlayerService.save(any(GamePlayer.class))).thenAnswer(i -> i.getArguments()[0]);
@@ -128,20 +147,6 @@ public class GamePlayerRestControllerTests {
                 assertTrue(1 == actualGamePlayer.getId());
         }
 
-        @Test
-        @WithMockUser(username = "player2", password = "0wn3r")
-        void canCreateGamePlayerById() throws Exception {
-                Integer gamePlayerId = 1;
-                when(gamePlayerService.getGamePlayerById(gamePlayerId)).thenReturn(Optional.of(gamePlayer1));
-
-                MockHttpServletRequestBuilder requestBuilder = get("/api/v1/gamePlayers/{id}", gamePlayerId)
-                                .with(csrf());
-
-                mockMvc.perform(requestBuilder)
-                                .andExpect(status().isOk())
-                                .andExpect(jsonPath("$.id").value(gamePlayerId));
-
-        }
 
         @Test
         @WithMockUser("PLAYER")
@@ -256,5 +261,12 @@ public class GamePlayerRestControllerTests {
 
                 mockMvc.perform(requestBuilder)
                                 .andExpect(status().isNotFound());
+        }
+
+        @Test
+        @WithMockUser("PLAYER")
+        void canAddPlayer() {
+                Game game3 = new Game();
+
         }
 }
