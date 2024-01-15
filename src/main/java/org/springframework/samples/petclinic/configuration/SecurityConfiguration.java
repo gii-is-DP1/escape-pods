@@ -43,6 +43,8 @@ public class SecurityConfiguration {
 
 	private static final String ADMIN = "ADMIN";
 	private static final String CLINIC_OWNER = "CLINIC_OWNER";
+	private static final String PLAYER = "PLAYER";
+
 
 	@Bean
 	protected SecurityFilterChain configure(HttpSecurity http) throws Exception {
@@ -80,6 +82,11 @@ public class SecurityConfiguration {
 						.requestMatchers(HttpMethod.GET, "/api/v1/vets/stats").hasAuthority(ADMIN)
 						.requestMatchers(HttpMethod.GET, "/api/v1/vets/**").authenticated()
 						.requestMatchers("/api/v1/vets/**").hasAnyAuthority(ADMIN, "VET", CLINIC_OWNER)
+
+						.requestMatchers(HttpMethod.POST, "/api/v1/games").hasAuthority(PLAYER)
+						.requestMatchers("/api/v1/games/**").hasAnyAuthority(ADMIN,PLAYER)
+						.requestMatchers("/api/v1/players/**").hasAnyAuthority(PLAYER,ADMIN)
+						
 						.anyRequest().permitAll()) // .anyRequest().authenticated()) se ha cambiado para entrar facil al
 													// h2
 

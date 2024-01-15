@@ -22,11 +22,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/players")
+@Tag(name = "Players", description = "API for the  management of Players, Only users authenticated as players or admins can access to the methods below")
 @SecurityRequirement(name = "bearerAuth")
 public class PlayerRestController {
 
@@ -39,6 +44,14 @@ public class PlayerRestController {
 		this.userService = userService;
 	}
 
+	@Operation(summary = "returns the list of players that have been created", description = " you can give a username to filter the returned players")
+	@ApiResponses(value = {
+
+			@ApiResponse(responseCode = "200", description = "the given parameter was correct or the method can return all of the existent payers"),
+			@ApiResponse(responseCode = "401", description = "the user must be fully authenticated to access this method"),
+			@ApiResponse(responseCode = "404", description = " the username given is not associated to any existent player")
+
+	})
 	@GetMapping
 	public ResponseEntity<List<Player>> getAllPlayers(
 			@RequestParam(value = "username", required = false) String username) {
@@ -51,11 +64,27 @@ public class PlayerRestController {
 
 	}
 
+	@Operation(summary = "returns the player that matches the given id")
+	@ApiResponses(value = {
+
+			@ApiResponse(responseCode = "200", description = "the given parameter was correct"),
+			@ApiResponse(responseCode = "401", description = "the user must be fully authenticated to access this method"),
+			@ApiResponse(responseCode = "404", description = " the given id is not associated to any player")
+
+	})
 	@GetMapping(value = "/{id}")
 	public ResponseEntity<Player> findById(@PathVariable("id") int id) {
 		return new ResponseEntity<>(playerService.findPlayerById(id), HttpStatus.OK);
 	}
 
+	@Operation(summary = "returns the created player", description = "the body of the request must be valid and match the restrictions and annotations defined")
+	@ApiResponses(value = {
+
+			@ApiResponse(responseCode = "201", description = "the player has been created"),
+			@ApiResponse(responseCode = "400", description = "the request couldnt be done because the given player is not valid"),
+			@ApiResponse(responseCode = "401", description = "the user must be fully authenticated to access this method"),
+
+	})
 	@PostMapping()
 	@ResponseStatus(HttpStatus.CREATED)
 	public ResponseEntity<Player> create(@RequestBody @Valid Player player) throws URISyntaxException {
@@ -68,9 +97,18 @@ public class PlayerRestController {
 		return new ResponseEntity<>(savedPlayer, HttpStatus.CREATED);
 	}
 
+	@Operation(summary = "this method updates the player ", description = "the player line must be valid and the given id must be the same as your player if you have the 'PLAYER' role")
+	@ApiResponses(value = {
+
+			@ApiResponse(responseCode = "200", description = "the player has been updated"),
+			@ApiResponse(responseCode = "400", description = "the request couldnt be done because the given player is not valid"),
+			@ApiResponse(responseCode = "401", description = "the user must be fully authenticated to access this method"),
+			@ApiResponse(responseCode = "403", description = "if you want to update another player besides yourself you will need to be authenticated as an user with the 'ADMIN' role "),
+			@ApiResponse(responseCode = "404", description = "the given id is not associated to any player")
+
+	})
 	@PutMapping(value = "{playerId}")
 	@ResponseStatus(HttpStatus.OK)
-
 	public ResponseEntity<Player> update(@PathVariable("playerId") int playerId, @RequestBody @Valid Player player) {
 
 		RestPreconditions.checkNotNull(playerService.findPlayerById(playerId), "Player", "ID", playerId);
@@ -87,6 +125,14 @@ public class PlayerRestController {
 
 	}
 
+	@Operation(summary = "this method deletes the player that mathces the given id ", description = "the player line must be valid and the given id must be the same as your player if you have the 'PLAYER' role")
+	@ApiResponses(value = {
+
+			@ApiResponse(responseCode = "200", description = "the player has been deleted"),
+			@ApiResponse(responseCode = "401", description = "the user must be fully authenticated to access this method"),
+			@ApiResponse(responseCode = "403", description = "if you want to delete another player besides yourself you will need to be authenticated as an user with the 'ADMIN' role "),
+			@ApiResponse(responseCode = "404", description = "the given id is not associated to any player")
+	})
 	@DeleteMapping(value = "{playerId}")
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<MessageResponse> delete(@PathVariable("playerId") int id) {

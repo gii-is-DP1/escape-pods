@@ -197,7 +197,6 @@ public class GameRestControllerTests {
                 MockHttpServletRequestBuilder requestBuilder = post("/api/v1/games")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(game3JsonString);
-
                 MvcResult result = mockMvc.perform(requestBuilder)
                                 .andExpect(status().isForbidden())
                                 .andReturn();
