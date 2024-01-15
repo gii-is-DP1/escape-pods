@@ -20,6 +20,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -36,6 +39,14 @@ public class PodController {
         this.ps = ps;
     }
 
+    @Operation(summary = "returns the list of pods that have been created", description = " you can give a gameId, or capacity to filter the returned lines")
+    @ApiResponses(value = {
+
+            @ApiResponse(responseCode = "200", description = "the given parameter was correct or the method can return all of the existent lines"),
+            @ApiResponse(responseCode = "404", description = " the gameId given is not associated to any existent game or the capacity is not associated to any exsitent pod"),
+            @ApiResponse(responseCode = "401", description = "the user must be fully authenticated to access this method"),
+    })
+
     @GetMapping
     public List<Pod> getAllPods(@ParameterObject @RequestParam(value = "status", required = false) Integer capacity,
             @ParameterObject @RequestParam(value = "gameid", required = false) Integer gameid) {
@@ -49,6 +60,15 @@ public class PodController {
         }
     }
 
+    @Operation(summary = "returns the pod that have the id passed", description = " you must give a valid id to get the pod you want")
+    @ApiResponses(value = {
+
+            @ApiResponse(responseCode = "200", description = "the given parameter was correct or the method can return the pod"),
+            @ApiResponse(responseCode = "404", description = " the podId given is not associated to any existent pod"),
+            @ApiResponse(responseCode = "400", description = " the podId given is not a valid id"),
+            @ApiResponse(responseCode = "401", description = "the user must be fully authenticated to access this method"),
+    })
+
     @GetMapping("/{id}")
     public Pod getPodsById(@PathVariable("id") Integer id) {
         Optional<Pod> g = ps.getPodsById(id);
@@ -57,6 +77,14 @@ public class PodController {
 
         return g.get();
     }
+
+    @Operation(summary = "this method creates a pod", description = " the entity pod must be given correctly")
+    @ApiResponses(value = {
+
+            @ApiResponse(responseCode = "201", description = "the pod has been created"),
+            @ApiResponse(responseCode = "400", description = " the request couldnt be done because the given pod is not valid"),
+            @ApiResponse(responseCode = "401", description = "the user must be fully authenticated to access this method"),
+    })
 
     @PostMapping()
     public ResponseEntity<Pod> createPods(@Valid @RequestBody Pod g) {
@@ -69,6 +97,15 @@ public class PodController {
         return ResponseEntity.created(location).body(g);
     }
 
+    @Operation(summary = "this method updates a pod", description = " the entity pod must be given correctly")
+    @ApiResponses(value = {
+
+            @ApiResponse(responseCode = "204", description = "the given parameter was correct or the method can update the pod given"),
+            @ApiResponse(responseCode = "404", description = " the podId given is not associated to any existent pod"),
+            @ApiResponse(responseCode = "400", description = " the request couldnt be done because the given pod is not valid"),
+            @ApiResponse(responseCode = "401", description = "the user must be fully authenticated to access this method"),
+    })
+
     @PutMapping("/{id}")
     public ResponseEntity<Void> updatePods(@Valid @RequestBody Pod g, @PathVariable("id") Integer id) {
         Pod gToUpdate = getPodsById(id);
@@ -77,12 +114,30 @@ public class PodController {
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(summary = "this method deletes a pod from a id", description = " you can give a id to delete the pod you want")
+    @ApiResponses(value = {
+
+            @ApiResponse(responseCode = "204", description = "the given parameter was correct or the method can delete the pod"),
+            @ApiResponse(responseCode = "404", description = " the podId given is not associated to any existent pod"),
+            @ApiResponse(responseCode = "401", description = "the user must be fully authenticated to access this method"),
+    })
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePods(@PathVariable("id") Integer id) {
         if (getPodsById(id) != null)
             ps.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+
+    @Operation(summary = "this method deletes all pods from a game", description = " you can give a gameId to delete all the pods from that game")
+    @ApiResponses(value = {
+
+            @ApiResponse(responseCode = "204", description = "the given parameter was correct or the method can delete the pods"),
+            @ApiResponse(responseCode = "404", description = " the gameId given is not associated to any existent game"),
+            @ApiResponse(responseCode = "401", description = "the user must be fully authenticated to access this method"),
+    })
+
 
     @DeleteMapping()
     public ResponseEntity<Void> deletePodsByGameId(
