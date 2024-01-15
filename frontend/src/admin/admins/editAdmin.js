@@ -14,6 +14,8 @@ export default function EditAdmin() {
     const myUsername = jwt_decode(jwt).sub;
     const playerUsername = window.location.href.split("/")[4]
     const auths = useFetchData(`/api/v1/users/authorities`, jwt);
+    const [loggedAccount, setLoggedAccount] = useState({})
+
 
     const authOptions = auths.filter(auth=> auth.id === 1 || auth.id === 5).map((auth) => (
         <option key={auth.id} value={auth.id}>
@@ -37,8 +39,22 @@ export default function EditAdmin() {
     useEffect(() => {
         if (jwt) {
             GetCurrentUser();
+            GetLoggedAccount();
         }
     }, [jwt])
+
+    async function GetLoggedAccount() {
+        const usrnm = jwt_decode(jwt).sub;
+        const response = await fetch(`/api/v1/users?username=${usrnm}`, {
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${jwt}`,
+            },
+            method: "GET"
+        })
+        const fetchedPlayer = await response.json();
+        await setLoggedAccount(fetchedPlayer[0]);
+    }
 
     function sendLogoutRequest() {
         const jwt = window.localStorage.getItem("jwt");
@@ -51,6 +67,15 @@ export default function EditAdmin() {
 
     }
 
+    function decideWhoToEdit() {
+        if (loggedAccount.username === playerUsername) {
+            sendLogoutRequest();
+        }
+        else {
+            window.location.href = `/`;
+        }
+    }
+
     async function ActualizarUsuario(event) {
         event.preventDefault();
         await fetch(`/api/v1/users/${myUser.id}`, {
@@ -61,7 +86,6 @@ export default function EditAdmin() {
             method: "PUT",
             body: JSON.stringify(myUser)
         })
-        console.log(myUser)
         if (myUser.authority.id === 5) {
             await fetch(`/api/v1/players`, {
                 headers: {
@@ -77,8 +101,7 @@ export default function EditAdmin() {
                     })
             })
         }
-        console.log(myUser)
-        sendLogoutRequest();
+        decideWhoToEdit();
 
     }
 
@@ -110,7 +133,6 @@ export default function EditAdmin() {
             authority: auth,
 
         }
-        console.log(changedUser)
         setMyUser(changedUser);
     }
 

@@ -35,8 +35,7 @@ export default function Admins() {
             method: "GET"
         })
         const fetchedPlayer = await response.json();
-        console.log(fetchedPlayer[0].username);
-        setLoggedAccount(fetchedPlayer[0]);
+        await setLoggedAccount(fetchedPlayer[0]);
     }
 
     function sendLogoutRequest() {
@@ -68,10 +67,8 @@ export default function Admins() {
             method: "GET"
         })
         const fetchedPlayer = await response.json();
-        console.log(fetchedPlayer[0]);
         setMyUser(fetchedPlayer[0]);
     }
-    console.log(myUser)
 
     async function GetPlayerToEdit() {
         setGame(await fetchPlayerToEdit())
@@ -89,7 +86,6 @@ export default function Admins() {
         window.location.href = `/editAdmin/${playerUsername}`
         return fetchedGame
     }
-    console.log(myUser)
 
     function DeleteCurrentAccount() {
 
