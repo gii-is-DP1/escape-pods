@@ -149,10 +149,7 @@ public class SectorController {
 
     @DeleteMapping()
     public ResponseEntity<Void> deleteSectorsByGameId(
-            @ParameterObject @RequestParam(value = "gameid", required = true) Integer gameid) {
-        if (getSectorById(gameid) == null){
-            return ResponseEntity.notFound().build();
-        }
+            @ParameterObject @RequestParam(value = "gameid", required = true) Integer gameid) {   
             scs.deleteByGameId(gameid);
         return ResponseEntity.noContent().build();
     }

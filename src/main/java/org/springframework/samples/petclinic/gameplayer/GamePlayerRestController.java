@@ -135,9 +135,6 @@ public class GamePlayerRestController {
     @DeleteMapping()
     public ResponseEntity<Void> deleteGamePlayersByGameId(
             @ParameterObject() @RequestParam(value = "gameid", required = false) Integer gameid) {
-        if (ps.getGamePlayersByGameId(gameid) == null) {
-            ResponseEntity.notFound().build();
-        }
         ps.deleteByGameId(gameid);
         return ResponseEntity.noContent().build();
     }
