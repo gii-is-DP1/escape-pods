@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
+import org.springframework.samples.petclinic.player.Player;
+import org.springframework.samples.petclinic.player.PlayerService;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -36,6 +38,9 @@ import org.springframework.data.domain.Pageable;
 @SecurityRequirement(name = "bearerAuth")
 public class GameRestController {
     GameService gs;
+
+    @Autowired
+    PlayerService ps;
 
     @Autowired
     public GameRestController(GameService gs) {
@@ -107,6 +112,14 @@ public class GameRestController {
         if (getGameById(id) != null)
             gs.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}/addPlayer")
+    public ResponseEntity<Game> addPlayer(@PathVariable("id") Integer id, @RequestParam("playerid") Integer playerid) {
+        Game g = getGameById(id);
+        Player p = ps.findPlayerById(playerid);
+        g = gs.addPlayer(g, p);
+        return ResponseEntity.ok(g);
     }
 
     @PatchMapping("/{id}/nextTurn")

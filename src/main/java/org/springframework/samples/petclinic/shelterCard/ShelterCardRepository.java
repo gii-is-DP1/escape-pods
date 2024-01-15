@@ -23,5 +23,5 @@ public interface ShelterCardRepository extends CrudRepository<ShelterCard, Integ
 
     @Modifying
     @Query("DELETE FROM ShelterCard sc WHERE sc.game.id=:id")
-    Void deleteByGameId(@Param("id") Integer id);
+    int deleteByGameId(@Param("id") Integer id);
 }

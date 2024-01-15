@@ -133,27 +133,24 @@ export default function Home() {
     }
 
     async function addPlayerToGame(id) {
+        try {
+            const response = await fetch(`/api/v1/games/${id}/addPlayer?playerid=${myPlayer.id}`, {
+                headers: {
+                    "Authorization": ` Bearer ${jwt}`,
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                method: 'PATCH',
+            });
 
-        const updatedPlayers = waitingGames.find((game) => game.id === id).players
-        updatedPlayers.push(myPlayer)
-
-        const updatedGame = {
-            numPlayers: waitingGames.find((game) => game.id === id).numPlayers,
-            start: waitingGames.find((game) => game.id === id).start,
-            finish: waitingGames.find((game) => game.id === id).finish,
-            status: waitingGames.find((game) => game.id === id).status,
-            players: updatedPlayers
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message);
+            }
+            window.location.href = `/lobby/${id}`
+        } catch (error) {
+            alert(error);
         }
-        await fetch(`/api/v1/games/${id}`, {
-            headers: {
-                "Authorization": ` Bearer ${jwt}`,
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            method: 'PUT',
-            body: JSON.stringify(updatedGame)
-        });
-        window.location.href = `/lobby/${id}`
     }
 
     const waitingGamesList = waitingGames.map(game =>

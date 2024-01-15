@@ -61,7 +61,6 @@ public class GamePlayerRestControllerTests {
                 gamePlayer1.setPlayer(player);
                 gamePlayer1.setGame(game);
                 gamePlayer1.setColor(Color.BLACK);
-                gamePlayer1.setPoints(25);
                 gamePlayer1.setActions(2);
 
                 gamePlayer2 = new GamePlayer();
@@ -71,7 +70,6 @@ public class GamePlayerRestControllerTests {
                 gamePlayer2.setPlayer(player2);
                 gamePlayer2.setGame(game2);
                 gamePlayer2.setColor(Color.WHITE);
-                gamePlayer2.setPoints(20);
                 gamePlayer2.setActions(1);
 
                 gamePlayers = new ArrayList<GamePlayer>();
@@ -109,7 +107,6 @@ public class GamePlayerRestControllerTests {
                 gameplayer.setId(1);
                 gameplayer.setColor(Color.BLACK);
                 gameplayer.setPlayer(player);
-                gameplayer.setPoints(25);
                 gameplayer.setActions(2);
 
                 objectMapper = new ObjectMapper();
@@ -155,7 +152,6 @@ public class GamePlayerRestControllerTests {
                 gameplayer.setId(-1);
                 gameplayer.setColor(Color.BLACK);
                 gameplayer.setPlayer(null);
-                gameplayer.setPoints(-25);
                 gameplayer.setActions(-2);
 
                 objectMapper = new ObjectMapper();

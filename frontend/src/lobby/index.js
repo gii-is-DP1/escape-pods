@@ -69,7 +69,7 @@ export default function Lobby() {
             method: "GET"
         })
         const fetchedGame = await response.json();
-        if (fetchedGame.status === "PLAYING") {
+        if (fetchedGame.status === "PLAYING" && fetchedGame.players.map(player => player.id).includes(myPlayer.id)) {
             window.location.href = `/game/${gameId}`
         }
         return fetchedGame
@@ -175,28 +175,31 @@ export default function Lobby() {
                             </Badge>
                         </div>
 
-
-                        <Button className="button" style={{
-                            backgroundColor: "#CFFF68",
-                            border: "none",
-                            width: 300,
-                            fontSize: 35,
-                            borderRadius: 20,
-                            height: 100,
-                            boxShadow: "5px 5px 5px #00000020",
-                            textShadow: "2px 2px 2px #00000020",
-                            transition: "0.15s",
-                            alignSelf: "center",
-                            marginBottom: 20
-                        }} onClick={() => {
-                            if (myPlayer.id === game.players[0].id) {
-                                startGame()
-                            } else {
-                                alert("Only the lobby owner can start the game")
-                            }
-                        }}>
-                            START GAME
-                        </Button>
+                        {game.status === "WAITING" &&
+                            <Button className="button" style={{
+                                backgroundColor: "#CFFF68",
+                                border: "none",
+                                width: 300,
+                                fontSize: 35,
+                                borderRadius: 20,
+                                height: 100,
+                                boxShadow: "5px 5px 5px #00000020",
+                                textShadow: "2px 2px 2px #00000020",
+                                transition: "0.15s",
+                                alignSelf: "center",
+                                marginBottom: 20
+                            }} onClick={() => {
+                                if (game.players.length === 1) {
+                                    alert("You can't start a game with only one player")
+                                } else if (myPlayer.id !== game.players[0].id) {
+                                    alert("Only the lobby owner can start the game")
+                                } else {
+                                    startGame()
+                                }
+                            }}>
+                                START GAME
+                            </Button>
+                        }
                         <Link to="/">
                             <Button className="button" style={{
                                 backgroundColor: "#FF8368",

@@ -23,6 +23,6 @@ public interface SectorRepository extends CrudRepository<Sector, Integer> {
 
     @Modifying
     @Query("DELETE FROM Sector s WHERE s.game.id=:id")
-    Void deleteByGameId(@Param("id") Integer id);
+    int deleteByGameId(@Param("id") Integer id);
 
 }
