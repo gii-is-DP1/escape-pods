@@ -138,6 +138,9 @@ public class SlotInfoController {
     public ResponseEntity<Void> deleteSlotInfoByGameId(
             @ParameterObject @RequestParam(value = "gameid", required = false) Integer gameid) {
 
+                if(sis.getSlotInfoByGameId(gameid).size()==0){
+                    return ResponseEntity.notFound().build();
+                }
         sis.deleteByGameId(gameid);
         return ResponseEntity.noContent().build();
     }

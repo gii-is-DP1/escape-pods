@@ -192,33 +192,41 @@ public class PodRestControllerTests {
 
         @Test
         @WithMockUser("PLAYER")
-        void canDeletePodByGameId() throws Exception {
-
+        void canDeleteLineByGameId() throws Exception {
                 Integer gameId = 1;
                 Game game1 = new Game();
                 game1.setId(gameId);
-                pod1.setGame(game1);
 
-                when(podService.getPodsById(pod1.getId())).thenReturn(Optional.of(pod1));
+                Pod lineTest = new Pod();
+                lineTest.setId(3);
+                lineTest.setGame(game1);
+
+                when(podService.getPodsByGameId(gameId)).thenReturn(List.of(lineTest));
                 doNothing().when(podService).deleteByGameId(gameId);
 
-                MockHttpServletRequestBuilder requestBuilder = delete("/api/v1/pods/{gameId}", gameId)
+                MockHttpServletRequestBuilder requestBuilder = delete("/api/v1/pods?gameid={gameId}", gameId)
+                                .contentType(MediaType.APPLICATION_JSON)
                                 .with(csrf());
 
-                mockMvc.perform(requestBuilder).andExpect(status().isNoContent());
+                mockMvc.perform(requestBuilder)
+                                .andExpect(status().isNoContent());
         }
 
         @Test
         @WithMockUser("PLAYER")
-        void cantDeletePodByGameId_notFound() throws Exception {
+        void cantDeletePodByGameId() throws Exception {
 
-                Integer nonExistentGameId = 20;
-                doThrow(NoSuchElementException.class).when(podService).deleteByGameId(nonExistentGameId);
+                Integer nonExistendPodId = 33;
 
-                MockHttpServletRequestBuilder requestBuilder = delete("/api/v1/pods/{gameId}", nonExistentGameId)
+                when(podService.getPodsByGameId(nonExistendPodId)).thenReturn(List.of());
+                doNothing().when(podService).deleteByGameId(nonExistendPodId);
+
+                MockHttpServletRequestBuilder requestBuilder = delete("/api/v1/pods?gameid={nonExistendGameId}", nonExistendPodId)
+                                .contentType(MediaType.APPLICATION_JSON)
                                 .with(csrf());
 
-                mockMvc.perform(requestBuilder).andExpect(status().isNotFound());
+                mockMvc.perform(requestBuilder)
+                                .andExpect(status().isNotFound());
         }
 
 }

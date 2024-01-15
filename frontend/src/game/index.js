@@ -169,7 +169,9 @@ export default function Game() {
         const fetchedShelterCards = await itemGetters.fetchShelterCards(gameId, jwt);
         setShelterCards(fetchedShelterCards);
         const playableSectorsNumbers = isLastRound(fetchedSectors);
-        isGameFinished(fetchedGamePlayers, playableSectorsNumbers, fetchedPods, fetchedShelterCards);
+        if (playableSectorsNumbers) {
+            isGameFinished(fetchedGamePlayers, playableSectorsNumbers, fetchedPods, fetchedShelterCards);
+        }
     }
 
     function GetCurrentPlayer() {

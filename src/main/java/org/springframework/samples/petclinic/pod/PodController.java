@@ -129,7 +129,6 @@ public class PodController {
         return ResponseEntity.noContent().build();
     }
 
-
     @Operation(summary = "this method deletes all pods from a game", description = " you can give a gameId to delete all the pods from that game")
     @ApiResponses(value = {
 
@@ -138,10 +137,12 @@ public class PodController {
             @ApiResponse(responseCode = "401", description = "the user must be fully authenticated to access this method"),
     })
 
-
     @DeleteMapping()
     public ResponseEntity<Void> deletePodsByGameId(
             @ParameterObject @RequestParam(value = "gameid", required = true) Integer gameid) {
+                if(ps.getPodsByGameId(gameid).size()==0){
+                    return ResponseEntity.notFound().build();
+                }
         ps.deleteByGameId(gameid);
         return ResponseEntity.noContent().build();
     }

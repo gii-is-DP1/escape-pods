@@ -185,4 +185,44 @@ public class BeaconRestControllerTests {
                                 .andExpect(status().isNotFound());
 
         }
+
+        @Test
+        @WithMockUser("PLAYER")
+        void canDeleteBeaconByGameId() throws Exception {
+                Integer gameId = 1;
+                Game game1 = new Game();
+                game1.setId(gameId);
+
+                Beacon beaconTest = new Beacon();
+                beaconTest.setId(3);
+                beaconTest.setGame(game1);
+
+                when(beaconService.getBeaconsByGameId(gameId)).thenReturn(List.of(beaconTest));
+                doNothing().when(beaconService).deleteByGameId(gameId);
+
+
+                MockHttpServletRequestBuilder requestBuilder = delete("/api/v1/beacons?gameid={gameId}", gameId)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .with(csrf());
+
+                mockMvc.perform(requestBuilder)
+                                .andExpect(status().isNoContent());
+        }
+
+        @Test
+        @WithMockUser("PLAYER")
+        void cantDeleteBeaconByGameId() throws Exception {
+
+                Integer nonExistendBeaconId = 33;
+
+                when(beaconService.getBeaconsByGameId(nonExistendBeaconId)).thenReturn(List.of());
+                doNothing().when(beaconService).deleteByGameId(nonExistendBeaconId);
+
+                MockHttpServletRequestBuilder requestBuilder = delete("/api/v1/beacons?gameid={nonExistendGameId}", nonExistendBeaconId)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .with(csrf());
+
+                mockMvc.perform(requestBuilder)
+                                .andExpect(status().isNotFound());
+        }
 }

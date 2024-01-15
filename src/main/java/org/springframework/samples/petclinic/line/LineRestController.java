@@ -138,6 +138,9 @@ public class LineRestController {
     @DeleteMapping()
     public ResponseEntity<Void> deleteLinesByGameId(
             @ParameterObject @RequestParam(value = "gameid", required = true) Integer gameid) {
+                if(ls.getAllLinesByGameId(gameid).size()==0){
+                    return ResponseEntity.notFound().build();
+                }
         ls.deleteByGameId(gameid);
         return ResponseEntity.noContent().build();
     }

@@ -263,36 +263,41 @@ public class SectorControllerTests {
         @Test
         @WithMockUser("PLAYER")
         void canDeleteSectorByGameId() throws Exception {
-                Integer gameId= 1;
-                Game game1= new Game();
+                Integer gameId = 1;
+                Game game1 = new Game();
                 game1.setId(gameId);
 
-                Sector sectorTest= new Sector();
+                Sector sectorTest = new Sector();
+                sectorTest.setId(3);
                 sectorTest.setGame(game1);
-        
-                when(sectorService.getSectorById(gameId)).thenReturn(Optional.of(sectorTest));
+
+                when(sectorService.getAllSectorsByGameId(gameId)).thenReturn(List.of(sectorTest));
                 doNothing().when(sectorService).deleteByGameId(gameId);
 
-                MockHttpServletRequestBuilder requestBuilder = delete("/api/v1/sectors/{gameId}", gameId)
+
+                MockHttpServletRequestBuilder requestBuilder = delete("/api/v1/sectors?gameid={gameId}", gameId)
+                                .contentType(MediaType.APPLICATION_JSON)
                                 .with(csrf());
 
-                mockMvc.perform(requestBuilder).andExpect(status().isNoContent());
+                mockMvc.perform(requestBuilder)
+                                .andExpect(status().isNoContent());
         }
 
         @Test
-
         @WithMockUser("PLAYER")
-        void cantDeleteSectorByGameId_NotFound() throws Exception {
+        void cantDeleteSectorByGameId() throws Exception {
 
-                Integer nonExistendGameId = 20;
+                Integer nonExistendSectorId = 33;
 
-                
-                doThrow(NoSuchElementException.class).when(sectorService).deleteByGameId(nonExistendGameId);
+                when(sectorService.getAllSectorsByGameId(nonExistendSectorId)).thenReturn(List.of());
+                doNothing().when(sectorService).deleteByGameId(nonExistendSectorId);
 
-                MockHttpServletRequestBuilder requestBuilder = delete("/api/v1/sectors/{gameId}", nonExistendGameId)
+                MockHttpServletRequestBuilder requestBuilder = delete("/api/v1/sectors?gameid={nonExistendGameId}", nonExistendSectorId)
+                                .contentType(MediaType.APPLICATION_JSON)
                                 .with(csrf());
 
-                mockMvc.perform(requestBuilder).andExpect(status().isNotFound());
+                mockMvc.perform(requestBuilder)
+                                .andExpect(status().isNotFound());
         }
 
 }
