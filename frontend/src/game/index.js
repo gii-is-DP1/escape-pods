@@ -1574,16 +1574,16 @@ export default function Game() {
                         ))}
                     </div>
                     <div style={{ height: "100%", width: "180px", position: "absolute", left: 710 }}>
-                        <div style={{ position: "absolute", top: 90, left: "-60px", height: 130, width: 179 }}>
+                        <div style={{ position: "absolute", top: "15%", left: "-60px", height: 130, width: 179 }}>
                             <ShelterCard shelterCard={shelterCards.find(res => res.sector.number === 11)} />
                         </div>
-                        <div style={{ position: "absolute", top: 245, height: 130, width: 179 }}>
+                        <div style={{ position: "absolute", top: "35%", height: 130, width: 179 }}>
                             <ShelterCard shelterCard={shelterCards.filter(res => res.sector.number === 12)[0]} />
                         </div>
-                        <div style={{ position: "absolute", top: 405, height: 130, width: 179 }}>
+                        <div style={{ position: "absolute", top: "55%", height: 130, width: 179 }}>
                             <ShelterCard shelterCard={shelterCards.filter(res => res.sector.number === 12)[1]} />
                         </div>
-                        <div style={{ position: "absolute", top: 565, left: "-60px", height: 130, width: 179 }}>
+                        <div style={{ position: "absolute", top: "75%", left: "-60px", height: 130, width: 179 }}>
                             <ShelterCard shelterCard={shelterCards.find(res => res.sector.number === 13)} />
                         </div>
                     </div>
