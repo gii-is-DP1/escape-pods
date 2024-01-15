@@ -17,6 +17,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -50,6 +52,12 @@ public class Game extends BaseEntity {
     @NotNull
     @ManyToMany(cascade = CascadeType.MERGE)
     List<Player> players;
+
+    @ManyToOne
+    Player winner;
+
+    @OneToOne
+    Player activePlayer;
 
     public void removePlayer(Player player) {
         players.remove(player);

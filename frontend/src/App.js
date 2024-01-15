@@ -51,12 +51,14 @@ import VetEditClinicOwner from "./clinicOwner/vets/VetEditClinicOwner";
 import AchievementList from "./achievements/achievementList";
 import Lobby from "./lobby";
 import Players from "./admin/players";
+import Admins from "./admin/admins";
 import Game from "./game"
 import Profile from "./profile"
 import GameLists from "./admin/gameList"
 import CreateUser from "./admin/createUser"
 import EditProfile from "./profile/editProfile";
-import EditPlayer from "./admin/players/editPlayer" // El edit del admin
+import EditPlayer from "./admin/players/editPlayer" // El edit del admin a un jugador
+import EditAdmin from "./admin/admins/editAdmin" // El edit del admin a otro admin
 import Scores from "./scores";
 
 
@@ -115,6 +117,9 @@ function App() {
           <Route path="/gameList" exact={true} element={<PrivateRoute><GameLists /></PrivateRoute>} />
           <Route path="/createUser" exact={true} element={<PrivateRoute><CreateUser /></PrivateRoute>} />
           <Route path="/editPlayer/:playerId" exact={true} element={<PrivateRoute><EditPlayer /></PrivateRoute>} />
+          <Route path="/admins/:username" exact={true} element={<PrivateRoute><Admins /></PrivateRoute>} />
+          <Route path="/editAdmin/:playerId" exact={true} element={<PrivateRoute><EditAdmin /></PrivateRoute>} />
+
         </>)
     }
     if (role === "OWNER") {

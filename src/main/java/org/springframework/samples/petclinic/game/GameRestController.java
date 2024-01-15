@@ -10,8 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
+import org.springframework.samples.petclinic.player.Player;
+import org.springframework.samples.petclinic.player.PlayerService;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -38,6 +41,9 @@ import org.springframework.data.domain.Pageable;
 @SecurityRequirement(name = "bearerAuth")
 public class GameRestController {
     GameService gs;
+
+    @Autowired
+    PlayerService ps;
 
     @Autowired
     public GameRestController(GameService gs) {
@@ -149,6 +155,29 @@ public class GameRestController {
     public ResponseEntity<Void> deleteGame(@PathVariable("id") Integer id) {
         if (getGameById(id) != null)
             gs.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{id}/addPlayer")
+    public ResponseEntity<Game> addPlayer(@PathVariable("id") Integer id, @RequestParam("playerid") Integer playerid) {
+        Game g = getGameById(id);
+        Player p = ps.findPlayerById(playerid);
+        g = gs.addPlayer(g, p);
+        return ResponseEntity.ok(g);
+    }
+
+    @PatchMapping("/{id}/nextTurn")
+    public ResponseEntity<Game> nextTurn(@PathVariable("id") Integer id,
+            @RequestParam(value = "lastRound", required = false, defaultValue = "false") Boolean lastRound) {
+        Game g = getGameById(id);
+        g = gs.nextTurn(g, lastRound);
+        return ResponseEntity.ok(g);
+    }
+
+    @PatchMapping("/{id}/finish")
+    public ResponseEntity<Void> finishGame(@PathVariable("id") Integer id) {
+        Game g = getGameById(id);
+        gs.finishGame(g);
         return ResponseEntity.noContent().build();
     }
 }

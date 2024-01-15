@@ -5,28 +5,29 @@ import '../../App.css';
 import tokenService from '../../services/token.service';
 import '../../static/css/home/home.css';
 import "../../static/css/lobby/lobby.css";
-import foto from "../../static/images/profile-picture-cover.png";
-import fotoP2 from "../../static/images/amongus-profile-picture.png";
 
-export default function Players() {
+export default function Admins() {
 
-    const [myPlayer, setMyPlayer] = useState({})
+    const [myUser, setMyUser] = useState({})
     const jwt = tokenService.getLocalAccessToken();
     const [game, setGame] = useState({});
     let userLogout = <></>;
     const playerUsername = window.location.href.split("/")[4]
     const [deleteAccountVisible, setDeleteAccountVisible] = useState(false);
+    const [loggedAccount, setLoggedAccount] = useState({})
 
 
     useEffect(() => {
         if (jwt) {
             GetCurrentPlayer();
+            GetLoggedAccount();
         }
     }, [jwt])
 
 
-    async function GetCurrentPlayer() {
-        const response = await fetch("/api/v1/players?username=" + playerUsername, {
+    async function GetLoggedAccount() {
+        const usrnm = jwt_decode(jwt).sub;
+        const response = await fetch(`/api/v1/users?username=${usrnm}`, {
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${jwt}`,
@@ -34,18 +35,39 @@ export default function Players() {
             method: "GET"
         })
         const fetchedPlayer = await response.json();
-        console.log(fetchedPlayer[0]);
-        setMyPlayer(fetchedPlayer[0]);
+        await setLoggedAccount(fetchedPlayer[0]);
     }
 
-    function emptyChecker(type, a) {
-        if (type === "array") {
-            const copy = a
-            return JSON.stringify(copy) === "[]" ? true : false
-        } else if (type === "object") {
-            const copy = a
-            return JSON.stringify(copy) === "{}" ? true : false
+    function sendLogoutRequest() {
+        const jwt = window.localStorage.getItem("jwt");
+        if (jwt || typeof jwt === "undefined") {
+            tokenService.removeUser();
+            window.location.href = "/";
+        } else {
+            alert("There is no user logged in");
         }
+
+    }
+
+    function decideWhoToDelete() {
+        if (loggedAccount.username === playerUsername) {
+            sendLogoutRequest();
+        }
+        else {
+            window.location.href = "/";
+        }
+    }
+
+    async function GetCurrentPlayer() {
+        const response = await fetch(`/api/v1/users?username=${playerUsername}`, {
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${jwt}`,
+            },
+            method: "GET"
+        })
+        const fetchedPlayer = await response.json();
+        setMyUser(fetchedPlayer[0]);
     }
 
     async function GetPlayerToEdit() {
@@ -53,7 +75,7 @@ export default function Players() {
     }
 
     async function fetchPlayerToEdit() {
-        const response = await fetch(`/api/v1/players/${playerUsername}`, {
+        const response = await fetch(`/api/v1/users?username=${playerUsername}`, {
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${jwt}`,
@@ -61,16 +83,13 @@ export default function Players() {
             method: "GET"
         })
         const fetchedGame = await response.json();
-        window.location.href = `/editPlayer/${playerUsername}`
+        window.location.href = `/editAdmin/${playerUsername}`
         return fetchedGame
     }
-    console.log(myPlayer)
 
     function DeleteCurrentAccount() {
 
-
-
-        fetch(`/api/v1/players/${myPlayer.id}`, {
+        fetch(`/api/v1/users/${myUser.id}`, {
             headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${jwt}`,
@@ -78,30 +97,13 @@ export default function Players() {
             method: "DELETE"
         })
             .then(response => response.json())
-            .then(response => { setMyPlayer(response[0]) })
+            .then(response => { setMyUser(response[0]) })
     }
 
     return (
         <>
             <div className="lobby-page-container-retro" >
-                <div className="hero-div" style={{
-                    backgroundColor: "rgba(223, 0, 0, 0)",
-                    backdropFilter: "blur(0px)",
-                    height: 300, width: 200,
-                    marginBottom: 300,
-                    marginRight: 20,
-                    marginLeft: 100,
-                    display: 'flex',
-                    flexDirection: 'row',
-                    justifyContent: 'center',
-                }}>
-                    <img className="profile-picture" src={foto}
-                        style={{ height: 170, width: 170, position: 'relative' }} />
 
-                    <img className="profile-picture" src={myPlayer && !emptyChecker("object", myPlayer) && Object.keys(myPlayer).includes('profilePicture') ? myPlayer.profilePicture : { fotoP2 }}
-                        style={{ height: 150, width: 150, position: 'absolute', marginTop: 10 }} />
-
-                </div>
                 <div className="hero-div" style={{
                     backgroundColor: "rgba(223, 0, 0, 0)",
                     backdropFilter: "blur(0px)",
@@ -117,11 +119,6 @@ export default function Players() {
                         <div style={{ display: 'flex', flexDirection: 'row' }}>
                             <p style={{ fontSize: 20, color: '#00ff6600', fontFamily: 'monospace', }}>..</p>
                             <p style={{ fontSize: 30, color: '#00FF66', fontFamily: 'monospace', }}>{playerUsername}</p>
-                        </div>
-                        <p style={{ marginTop: 20, fontSize: 30, color: '#00FF66', fontFamily: 'monospace', }}>Profile description:</p>
-                        <div style={{ display: 'flex', flexDirection: 'row', width: 500 }}>
-                            <p style={{ fontSize: 20, color: '#00ff6600', fontFamily: 'monospace', }}>..</p>
-                            <p style={{ fontSize: 30, color: '#00FF66', fontFamily: 'monospace', }}>{myPlayer.profileDescription}</p>
                         </div>
                     </div>
                 </div>
@@ -189,7 +186,7 @@ export default function Players() {
                                 backgroundColor: "#DC2525", border: "none", boxShadow: "5px 5px 5px #00000020", textShadow: "2px 2px 2px #00000020", transition: "0.15s",
                             }} onClick={() => {
                                 setDeleteAccountVisible(false);
-                                console.log(myPlayer)
+                                console.log(myUser)
                             }}>
                                 Cancel
                             </Button>
@@ -197,7 +194,7 @@ export default function Players() {
                                 backgroundColor: "#21FF1E", border: "none", boxShadow: "5px 5px 5px #00000020", textShadow: "2px 2px 2px #00000020", transition: "0.15s",
                             }} onClick={() => {
                                 DeleteCurrentAccount();
-                                window.location.href = "/";
+                                decideWhoToDelete();
                             }}>
                                 Done
                             </Button>
@@ -207,5 +204,4 @@ export default function Players() {
             </div >
         </>
     )
-
 }

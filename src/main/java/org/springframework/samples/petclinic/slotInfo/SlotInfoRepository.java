@@ -14,8 +14,6 @@ public interface SlotInfoRepository extends CrudRepository<SlotInfo, Integer> {
 
     List<SlotInfo> findAll();
 
-    List<SlotInfo> findByPosition(Integer position);
-
     Optional<SlotInfo> findById(Integer id);
 
     @Query("SELECT si FROM SlotInfo si WHERE si.game.id= :id")
@@ -23,6 +21,6 @@ public interface SlotInfoRepository extends CrudRepository<SlotInfo, Integer> {
 
     @Modifying
     @Query("DELETE FROM  SlotInfo si WHERE si.game.id=:id")
-    void deleteByGameId(@Param("id") Integer id);
+    int deleteByGameId(@Param("id") Integer id);
 
 }

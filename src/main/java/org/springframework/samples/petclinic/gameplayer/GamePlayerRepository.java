@@ -21,5 +21,8 @@ public interface GamePlayerRepository extends CrudRepository<GamePlayer, Integer
 
     @Modifying
     @Query("DELETE FROM GamePlayer g WHERE g.game.id=:id")
-    void deleteByGameId(@Param("id") Integer id);
+    int deleteByGameId(@Param("id") Integer id);
+
+    @Query("SELECT g FROM GamePlayer g WHERE g.player.id = :playerId")
+    GamePlayer findByPlayerId(Integer playerId);
 }

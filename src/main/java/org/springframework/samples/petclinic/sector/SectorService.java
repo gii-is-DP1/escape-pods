@@ -51,6 +51,6 @@ public class SectorService {
 
     @Transactional
     public void deleteByGameId(Integer id) throws DataAccessException {
-        s.deleteById(id);
+        s.deleteByGameId(id);
     }
 }

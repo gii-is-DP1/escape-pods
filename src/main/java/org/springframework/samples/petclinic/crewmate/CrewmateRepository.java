@@ -24,6 +24,6 @@ public interface CrewmateRepository extends CrudRepository<Crewmate, Integer> {
 
     @Modifying
     @Query("DELETE FROM Crewmate c WHERE c.game.id=:id")
-    void deleteByGameId(@Param("id") Integer id);
+    int deleteByGameId(@Param("id") Integer id);
 
 }

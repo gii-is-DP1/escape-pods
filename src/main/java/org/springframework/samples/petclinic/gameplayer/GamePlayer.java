@@ -25,9 +25,6 @@ public class GamePlayer extends BaseEntity {
     Integer actions;
 
     @NotNull
-    Integer points;
-
-    @NotNull
     Color color;
 
     @NotNull
@@ -37,5 +34,8 @@ public class GamePlayer extends BaseEntity {
     @ManyToOne
     @NotNull
     Game game;
+
+    @NotNull
+    Boolean noMoreTurns;
 
 }

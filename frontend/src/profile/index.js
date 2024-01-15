@@ -1,6 +1,6 @@
 import jwt_decode from "jwt-decode";
 import React, { useEffect, useState } from 'react';
-import { Button, Modal, ModalHeader, ModalFooter, ModalBody, Badge, UncontrolledCollapse, Table } from "reactstrap";
+import { Button, Modal, ModalFooter, ModalBody, Table } from "reactstrap";
 import '../App.css';
 import tokenService from '../services/token.service';
 import '../static/css/home/home.css';
@@ -10,13 +10,12 @@ import foto from "../static/images/pods/pod1.png";
 
 
 //ICONOS
-import { DiAptana } from "react-icons/di";
-import { MdAdd, MdOutlinePersonAddAlt1 } from "react-icons/md";
-import { TiTick } from "react-icons/ti";
-import { RiChatOffLine, RiChat4Line, RiCodeFill } from "react-icons/ri";
+
 import { BiSolidInvader } from "react-icons/bi";
 import { FaSpaceAwesome } from "react-icons/fa6";
-import { FaGalacticRepublic, FaFulcrum } from "react-icons/fa";
+import { FaFulcrum } from "react-icons/fa";
+import { LiaRedditAlien } from "react-icons/lia";
+
 
 
 export default function Profile() {
@@ -30,6 +29,7 @@ export default function Profile() {
     let userLogout = <></>;
     const [pages, setPages] = useState([0, 1, 2, 3, 4, 5, 6]);
     const [playerGames, setPlayerGames] = useState([])
+    
 
 
     useEffect(() => {
@@ -63,10 +63,10 @@ export default function Profile() {
         }
     }
 
-    async function getPageData(){
+    async function getPageData() {
         await getPlayerGames(0, await GetCurrentPlayer());
     }
-    
+
     async function fetchPlayerGames(page, player) {
         const response = await fetch(`/api/v1/games?playerId=${player.id}&page=${page}`, {
             headers: {
@@ -90,7 +90,8 @@ export default function Profile() {
             <td style={{ color: '#ffffff', backgroundColor: 'rgba(0, 0, 0, 0)' }}>{game.id}</td>
             <td style={{ color: '#ffffff', backgroundColor: 'rgba(0, 0, 0, 0)' }}>{game.players[0].user.username}</td>
             <td style={{ color: '#ffffff', backgroundColor: 'rgba(0, 0, 0, 0)', }}>{JSON.stringify(game) === "{}" ? null : game.players.map((player, index, array) => player.user.username + (index < array.length - 1 ? ", " : ""))}</td>
-        </tr>)                                                
+            <td style={{ color: '#ffffff', backgroundColor: 'rgba(0, 0, 0, 0)' }}>{game.winner?game.winner.user.username:"none"}</td>
+        </tr>)
 
     function newPages(direction) {
         let out = []
@@ -100,15 +101,15 @@ export default function Profile() {
         return out;
     }
 
-        function sendLogoutRequest() {
-          const jwt = window.localStorage.getItem("jwt");
-          if (jwt || typeof jwt === "undefined") {
+    function sendLogoutRequest() {
+        const jwt = window.localStorage.getItem("jwt");
+        if (jwt || typeof jwt === "undefined") {
             tokenService.removeUser();
             window.location.href = "/";
-          } else {
+        } else {
             alert("There is no user logged in");
-          }
-        
+        }
+
     }
 
     function DeleteCurrentAccount() {
@@ -123,8 +124,6 @@ export default function Profile() {
             .then(response => response.json())
             .then(response => { setMyUser(response[0]) })
     }
-
-
 
     return (
         <>
@@ -153,17 +152,19 @@ export default function Profile() {
                         </ModalFooter>
                     </Modal>
                 </div>
-                <div className="hero-div" style={{ backgroundColor: "rgba(223, 0, 0, 0)", backdropFilter: "blur(0px)", color: 'white', height: 300, width: 300, alignItems: 'left', marginBottom: 300, marginRight: 250, }}>
+                <div className="hero-div" style={{ backgroundColor: "rgba(223, 0, 0, 0)", backdropFilter: "blur(0px)", color: 'white', height: 300, width: 300, alignItems: 'left', marginBottom: 400, marginRight: 250, }}>
                     <div style={{ position: 'relative', marginBottom: 50 }}>
                         <img className="profile-picture" src={foto}
                             style={{ rotate: '-90deg', height: 300, width: 300 }} />
                     </div>
-                    <div style={{ position: 'absolute', marginTop: 104.5, marginLeft: 100 }}>
+                    <div style={{ position: 'absolute', marginTop: 104.5, marginLeft: 100, }}>
                         {myPlayer.profilePicture !== undefined &&
                             <img className="profile-picture" src={myPlayer.profilePicture.startsWith("http") ? myPlayer.profilePicture : `data:image/png;base64,${myPlayer.profilePicture}`}
                                 style={{ height: 100, width: 100 }} />
                         }
                         <p style={{ marginTop: 60, alignSelf: 'center', fontSize: 30 }}>{myUsername}</p>
+                        {myPlayer.profileDescription !== undefined &&
+                            <p style={{alignSelf: 'center', fontSize: 30, width: 400,height:85, marginBottom: 20, marginTop: -15, maxWidth: 1500, wordWrap: 'break-word',textOverflow:'ellipsis', marginLeft:-150, textAlign:'center'}}> {myPlayer.profileDescription.substring(0,42)}</p>}
                     </div>
                     <div>
                         <Link to="/logout">
@@ -179,7 +180,8 @@ export default function Profile() {
                                 transition: "0.15s",
                                 alignSelf: "center",
                                 marginBottom: 20,
-                                marginLeft: 30
+                                marginLeft: 30,
+                                marginTop: 65
                             }}>LOGOUT
 
                             </Button>
@@ -232,6 +234,7 @@ export default function Profile() {
                                     <th style={{ color: '#ffffff', backgroundColor: 'rgba(0, 0, 0, 0)' }}>Id <FaFulcrum style={{ fontSize: 25 }} /></th>
                                     <th style={{ color: '#ffffff', backgroundColor: 'rgba(0, 0, 0, 0)' }}>Owner <BiSolidInvader /></th>
                                     <th style={{ color: '#ffffff', backgroundColor: 'rgba(0, 0, 0, 0)' }}>Players <FaSpaceAwesome /></th>
+                                    <th style={{ color: '#ffffff', backgroundColor: 'rgba(0, 0, 0, 0)' }}>Winner <LiaRedditAlien /></th>
                                 </tr>
                             </thead>
                             <tbody >

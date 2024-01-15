@@ -50,4 +50,16 @@ public class GamePlayerService {
         pr.deleteByGameId(id);
     }
 
+    @Transactional
+    public List<GamePlayer> spendAction(GamePlayer gp) throws DataAccessException {
+        if(gp.getActions() > 1) {
+            gp.setActions(1);
+            pr.save(gp);
+        } else {
+            gp.setActions(2);
+            pr.save(gp);
+        }
+        return pr.findByGameId(gp.getGame().getId());
+    }
+
 }

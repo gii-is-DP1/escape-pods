@@ -20,5 +20,5 @@ public interface LineRepository extends CrudRepository<Line, Integer> {
 
     @Modifying
     @Query("DELETE FROM Line l WHERE l.game.id= :id")
-    Void deleteByGameId(@Param("id") Integer id);
+    int deleteByGameId(@Param("id") Integer id);
 }
