@@ -218,4 +218,43 @@ public class SlotInfoRestControllerTests {
                                 .andExpect(status().isNotFound());
 
         }
+
+        @Test
+        @WithMockUser("PLAYER")
+        void canDeleteSlotInfoByGameId() throws Exception {
+                Integer gameId = 1;
+                Game game1 = new Game();
+                game1.setId(gameId);
+
+                SlotInfo SlotInfoTest = new SlotInfo();
+                SlotInfoTest.setId(3);
+                SlotInfoTest.setGame(game1);
+
+                when(slotInfoService.getSlotInfoByGameId(gameId)).thenReturn(List.of(SlotInfoTest));
+                doNothing().when(slotInfoService).deleteByGameId(gameId);
+
+                MockHttpServletRequestBuilder requestBuilder = delete("/api/v1/slotInfos?gameid={gameId}", gameId)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .with(csrf());
+
+                mockMvc.perform(requestBuilder)
+                                .andExpect(status().isNoContent());
+        }
+
+        @Test
+        @WithMockUser("PLAYER")
+        void cantDeleteSlotInfoByGameId() throws Exception {
+
+                Integer nonExistendSlotInfoId = 33;
+
+                when(slotInfoService.getSlotInfoByGameId(nonExistendSlotInfoId)).thenReturn(List.of());
+                doNothing().when(slotInfoService).deleteByGameId(nonExistendSlotInfoId);
+
+                MockHttpServletRequestBuilder requestBuilder = delete("/api/v1/slotInfos?gameid={nonExistendGameId}", nonExistendSlotInfoId)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .with(csrf());
+
+                mockMvc.perform(requestBuilder)
+                                .andExpect(status().isNotFound());
+        }
 }

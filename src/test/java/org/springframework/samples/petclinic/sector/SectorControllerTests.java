@@ -266,55 +266,44 @@ public class SectorControllerTests {
                 mockMvc.perform(requestBuilder).andExpect(status().isNotFound());
         }
 
-        /*
-         * @Test
-         * 
-         * @WithMockUser("PLAYER")
-         * void canDeleteSectorByGameId() throws Exception {
-         * 
-         * Integer gameId = 1;
-         * 
-         * ObjectMapper objectMapper = new ObjectMapper();
-         * 
-         * when(sectorService.deleteByGameId(gameId)).thenReturn(sectors);
-         * doNothing().when(sectorService).deleteByGameId(gameId);
-         * 
-         * String json = objectMapper.writeValueAsString(sectors);
-         * 
-         * MockHttpServletRequestBuilder requestBuilder =
-         * delete("/api/v1/sectors?gameId=", gameId)
-         * .contentType(MediaType.APPLICATION_JSON)
-         * .content(json)
-         * .with(csrf());
-         * 
-         * mockMvc.perform(requestBuilder).andExpect(status().isNoContent());
-         * }
-         * 
-         * 
-         * @Test
-         * 
-         * @WithMockUser("PLAYER")
-         * void cantDeleteSectorByGameId_NotFound() throws Exception {
-         * 
-         * Integer gameId = 1;
-         * Integer nonExistendGameId = 20;
-         * 
-         * ObjectMapper objectMapper = new ObjectMapper();
-         * 
-         * when(sectorService.deleteByGameId(nonExistendGameId)).thenThrow(
-         * ResourceNotFoundException.class);
-         * doNothing().when(sectorService).deleteByGameId(gameId);
-         * 
-         * String json = objectMapper.writeValueAsString(sectors);
-         * 
-         * MockHttpServletRequestBuilder requestBuilder =
-         * delete("/api/v1/sectors?gameId=", gameId)
-         * .contentType(MediaType.APPLICATION_JSON)
-         * .content(json)
-         * .with(csrf());
-         * 
-         * mockMvc.perform(requestBuilder).andExpect(status().isNotFound());
-         * }
-         */
+        @Test
+        @WithMockUser("PLAYER")
+        void canDeleteSectorByGameId() throws Exception {
+                Integer gameId = 1;
+                Game game1 = new Game();
+                game1.setId(gameId);
+
+                Sector sectorTest = new Sector();
+                sectorTest.setId(3);
+                sectorTest.setGame(game1);
+
+                when(sectorService.getAllSectorsByGameId(gameId)).thenReturn(List.of(sectorTest));
+                doNothing().when(sectorService).deleteByGameId(gameId);
+
+
+                MockHttpServletRequestBuilder requestBuilder = delete("/api/v1/sectors?gameid={gameId}", gameId)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .with(csrf());
+
+                mockMvc.perform(requestBuilder)
+                                .andExpect(status().isNoContent());
+        }
+
+        @Test
+        @WithMockUser("PLAYER")
+        void cantDeleteSectorByGameId() throws Exception {
+
+                Integer nonExistendSectorId = 33;
+
+                when(sectorService.getAllSectorsByGameId(nonExistendSectorId)).thenReturn(List.of());
+                doNothing().when(sectorService).deleteByGameId(nonExistendSectorId);
+
+                MockHttpServletRequestBuilder requestBuilder = delete("/api/v1/sectors?gameid={nonExistendGameId}", nonExistendSectorId)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .with(csrf());
+
+                mockMvc.perform(requestBuilder)
+                                .andExpect(status().isNotFound());
+        }
 
 }

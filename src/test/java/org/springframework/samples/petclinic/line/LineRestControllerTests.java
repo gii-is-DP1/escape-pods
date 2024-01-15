@@ -190,4 +190,45 @@ public class LineRestControllerTests {
                                 .andExpect(status().isNotFound());
         }
 
+        @Test
+        @WithMockUser("PLAYER")
+        void canDeleteLineByGameId() throws Exception {
+                Integer gameId = 1;
+                Game game1 = new Game();
+                game1.setId(gameId);
+
+                Line lineTest = new Line();
+                lineTest.setId(3);
+                lineTest.setGame(game1);
+
+                when(lineService.getAllLinesByGameId(gameId)).thenReturn(List.of(lineTest));
+                doNothing().when(lineService).deleteByGameId(gameId);
+
+
+                MockHttpServletRequestBuilder requestBuilder = delete("/api/v1/lines?gameid={gameId}", gameId)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .with(csrf());
+
+                mockMvc.perform(requestBuilder)
+                                .andExpect(status().isNoContent());
+        }
+
+        @Test
+        @WithMockUser("PLAYER")
+        void cantDeleteLineByGameId() throws Exception {
+
+                Integer nonExistendGameId = 33;
+
+                when(lineService.getAllLinesByGameId(nonExistendGameId)).thenReturn(List.of());
+                doNothing().when(lineService).deleteByGameId(nonExistendGameId);
+
+                MockHttpServletRequestBuilder requestBuilder = delete("/api/v1/lines?gameid={nonExistendGameId}", nonExistendGameId)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .with(csrf());
+
+                mockMvc.perform(requestBuilder)
+                                .andExpect(status().isNotFound());
+        }
+
+
 }
