@@ -152,8 +152,8 @@ INSERT INTO players(id, profile_description, profile_picture, user_id) VALUES (5
 
 INSERT INTO games(id, num_players, start, finish, status) VALUES (1, 5, '2022-01-02 19:33', '2022-01-02 19:34', 'WAITING');
 INSERT INTO games(id, num_players, start, finish, status) VALUES (2, 4, '2022-01-03 19:33', '2022-01-03 19:34', 'WAITING');
-INSERT INTO games(id, num_players, start, finish, status) VALUES (3, 5, '2022-01-04 19:33', '2022-01-04 19:59', 'FINISHED');
-INSERT INTO games(id, num_players, start, finish, status) VALUES (4, 4, '2022-01-05 19:33', '2022-01-05 19:59', 'FINISHED');
+INSERT INTO games(id, num_players,winner_id, start, finish, status) VALUES (3, 5,2, '2022-01-04 19:33', '2022-01-04 19:59', 'FINISHED');
+INSERT INTO games(id, num_players,winner_id, start, finish, status) VALUES (4, 4,1, '2022-01-05 19:33', '2022-01-05 19:59', 'FINISHED');
 
 INSERT INTO games_players(game_id, players_id) VALUES (1, 1);
 INSERT INTO games_players(game_id, players_id) VALUES (1, 2);
