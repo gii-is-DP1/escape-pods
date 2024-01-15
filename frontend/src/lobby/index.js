@@ -66,7 +66,7 @@ export default function Lobby() {
             method: "GET"
         })
         const fetchedGame = await response.json();
-        if (fetchedGame.status === "PLAYING" && fetchedGame.players.map(player => player.id).includes(myPlayer.id)) {
+        if (fetchedGame.status === "PLAYING") {
             window.location.href = `/game/${gameId}`
         }
         return fetchedGame

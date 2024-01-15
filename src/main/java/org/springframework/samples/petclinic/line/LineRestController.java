@@ -21,13 +21,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/v1/lines")
-@Tag(name = "Lines", description = "API for the  management of Lines.")
+@Tag(name = "Lines", description = "API for the  management of Lines, only authenticated users can access the methods below")
 @SecurityRequirement(name = "bearerAuth")
 public class LineRestController {
     LineService ls;
@@ -38,6 +41,14 @@ public class LineRestController {
 
     }
 
+    @Operation(summary = "returns the list of lines that have been created", description = " you can give a gameId to filter the returned lines")
+    @ApiResponses(value = {
+
+            @ApiResponse(responseCode = "200", description = "the given parameter was correct or the method can return all of the existent lines"),
+            @ApiResponse(responseCode = "401", description = "the user must be fully authenticated to access this method"),
+            @ApiResponse(responseCode = "404", description = " the gameId given is not associated to any existent game")
+
+    })
     @GetMapping
     public ResponseEntity<List<Line>> getAllLines(
             @ParameterObject @RequestParam(value = "gameid", required = false) Integer gameid) {
@@ -48,6 +59,14 @@ public class LineRestController {
 
     }
 
+    @Operation(summary = "returns the line that matches the given id")
+    @ApiResponses(value = {
+
+            @ApiResponse(responseCode = "200", description = "the given parameter was correct"),
+            @ApiResponse(responseCode = "401", description = "the user must be fully authenticated to access this method"),
+            @ApiResponse(responseCode = "404", description = " the given id is not associated to any line")
+
+    })
     @GetMapping("/{id}")
     public Line getLineById(@PathVariable("id") Integer id) {
         Optional<Line> l = ls.getLineById(id);
@@ -56,6 +75,14 @@ public class LineRestController {
         return l.get();
     }
 
+    @Operation(summary = "returns the created line", description = "the body of the request must be valid and match the restrictions and annotations defined")
+    @ApiResponses(value = {
+
+            @ApiResponse(responseCode = "201", description = "the line has been created"),
+            @ApiResponse(responseCode = "401", description = "the user must be fully authenticated to access this method"),
+            @ApiResponse(responseCode = "400", description = "the request couldnt be done because the given line is not valid")
+
+    })
     @PostMapping()
     public ResponseEntity<Line> createLine(@Valid @RequestBody Line l) {
         l = ls.save(l);
@@ -67,6 +94,16 @@ public class LineRestController {
         return ResponseEntity.created(location).body(l);
     }
 
+    @Operation(summary = "this method updates the line ", description = "the given line must be valid")
+    @ApiResponses(value = {
+
+            @ApiResponse(responseCode = "204", description = "the line has been updated"),
+            @ApiResponse(responseCode = "400", description = "the request couldnt be done because the given line is not valid"),
+            @ApiResponse(responseCode = "401", description = "the user must be fully authenticated to access this method"),
+            @ApiResponse(responseCode = "404", description = "the given id is not associated to any line")
+            
+
+    })
     @PutMapping("/{id}")
     public ResponseEntity<Void> updateLine(@Valid @RequestBody Line l, @PathVariable("id") Integer id) {
         Line lToUpdate = getLineById(id);
@@ -75,6 +112,14 @@ public class LineRestController {
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(summary = "this method deletes the line that matches the id")
+    @ApiResponses(value = {
+
+            @ApiResponse(responseCode = "204", description = "the given id was correct and the line was deleted"),
+            @ApiResponse(responseCode = "401", description = "the user must be fully authenticated to access this method"),
+            @ApiResponse(responseCode = "404", description = " the given id is not associated to any line")
+
+    })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteLine(@PathVariable("id") Integer id) {
         if (getLineById(id) != null)
@@ -82,6 +127,14 @@ public class LineRestController {
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(summary = "this method deletes all of the lines that matches the given game id ")
+    @ApiResponses(value = {
+
+            @ApiResponse(responseCode = "204", description = "the given id was correct and the lines associated to the game were deleted"),
+            @ApiResponse(responseCode = "401", description = "the user must be fully authenticated to access this method"),
+            @ApiResponse(responseCode = "404", description = " the given game id is not associated to any line")
+
+    })
     @DeleteMapping()
     public ResponseEntity<Void> deleteLinesByGameId(
             @ParameterObject @RequestParam(value = "gameid", required = true) Integer gameid) {
