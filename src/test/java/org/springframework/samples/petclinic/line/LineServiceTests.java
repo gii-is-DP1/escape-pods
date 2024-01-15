@@ -140,4 +140,22 @@ class LineServiceTests {
         verify(lineRepository, times(1)).deleteById(lineId);
     }
 
+    @Test
+    void deleteLineByGameIdTest() {
+
+        Integer gameId = 1;
+        Game game1 = new Game();
+        game1.setId(gameId);
+
+        Line expectedLine = new Line();
+        expectedLine.setId(2);
+        expectedLine.setGame(game1);
+
+        when(lineRepository.deleteByGameId(game1.getId())).thenReturn(1);
+        lineService.deleteByGameId(gameId);
+        assertTrue(1== lineRepository.deleteByGameId(game1.getId()));
+        verify(lineRepository, times(2)).deleteByGameId(gameId);
+
+    }
+
 }

@@ -2,6 +2,7 @@ package org.springframework.samples.petclinic.sheltercard;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.samples.petclinic.game.Game;
 import org.springframework.samples.petclinic.shelterCard.ShelterCard;
 import org.springframework.samples.petclinic.shelterCard.ShelterCardRepository;
 import org.springframework.samples.petclinic.shelterCard.ShelterCardService;
@@ -94,5 +96,23 @@ public class shelterCardServiceTests {
         assertEquals(expectedShelterCard, shelterCardService.getShelterCardById(shelterCardId).get());
 
         verify(shelterCardRepository, times(1)).deleteById(shelterCardId);
+    }
+
+    @Test
+    void deleteShelterCardByGameIdTest() {
+
+        Integer gameId = 1;
+        Game game1 = new Game();
+        game1.setId(gameId);
+
+        ShelterCard expectedShelterCard = new ShelterCard();
+        expectedShelterCard.setId(2);
+        expectedShelterCard.setGame(game1);
+
+        when(shelterCardRepository.deleteByGameId(game1.getId())).thenReturn(1);
+        shelterCardService.deleteByGameId(gameId);
+        assertTrue(1== shelterCardRepository.deleteByGameId(game1.getId()));
+        verify(shelterCardRepository, times(2)).deleteByGameId(gameId);
+
     }
 }
