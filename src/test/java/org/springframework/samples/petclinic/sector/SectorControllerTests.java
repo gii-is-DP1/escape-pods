@@ -7,6 +7,7 @@ import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -49,6 +50,8 @@ public class SectorControllerTests {
         private Sector sector1;
         private Sector sector2;
 
+
+
         private List<Sector> sectors;
         ObjectMapper objectMapper = new ObjectMapper();
 
@@ -57,6 +60,7 @@ public class SectorControllerTests {
                 MockitoAnnotations.openMocks(this);
 
                 Game game = new Game();
+                game.setId(1);
                 Line line1 = new Line();
                 Line line2 = new Line();
                 List<Line> lines = new ArrayList<Line>();
@@ -235,11 +239,7 @@ public class SectorControllerTests {
                 when(sectorService.getSectorById(sectorId)).thenReturn(Optional.of(sector1));
                 doNothing().when(sectorService).delete(sectorId);
 
-                String json = objectMapper.writeValueAsString(sector1);
-
                 MockHttpServletRequestBuilder requestBuilder = delete("/api/v1/sectors/{id}", sectorId)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(json)
                                 .with(csrf());
 
                 mockMvc.perform(requestBuilder).andExpect(status().isNoContent());
@@ -251,16 +251,10 @@ public class SectorControllerTests {
                 Integer sectorId = 1;
                 Integer nonExistendSectorId = 20;
 
-                ObjectMapper objectMapper = new ObjectMapper();
-
                 when(sectorService.getSectorById(nonExistendSectorId)).thenThrow(ResourceNotFoundException.class);
                 doNothing().when(sectorService).delete(sectorId);
 
-                String json = objectMapper.writeValueAsString(sector1);
-
                 MockHttpServletRequestBuilder requestBuilder = delete("/api/v1/sectors/{id}", sectorId)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(json)
                                 .with(csrf());
 
                 mockMvc.perform(requestBuilder).andExpect(status().isNotFound());

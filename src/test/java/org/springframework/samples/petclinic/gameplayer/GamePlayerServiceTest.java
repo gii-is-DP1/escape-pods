@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.samples.petclinic.beacon.Beacon;
 import org.springframework.samples.petclinic.game.Game;
 
 class GamePlayerServiceTest {

@@ -3,6 +3,7 @@ package org.springframework.samples.petclinic.pod;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -12,6 +13,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -36,7 +38,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class PodRestControllerTests {
 
         @MockBean
-        private PodService podservice;
+        private PodService podService;
 
         @Autowired
         private MockMvc mockMvc;
@@ -45,7 +47,7 @@ public class PodRestControllerTests {
         private Pod pod2;
 
         private List<Pod> pods;
-        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectMapper objectMapper;
 
         @BeforeEach
         void setUp() {
@@ -68,7 +70,7 @@ public class PodRestControllerTests {
         @WithMockUser(username = "player2", password = "0wn3r")
         void canGetAllPods() throws Exception {
 
-                when(podservice.getAllPods()).thenReturn(pods);
+                when(podService.getAllPods()).thenReturn(pods);
 
                 MockHttpServletRequestBuilder requestBuilder = get("/api/v1/pods").with(csrf());
 
@@ -97,7 +99,7 @@ public class PodRestControllerTests {
                 pod.setSector(sector);
 
                 objectMapper = new ObjectMapper();
-                when(podservice.save(any(Pod.class))).thenAnswer(i -> i.getArguments()[0]);
+                when(podService.save(any(Pod.class))).thenAnswer(i -> i.getArguments()[0]);
                 String json = objectMapper.writeValueAsString(pod);
 
                 MockHttpServletRequestBuilder requestBuilder = post("/api/v1/pods")
@@ -129,7 +131,7 @@ public class PodRestControllerTests {
 
                 objectMapper = new ObjectMapper();
 
-                when(podservice.save(any(Pod.class))).thenAnswer(i -> i.getArguments()[0]);
+                when(podService.save(any(Pod.class))).thenAnswer(i -> i.getArguments()[0]);
                 String json = objectMapper.writeValueAsString(pod);
 
                 MockHttpServletRequestBuilder requestBuilder = post("/api/v1/pods")
@@ -152,8 +154,8 @@ public class PodRestControllerTests {
 
                 ObjectMapper objectMapper = new ObjectMapper();
 
-                when(podservice.getPodsById(pod1Id)).thenReturn(Optional.of(pod1));
-                doNothing().when(podservice).delete(pod1Id);
+                when(podService.getPodsById(pod1Id)).thenReturn(Optional.of(pod1));
+                doNothing().when(podService).delete(pod1Id);
 
                 String json = objectMapper.writeValueAsString(pod1);
 
@@ -175,8 +177,8 @@ public class PodRestControllerTests {
 
                 ObjectMapper objectMapper = new ObjectMapper();
 
-                when(podservice.getPodsById(nonExistendPodId)).thenThrow(ResourceNotFoundException.class);
-                doNothing().when(podservice).delete(pod1Id);
+                when(podService.getPodsById(nonExistendPodId)).thenThrow(ResourceNotFoundException.class);
+                doNothing().when(podService).delete(pod1Id);
 
                 String json = objectMapper.writeValueAsString(pod1);
 
@@ -199,8 +201,8 @@ public class PodRestControllerTests {
                 lineTest.setId(3);
                 lineTest.setGame(game1);
 
-                when(podservice.getPodsByGameId(gameId)).thenReturn(List.of(lineTest));
-                doNothing().when(podservice).deleteByGameId(gameId);
+                when(podService.getPodsByGameId(gameId)).thenReturn(List.of(lineTest));
+                doNothing().when(podService).deleteByGameId(gameId);
 
                 MockHttpServletRequestBuilder requestBuilder = delete("/api/v1/pods?gameid={gameId}", gameId)
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -216,8 +218,8 @@ public class PodRestControllerTests {
 
                 Integer nonExistendPodId = 33;
 
-                when(podservice.getPodsByGameId(nonExistendPodId)).thenReturn(List.of());
-                doNothing().when(podservice).deleteByGameId(nonExistendPodId);
+                when(podService.getPodsByGameId(nonExistendPodId)).thenReturn(List.of());
+                doNothing().when(podService).deleteByGameId(nonExistendPodId);
 
                 MockHttpServletRequestBuilder requestBuilder = delete("/api/v1/pods?gameid={nonExistendGameId}", nonExistendPodId)
                                 .contentType(MediaType.APPLICATION_JSON)
