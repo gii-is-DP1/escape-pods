@@ -7,14 +7,10 @@ import '../../static/css/home/home.css';
 
 
 //ICONOS
-import { DiAptana } from "react-icons/di";
-import { MdAdd, MdOutlinePersonAddAlt1 } from "react-icons/md";
-import { TiTick } from "react-icons/ti";
-import { RiChatOffLine, RiChat4Line, RiCodeFill } from "react-icons/ri";
 import { BiSolidInvader } from "react-icons/bi";
 import { FaSpaceAwesome } from "react-icons/fa6";
 import { FaGalacticRepublic, FaFulcrum } from "react-icons/fa";
-
+import { LiaRedditAlien } from "react-icons/lia";
 
 export default function GameLists() {
 
@@ -143,6 +139,7 @@ export default function GameLists() {
             <td style={{ color: '#00FF66', backgroundColor: '#078a3b00', fontFamily: 'monospace', }}>{game.players[0].user.username}</td>
             <td style={{ color: '#00FF66', backgroundColor: '#078a3b00', fontFamily: 'monospace', }}>{game.status}</td>
             <td style={{ color: '#00FF66', backgroundColor: '#078a3b00', fontFamily: 'monospace', }}>{JSON.stringify(game) === "{}" ? null : game.players.map((player, index, array) => player.user.username + (index < array.length - 1 ? ", " : ""))}</td>
+            <td style={{ color: '#00FF66', backgroundColor: '#078a3b00', fontFamily: 'monospace', }}>{game.winner?game.winner.user.username:"none"}</td>
         </tr>)
 
     function newPages(direction) {
@@ -164,6 +161,7 @@ export default function GameLists() {
                                 <th style={{ fontFamily: 'monospace', color: '#00FF66', backgroundColor: '#078a3b58' }}>Owner <FaFulcrum /></th>
                                 <th style={{ fontFamily: 'monospace', color: '#00FF66', backgroundColor: '#078a3b58' }}>Status <BiSolidInvader /> </th>
                                 <th style={{ fontFamily: 'monospace', color: '#00FF66', backgroundColor: '#078a3b58' }}>Players <FaSpaceAwesome /></th>
+                                <th style={{ fontFamily: 'monospace', color: '#00FF66', backgroundColor: '#078a3b58' }}>Winner <LiaRedditAlien /></th>
                             </tr>
                         </thead>
                         <tbody >

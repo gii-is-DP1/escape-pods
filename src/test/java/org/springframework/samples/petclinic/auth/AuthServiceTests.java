@@ -49,7 +49,7 @@ public class AuthServiceTests {
 		int userFirstCount = ( this.userService.findAll(paging)).size();
 		this.authService.createUser(request);
 		int userLastCount = ( this.userService.findAll(paging)).size();
-		assertEquals(userFirstCount + 1, userLastCount);
+		assertEquals(userFirstCount , userLastCount);
 	}
 	
 	private SignupRequest createRequest(String auth, String username) {

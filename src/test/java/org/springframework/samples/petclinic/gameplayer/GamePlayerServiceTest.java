@@ -68,7 +68,7 @@ class GamePlayerServiceTest {
 
         GamePlayer expectedGamePlayer = new GamePlayer();
         expectedGamePlayer.setGame(game);
-        
+
         when(gamePlayerRepository.findById(id)).thenReturn(Optional.of(expectedGamePlayer));
 
         assertThrows(NoSuchElementException.class,

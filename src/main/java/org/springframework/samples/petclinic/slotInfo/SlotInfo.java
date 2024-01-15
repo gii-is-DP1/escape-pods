@@ -22,11 +22,6 @@ import lombok.Setter;
 public class SlotInfo extends BaseEntity{ 
 
     @NotNull
-    @Min(0)
-    @Max(4)
-    Integer position;
-
-    @NotNull
     Role role;
 
     @NotNull

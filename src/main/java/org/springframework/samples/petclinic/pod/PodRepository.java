@@ -22,6 +22,6 @@ public interface PodRepository extends CrudRepository<Pod, Integer> {
 
     @Modifying
     @Query("DELETE FROM Pod p WHERE p.game.id= :id")
-    Void deleteByGameId(@Param("id") Integer id);
+    int deleteByGameId(@Param("id") Integer id);
 
 }

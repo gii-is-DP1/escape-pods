@@ -32,6 +32,7 @@ import jakarta.validation.Valid;
 @Tag(name = "ShelterCards", description = "API for the  management of ShelterCards.")
 @SecurityRequirement(name = "bearerAuth")
 public class ShelterCardController {
+    
     ShelterCardService scs;
 
     @Autowired

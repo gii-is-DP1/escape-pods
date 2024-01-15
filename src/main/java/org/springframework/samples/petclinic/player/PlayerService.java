@@ -15,58 +15,58 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class PlayerService {
 
-    private PlayerRepository playerRepository;
+	private PlayerRepository playerRepository;
 
 	private GameRepository gameRepository;
 
-    @Autowired
+	@Autowired
 	public PlayerService(PlayerRepository playerRepository, GameRepository gameRepository) {
 		this.playerRepository = playerRepository;
 		this.gameRepository = gameRepository;
 	}
-    
-    @Transactional(readOnly = true)
+
+	@Transactional(readOnly = true)
 	public List<Player> findAll() throws DataAccessException {
 		return playerRepository.findAll();
 	}
 
-    @Transactional(readOnly = true)
+	@Transactional(readOnly = true)
 	public Player findPlayerById(int id) throws DataAccessException {
 		return this.playerRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Player", "ID", id));
 	}
 
-    @Transactional(readOnly = true)
+	@Transactional(readOnly = true)
 	public Optional<Player> optFindPlayerSByUser(int userId) throws DataAccessException {
 		return this.playerRepository.findByUser(userId);
 	}
 
-    @Transactional
+	@Transactional
 	public Player savePlayer(Player player) throws DataAccessException {
 		playerRepository.save(player);
 		return player;
 	}
 
-    @Transactional
+	@Transactional
 	public Player updatePlayer(Player player, int id) throws DataAccessException {
 		Player toUpdate = findPlayerById(id);
 		BeanUtils.copyProperties(player, toUpdate, "id", "user");
 		return savePlayer(toUpdate);
 	}
 
-    @Transactional
+	@Transactional
 	public void deletePlayer(int id) throws DataAccessException {
 		Player toDelete = findPlayerById(id);
 
 		for (Game game : gameRepository.findPlayerGames(id)) {
-        game.removePlayer(toDelete);
-		gameRepository.save(game);
-    }
+			game.removePlayer(toDelete);
+			gameRepository.save(game);
+		}
 
 		playerRepository.delete(toDelete);
 	}
 
 	@Transactional(readOnly = true)
-	public List<Player> findPlayerByUsername(String username){
+	public List<Player> findPlayerByUsername(String username) {
 		return playerRepository.findPlayerByUsername(username);
 	}
 }

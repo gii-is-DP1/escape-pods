@@ -103,6 +103,10 @@ public class UserService {
 		return userRepository.findAllByAuthority(auth, paging);
 	}
 
+	public List<User> findByUsername(String username, Pageable paging) {
+		return userRepository.findByUsername(username, paging);
+	}
+
 	@Transactional
 	public User updateUser(@Valid User user, Integer idToUpdate) {
 		User toUpdate = findUser(idToUpdate);

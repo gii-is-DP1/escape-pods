@@ -18,7 +18,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
 import org.springframework.samples.petclinic.game.Game;
 import org.springframework.samples.petclinic.game.GameRepository;
@@ -43,9 +42,9 @@ public class PlayerServiceTests {
     void getAllPlayersTest() {
         Player player1 = new Player();
         Player player2 = new Player();
-        
+
         List<Player> expectedPlayers = Arrays.asList(player1, player2);
-        
+
         when(playerRepository.findAll()).thenReturn(expectedPlayers);
 
         List<Player> actualPlayers = playerService.findAll();
@@ -73,7 +72,7 @@ public class PlayerServiceTests {
     }
 
     @Test
-    void getPlayerByIdNotFoundTest() { 
+    void getPlayerByIdNotFoundTest() {
         Integer id = 10;
         Player player = new Player();
         player.setId(id);
@@ -81,7 +80,7 @@ public class PlayerServiceTests {
 
         Player expectedGamePlayer = new Player();
         expectedGamePlayer.setId(id);
-        
+
         when(playerRepository.findById(id)).thenReturn(Optional.of(expectedGamePlayer));
 
         assertThrows(ResourceNotFoundException.class, () -> playerService.findPlayerById(nonExistentPlayerId));
@@ -132,7 +131,7 @@ public class PlayerServiceTests {
         doNothing().when(playerRepository).deleteById(playerId);
         when(playerRepository.findById(playerId)).thenReturn(Optional.of(expectedPlayer));
         when(gameRepository.findPlayerGames(playerId)).thenReturn(List.of(game));
-        
+
         playerService.deletePlayer(playerId);
 
         assertEquals(expectedPlayer, playerService.findPlayerById(playerId));

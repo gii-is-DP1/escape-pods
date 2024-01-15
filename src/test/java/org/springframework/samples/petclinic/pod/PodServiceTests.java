@@ -16,7 +16,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-
 public class PodServiceTests {
 
     @Mock
@@ -28,7 +27,6 @@ public class PodServiceTests {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        // PodService is now automatically instantiated with the mocked dependencies
     }
 
     @Test
@@ -70,7 +68,6 @@ public class PodServiceTests {
         verify(podRepository, times(1)).findByCapacity(capacity);
     }
 
-
     @Test
     void getPodsByGameIdTest() {
         Integer gameId = 1;
@@ -98,14 +95,13 @@ public class PodServiceTests {
 
         doNothing().when(podRepository).deleteById(podId);
         when(podRepository.findById(podId)).thenReturn(Optional.of(expectedPod));
-        
-   
+
         podService.delete(podId);
-        
+
         assertEquals(expectedPod, podService.getPodsById(podId).get());
 
         verify(podRepository, times(1)).deleteById(podId);
-   
+
     }
 
     @Test
@@ -116,14 +112,13 @@ public class PodServiceTests {
 
         doNothing().when(podRepository).deleteByGameId(gameId);
         when(podRepository.findById(gameId)).thenReturn(Optional.of(expectedPod));
-        
-   
+
         podService.deleteByGameId(gameId);
-        
+
         assertEquals(expectedPod, podService.getPodsById(gameId).get());
 
         verify(podRepository, times(1)).deleteByGameId(gameId);
-   
+
     }
 
 }

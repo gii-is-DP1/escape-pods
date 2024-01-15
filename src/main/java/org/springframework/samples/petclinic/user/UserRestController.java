@@ -39,9 +39,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/api/v1/users")
+@Tag(name = "Users", description = "API for the  management of Users.")
 @SecurityRequirement(name = "bearerAuth")
 class UserRestController {
 
@@ -57,28 +59,31 @@ class UserRestController {
 	@GetMapping
 	public ResponseEntity<List<User>> findAll(@RequestParam(required = false) String auth,
 			@RequestParam(required = false) String order,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "7") int size) {
+			@RequestParam(required = false) String username,
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "7") int size) {
 		Pageable paging;
 		List<User> res;
 
 		if (order != null) {
-            if (order.startsWith("-"))
-                paging = PageRequest.of(page, size, Sort.by(order.substring(1)).descending());
-            else
-                paging = PageRequest.of(page, size, Sort.by(order).ascending());
-        }
-        else{
-            paging = PageRequest.of(page, size);
-        }
+			if (order.startsWith("-"))
+				paging = PageRequest.of(page, size, Sort.by(order.substring(1)).descending());
+			else
+				paging = PageRequest.of(page, size, Sort.by(order).ascending());
+		} else {
+			paging = PageRequest.of(page, size);
+		}
 
 		if (auth != null) {
 			res = userService.findAllByAuthority(auth, paging);
+		}
+		else if (username != null) {
+			res = userService.findByUsername(username, paging);
 		} else
-			res =  userService.findAll(paging);
+			res = userService.findAll(paging);
 		return new ResponseEntity<>(res, HttpStatus.OK);
 	}
-	
+
 	@GetMapping("authorities")
 	public ResponseEntity<List<Authorities>> findAllAuths() {
 		List<Authorities> res = (List<Authorities>) authService.findAll();

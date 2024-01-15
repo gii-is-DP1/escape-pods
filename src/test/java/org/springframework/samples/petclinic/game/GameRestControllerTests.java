@@ -31,6 +31,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
 import org.springframework.samples.petclinic.player.Player;
+import org.springframework.samples.petclinic.player.PlayerService;
 import org.springframework.samples.petclinic.user.User;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -45,6 +46,9 @@ public class GameRestControllerTests {
 
         @MockBean
         private GameService gameService;
+
+        @MockBean
+        private PlayerService playerService;
 
         @Autowired
         private GameRestController gameRestController;
@@ -143,8 +147,6 @@ public class GameRestControllerTests {
                 MockHttpServletRequestBuilder requestBuilder = get("/api/v1/games/{id}", nonExistentGameId)
                                 .with(csrf());
 
-                // comprobamos que el servidor lanza le codigo de error asociado a la excepcion
-                // que se lanzaria en el controlador
                 mockMvc.perform(requestBuilder)
                                 .andExpect(status().isNotFound());
 
@@ -156,7 +158,6 @@ public class GameRestControllerTests {
 
                 List<Player> playersGame3 = List.of(player2);
 
-                // arrange del game con los datos validos
                 Game game3 = new Game();
                 game3.setId(3);
                 game3.setPlayers(playersGame3);
@@ -188,7 +189,6 @@ public class GameRestControllerTests {
 
                 List<Player> playersGame3 = List.of(player2);
 
-                // arrange del game con los datos validos
                 Game game3 = new Game();
                 game3.setId(3);
                 game3.setPlayers(playersGame3);
@@ -198,12 +198,9 @@ public class GameRestControllerTests {
                 when(gameService.save(any(Game.class))).thenAnswer(i -> i.getArguments()[0]);
                 String game3JsonString = objectMapper.writeValueAsString(game3);
 
-                // no se establece el uso de jwt lo que nos permite comprobar ele rror que
-                // queremos, la ruta no permitida
                 MockHttpServletRequestBuilder requestBuilder = post("/api/v1/games")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(game3JsonString);
-
                 MvcResult result = mockMvc.perform(requestBuilder)
                                 .andExpect(status().isForbidden())
                                 .andReturn();
@@ -217,7 +214,6 @@ public class GameRestControllerTests {
         @WithMockUser("PLAYER")
         void cantCreateGame_BadRequest() throws Exception {
 
-                // arrange del game con datos invalidos
                 Game game3 = new Game();
                 game3.setId(3);
                 game3.setPlayers(null);
