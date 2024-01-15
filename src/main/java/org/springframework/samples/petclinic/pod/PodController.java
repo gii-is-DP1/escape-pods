@@ -86,7 +86,10 @@ public class PodController {
 
     @DeleteMapping()
     public ResponseEntity<Void> deletePodsByGameId(
-            @ParameterObject @RequestParam(value = "gameid", required = false) Integer gameid) {
+            @ParameterObject @RequestParam(value = "gameid", required = true) Integer gameid) {
+        if (ps.getPodsByGameId(gameid) == null) {
+            return ResponseEntity.notFound().build();
+        }
         ps.deleteByGameId(gameid);
         return ResponseEntity.noContent().build();
     }

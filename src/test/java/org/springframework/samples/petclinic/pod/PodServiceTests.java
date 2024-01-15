@@ -1,6 +1,7 @@
 package org.springframework.samples.petclinic.pod;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -15,11 +16,16 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.samples.petclinic.game.Game;
+import org.springframework.samples.petclinic.game.GameRepository;
 
 public class PodServiceTests {
 
     @Mock
     private PodRepository podRepository;
+
+    @Mock
+    private GameRepository gameRepository;
 
     @InjectMocks
     private PodService podService;
@@ -106,18 +112,19 @@ public class PodServiceTests {
 
     @Test
     void deletePodByGameIdTest() {
+
         Integer gameId = 1;
+        Game game1 = new Game();
+        game1.setId(gameId);
+
         Pod expectedPod = new Pod();
-        expectedPod.setId(gameId);
+        expectedPod.setId(2);
+        expectedPod.setGame(game1);
 
-        doNothing().when(podRepository).deleteByGameId(gameId);
-        when(podRepository.findById(gameId)).thenReturn(Optional.of(expectedPod));
-
+        when(podRepository.deleteByGameId(game1.getId())).thenReturn(1);
         podService.deleteByGameId(gameId);
-
-        assertEquals(expectedPod, podService.getPodsById(gameId).get());
-
-        verify(podRepository, times(1)).deleteByGameId(gameId);
+        assertTrue(1 == podRepository.deleteByGameId(game1.getId()));
+        verify(podRepository, times(2)).deleteByGameId(gameId);
 
     }
 

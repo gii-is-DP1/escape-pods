@@ -137,6 +137,9 @@ public class BeaconRestController {
     @DeleteMapping()
     public ResponseEntity<Void> deleteBeaconsById(
             @ParameterObject @RequestParam(value = "gameid", required = false) Integer gameid) {
+                if(bs.getBeaconsByGameId(gameid)==null){
+                    ResponseEntity.notFound().build();
+                }
         bs.deleteByGameId(gameid);
         return ResponseEntity.noContent().build();
     }

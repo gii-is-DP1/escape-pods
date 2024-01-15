@@ -29,7 +29,7 @@ import jakarta.validation.Valid;
 @Tag(name = "ShelterCards", description = "API for the  management of ShelterCards.")
 @SecurityRequirement(name = "bearerAuth")
 public class ShelterCardController {
-    
+
     ShelterCardService scs;
 
     @Autowired
@@ -97,6 +97,9 @@ public class ShelterCardController {
     @DeleteMapping()
     public ResponseEntity<Void> deleteShelterCardsByGameId(
             @ParameterObject @RequestParam(value = "gameid", required = false) Integer gameid) {
+        if (scs.getShelterCardByGameId(gameid) == null) {
+            return ResponseEntity.notFound().build();
+        }
         scs.deleteByGameId(gameid);
         return ResponseEntity.noContent().build();
     }
