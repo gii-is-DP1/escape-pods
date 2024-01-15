@@ -2,6 +2,7 @@ package org.springframework.samples.petclinic.slotInfo;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 import java.util.Arrays;
@@ -14,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.samples.petclinic.game.Game;
 
 class SlotInfoServiceTests {
 
@@ -102,5 +104,23 @@ class SlotInfoServiceTests {
         assertEquals(expectedSlotInfo, slotInfoService.getSlotInfoById(slotInfoId).get());
 
         verify(slotInfoRepository, times(1)).deleteById(slotInfoId);
+    }
+    
+    @Test
+    void deleteSlotInfoByGameIdTest() {
+
+        Integer gameId = 1;
+        Game game1 = new Game();
+        game1.setId(gameId);
+
+        SlotInfo expectedSlotInfo = new SlotInfo();
+        expectedSlotInfo.setId(2);
+        expectedSlotInfo.setGame(game1);
+
+        when(slotInfoRepository.deleteByGameId(game1.getId())).thenReturn(1);
+        slotInfoService.deleteByGameId(gameId);
+        assertTrue(1== slotInfoRepository.deleteByGameId(game1.getId()));
+        verify(slotInfoRepository, times(2)).deleteByGameId(gameId);
+
     }
 }

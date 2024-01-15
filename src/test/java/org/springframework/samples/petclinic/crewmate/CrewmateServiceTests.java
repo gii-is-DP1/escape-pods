@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 import java.util.List;
@@ -116,6 +117,24 @@ class CrewmateServiceTests {
 
         assertEquals(expectedCrewmate.getId(), actualCrewmate.getId());
         verify(crewmateRepository, times(1)).save(any(Crewmate.class));
+    }
+
+    @Test
+    void deleteCrewmateByGameIdTest() {
+
+        Integer gameId = 1;
+        Game game1 = new Game();
+        game1.setId(gameId);
+
+        Crewmate expectedCrewmate = new Crewmate();
+        expectedCrewmate.setId(2);
+        expectedCrewmate.setGame(game1);
+
+        when(crewmateRepository.deleteByGameId(game1.getId())).thenReturn(1);
+        crewmateService.deleteByGameId(gameId);
+        assertTrue(1== crewmateRepository.deleteByGameId(game1.getId()));
+        verify(crewmateRepository, times(2)).deleteByGameId(gameId);
+
     }
 
 }
