@@ -51,7 +51,8 @@ public class SlotInfoController {
     })
 
     @GetMapping
-    public List<SlotInfo> getAllSlotInfos(@ParameterObject @RequestParam(value = "gameid", required = false) Integer gameid) {
+    public List<SlotInfo> getAllSlotInfos(
+            @ParameterObject @RequestParam(value = "gameid", required = false) Integer gameid) {
         if (gameid != null) {
             return sis.getSlotInfoByGameId(gameid);
         } else {
@@ -136,6 +137,7 @@ public class SlotInfoController {
     @DeleteMapping()
     public ResponseEntity<Void> deleteSlotInfoByGameId(
             @ParameterObject @RequestParam(value = "gameid", required = false) Integer gameid) {
+
                 if(sis.getSlotInfoByGameId(gameid).size()==0){
                     return ResponseEntity.notFound().build();
                 }
