@@ -160,6 +160,9 @@ public class ShelterCardController {
     @DeleteMapping()
     public ResponseEntity<Void> deleteShelterCardsByGameId(
             @ParameterObject @RequestParam(value = "gameid", required = false) Integer gameid) {
+                if(scs.getShelterCardByGameId(gameid).size()==0){
+                    return ResponseEntity.notFound().build();
+                }
         scs.deleteByGameId(gameid);
         return ResponseEntity.noContent().build();
     }

@@ -136,6 +136,9 @@ public class CrewmateRestController {
     @DeleteMapping()
     public ResponseEntity<Void> deleteCrewmatesByGameId(
             @ParameterObject @RequestParam(value = "gameid", required = true) Integer gameid) {
+                if(cs.getAllCrewmatesByGameId(gameid).size()==0){
+                    return ResponseEntity.notFound().build();
+                }
         cs.deleteByGameId(gameid);
         return ResponseEntity.noContent().build();
     }

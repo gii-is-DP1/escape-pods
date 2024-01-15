@@ -188,4 +188,43 @@ public class PodRestControllerTests {
                 mockMvc.perform(requestBuilder).andExpect(status().isNotFound());
         }
 
+        @Test
+        @WithMockUser("PLAYER")
+        void canDeleteLineByGameId() throws Exception {
+                Integer gameId = 1;
+                Game game1 = new Game();
+                game1.setId(gameId);
+
+                Pod lineTest = new Pod();
+                lineTest.setId(3);
+                lineTest.setGame(game1);
+
+                when(podservice.getPodsByGameId(gameId)).thenReturn(List.of(lineTest));
+                doNothing().when(podservice).deleteByGameId(gameId);
+
+                MockHttpServletRequestBuilder requestBuilder = delete("/api/v1/pods?gameid={gameId}", gameId)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .with(csrf());
+
+                mockMvc.perform(requestBuilder)
+                                .andExpect(status().isNoContent());
+        }
+
+        @Test
+        @WithMockUser("PLAYER")
+        void cantDeletePodByGameId() throws Exception {
+
+                Integer nonExistendPodId = 33;
+
+                when(podservice.getPodsByGameId(nonExistendPodId)).thenReturn(List.of());
+                doNothing().when(podservice).deleteByGameId(nonExistendPodId);
+
+                MockHttpServletRequestBuilder requestBuilder = delete("/api/v1/pods?gameid={nonExistendGameId}", nonExistendPodId)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .with(csrf());
+
+                mockMvc.perform(requestBuilder)
+                                .andExpect(status().isNotFound());
+        }
+
 }

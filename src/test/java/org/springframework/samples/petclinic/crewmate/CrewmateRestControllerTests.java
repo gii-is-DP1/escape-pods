@@ -194,4 +194,44 @@ public class CrewmateRestControllerTests {
                 mockMvc.perform(requestBuilder)
                                 .andExpect(status().isNotFound());
         }
+
+        @Test
+        @WithMockUser("PLAYER")
+        void canDeleteCrewmateByGameId() throws Exception {
+                Integer gameId = 1;
+                Game game1 = new Game();
+                game1.setId(gameId);
+
+                Crewmate crewmateTest = new Crewmate();
+                crewmateTest.setId(3);
+                crewmateTest.setGame(game1);
+
+                when(crewmateService.getAllCrewmatesByGameId(gameId)).thenReturn(List.of(crewmateTest));
+                doNothing().when(crewmateService).deleteByGameId(gameId);
+
+
+                MockHttpServletRequestBuilder requestBuilder = delete("/api/v1/crewmates?gameid={gameId}", gameId)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .with(csrf());
+
+                mockMvc.perform(requestBuilder)
+                                .andExpect(status().isNoContent());
+        }
+
+        @Test
+        @WithMockUser("PLAYER")
+        void cantDeleteCrewmateByGameId() throws Exception {
+
+                Integer nonExistendCrewmateId = 33;
+
+                when(crewmateService.getAllCrewmatesByGameId(nonExistendCrewmateId)).thenReturn(List.of());
+                doNothing().when(crewmateService).deleteByGameId(nonExistendCrewmateId);
+
+                MockHttpServletRequestBuilder requestBuilder = delete("/api/v1/crewmates?gameid={nonExistendGameId}", nonExistendCrewmateId)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .with(csrf());
+
+                mockMvc.perform(requestBuilder)
+                                .andExpect(status().isNotFound());
+        }
 }

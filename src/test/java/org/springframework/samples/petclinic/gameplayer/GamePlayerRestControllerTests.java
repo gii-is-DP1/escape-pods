@@ -265,8 +265,41 @@ public class GamePlayerRestControllerTests {
 
         @Test
         @WithMockUser("PLAYER")
-        void canAddPlayer() {
-                Game game3 = new Game();
+        void canDeleteGamePlayerByGameId() throws Exception {
+                Integer gameId = 1;
+                Game game1 = new Game();
+                game1.setId(gameId);
 
+                GamePlayer GamePlayerTest = new GamePlayer();
+                GamePlayerTest.setId(3);
+                GamePlayerTest.setGame(game1);
+
+                when(gamePlayerService.getGamePlayersByGameId(gameId)).thenReturn(List.of(GamePlayerTest));
+                doNothing().when(gamePlayerService).deleteByGameId(gameId);
+
+
+                MockHttpServletRequestBuilder requestBuilder = delete("/api/v1/gamePlayers?gameid={gameId}", gameId)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .with(csrf());
+
+                mockMvc.perform(requestBuilder)
+                                .andExpect(status().isNoContent());
+        }
+
+        @Test
+        @WithMockUser("PLAYER")
+        void cantDeleteGamePlayerByGameId() throws Exception {
+
+                Integer nonExistendGamePlayerId = 33;
+
+                when(gamePlayerService.getGamePlayersByGameId(nonExistendGamePlayerId)).thenReturn(List.of());
+                doNothing().when(gamePlayerService).deleteByGameId(nonExistendGamePlayerId);
+
+                MockHttpServletRequestBuilder requestBuilder = delete("/api/v1/gamePlayers?gameid={nonExistendGameId}", nonExistendGamePlayerId)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .with(csrf());
+
+                mockMvc.perform(requestBuilder)
+                                .andExpect(status().isNotFound());
         }
 }
