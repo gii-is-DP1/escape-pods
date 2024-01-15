@@ -29,8 +29,5 @@ public class ShelterCard extends BaseEntity{
     @NotNull
     @ManyToOne
     Sector sector;
-
-
-    
-    
+     
 }

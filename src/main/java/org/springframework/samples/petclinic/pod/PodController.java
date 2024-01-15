@@ -42,7 +42,7 @@ public class PodController {
     @Operation(summary = "returns the list of pods that have been created", description = " you can give a gameId, or capacity to filter the returned lines")
     @ApiResponses(value = {
 
-            @ApiResponse(responseCode = "200", description = "the given parameter was correct or the method can return all of the existent lines"),
+            @ApiResponse(responseCode = "200", description = "the given parameter was correct or the method can return all of the existent pods"),
             @ApiResponse(responseCode = "404", description = " the gameId given is not associated to any existent game or the capacity is not associated to any exsitent pod"),
             @ApiResponse(responseCode = "401", description = "the user must be fully authenticated to access this method"),
     })
